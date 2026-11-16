@@ -4,10 +4,10 @@ El juego se construye por etapas. Cada etapa termina con algo que se puede jugar
 
 ## Etapa 0: Base del proyecto
 
-- [x] Proyecto de Godot 4.4 con carpetas, controles y capas de colisión
+- [x] Proyecto de Godot 4.7 con carpetas, controles y capas de colisión
 - [x] `EventBus` y `GameState`
 - [x] Guion en `docs/guion.md`
-- [ ] Abrir el proyecto en Godot y confirmar que corre sin errores
+- [x] Abrir el proyecto en Godot y confirmar que corre sin errores
 
 ## Etapa 1: Prototipo jugable (un pasillo de Medicina)
 

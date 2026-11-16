@@ -1,6 +1,6 @@
 # Turno Nocturno
 
-Survival horror 2D (vista desde arriba) en Godot 4.4. Lalo, velador nocturno de 25 años, busca a su compañero Don Chava en un campus universitario vacío durante una noche. Algo enterrado bajo el campus (el pueblo de San Miguel Tlalixco, sepultado en 1953) sube como tierra negra y mueve maniquíes, esqueletos, animales disecados, estatuas y personas.
+Survival horror 2D (vista desde arriba) en Godot 4.7. Lalo, velador nocturno de 25 años, busca a su compañero Don Chava en un campus universitario vacío durante una noche. Algo enterrado bajo el campus (el pueblo de San Miguel Tlalixco, sepultado en 1953) sube como tierra negra y mueve maniquíes, esqueletos, animales disecados, estatuas y personas.
 
 ## Dónde está cada cosa
 

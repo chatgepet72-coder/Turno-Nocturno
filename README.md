@@ -4,7 +4,7 @@ Survival horror en 2D hecho en Godot. Lalo, un velador nocturno, busca a su comp
 
 ## Cómo abrir el proyecto
 
-1. Instala [Godot 4.4](https://godotengine.org/download) o más reciente (versión estándar, no la de .NET).
+1. Instala [Godot 4.7](https://godotengine.org/download) o más reciente (versión estándar, no la de .NET).
 2. Abre Godot, haz clic en **Importar** y selecciona el archivo `project.godot` de esta carpeta.
 3. Presiona **F5** para correrlo.
 
