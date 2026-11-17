@@ -34,8 +34,10 @@ Objetivo: probar si el juego da miedo antes de hacer el resto.
 - [x] Sistema de diálogos y mensajes de radio (con voces de murmullo y efecto de radio)
 - [x] Escena inicial: plática en la caseta, Don Chava se levanta y sale a su rondín
 - [x] Plática por radio con Don Chava
-- [ ] El sótano: escalera derrumbada y linterna de Don Chava
-- [ ] Llamada al Comandante y reja cerrada
+- [x] Don Chava deja de contestar (Lalo lo llama con Q)
+- [x] Apagón, tierra negra en los caminos y el maniquí en la banca que luego ya no está
+- [x] El sótano: escalera derrumbada y linterna de Don Chava
+- [x] Llamada al Comandante y reja cerrada
 - [ ] Mapa de rondines (pantalla del mapa)
 - [ ] Puzzle: llave de la caja de herramientas
 - [ ] Primer enfrentamiento con el maniquí

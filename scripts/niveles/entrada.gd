@@ -66,6 +66,19 @@ const CASETA_PAREDES: Array[Rect2] = [
 	Rect2(688, 840, 12, 192), Rect2(908, 840, 12, 192),  # paredes laterales
 	Rect2(688, 1020, 232, 12),                            # pared de abajo
 ]
+## Sótano del Edificio Central: un cuarto aparte, fuera del mapa del campus, al que se llega por el hueco.
+const SOTANO: Rect2i = Rect2i(0, 1400, 640, 360)
+const SOTANO_PAREDES: Array[Rect2] = [
+	Rect2(0, 1400, 640, 84), Rect2(0, 1400, 24, 360), Rect2(616, 1400, 24, 360), Rect2(0, 1736, 640, 24),
+	Rect2(350, 1484, 200, 90),   # el derrumbe que tapa la escalera de piedra
+]
+const SOTANO_LLEGADA: Vector2 = Vector2(80, 1640)
+const SALIDA_HUECO: Vector2 = Vector2(1830, 1040)
+## Tierra negra que aparece después del apagón: [archivo, posición]
+const TIERRA_APAGON: Array = [
+	["rastro_1.png", Vector2(740, 300)], ["rastro_2.png", Vector2(1040, 450)],
+	["juntas.png", Vector2(1180, 380)], ["huellas.png", Vector2(880, 740)], ["rastro_1.png", Vector2(1640, 560)],
+]
 const PUERTA_CASETA: Rect2 = Rect2(784, 844, 40, 28)
 const REJA_Y: float = 1036.0
 ## Barreras invisibles: la obra solo se alcanza entrando por el patio, no cortando por el pasto.
@@ -85,6 +98,14 @@ var ayuda: Label
 var _mundo: Node2D
 var _techo_caseta: Node2D
 var _objetivo: Label
+var _luces_campus: Array[PointLight2D] = []
+var _tierra: Array[Sprite2D] = []
+var _maniqui: Sprite2D
+var notificador_maniqui: VisibleOnScreenNotifier2D
+var _linterna_chava: Sprite2D
+var _luz_linterna_chava: PointLight2D
+var _respiracion: AudioStreamPlayer2D
+var _respirando: bool = false
 
 
 func _ready() -> void:
@@ -109,6 +130,9 @@ func _ready() -> void:
 	_armar_caseta(suelo)
 	_armar_bordes()
 	_armar_luces()
+	_armar_sotano(suelo)
+	_armar_tierra(suelo)
+	_armar_maniqui()
 	_crear_lalo()
 	_crear_hud()
 	_crear_ambiente()
@@ -265,8 +289,8 @@ func _armar_bordes() -> void:
 func _armar_luces() -> void:
 	var radial: Texture2D = load("res://assets/sprites/luces/luz_radial.png") as Texture2D
 	for p in POSTES:
-		_luz(radial, p + Vector2(0, 20), 2.2, 1.0, Color(1.0, 0.86, 0.6))
-	_luz(radial, CASETA.get_center(), 1.4, 1.2, Color(1.0, 0.95, 0.85))
+		_luces_campus.append(_luz(radial, p + Vector2(0, 20), 2.2, 1.0, Color(1.0, 0.86, 0.6)))
+	_luces_campus.append(_luz(radial, CASETA.get_center(), 1.4, 1.2, Color(1.0, 0.95, 0.85)))
 	var torreta := _luz(radial, Vector2(1830, 890), 1.0, 0.9, Color(1.0, 0.55, 0.15))
 	var parpadeo := create_tween().set_loops()
 	parpadeo.tween_property(torreta, "energy", 0.2, 0.5)
@@ -287,7 +311,10 @@ func _luz(tex: Texture2D, pos: Vector2, escala: float, energia: float, color: Co
 func _crear_lalo() -> void:
 	lalo = Lalo.new()
 	lalo.position = Vector2(744, 1004)   # sentado frente al escritorio; empieza con el prólogo
-	lalo.superficies_duras = DURAS
+	var duras: Array[Rect2] = []
+	duras.assign(DURAS)
+	duras.append(Rect2(SOTANO))
+	lalo.superficies_duras = duras
 	_mundo.add_child(lalo)
 	lalo.poner_limites_camara(MUNDO)
 	lalo.sentar()
@@ -298,6 +325,121 @@ func _limites(camara: Camera2D) -> void:
 	camara.limit_top = MUNDO.position.y
 	camara.limit_right = MUNDO.end.x
 	camara.limit_bottom = MUNDO.end.y
+
+
+# ---------- Prólogo: sótano, apagón y maniquí ----------
+func _armar_sotano(suelo: Node2D) -> void:
+	var fondo := Sprite2D.new()
+	fondo.texture = load(ESC + "prologo/sotano.png") as Texture2D
+	fondo.centered = false
+	fondo.position = Vector2(SOTANO.position)
+	suelo.add_child(fondo)
+	var paredes := StaticBody2D.new()
+	for r in SOTANO_PAREDES:
+		_forma(paredes, r)
+	add_child(paredes)
+	var radial: Texture2D = load("res://assets/sprites/luces/luz_radial.png") as Texture2D
+	_luz(radial, Vector2(76, 1470), 1.0, 0.5, Color(0.6, 0.7, 0.9))   # luz que entra por el hueco de arriba
+	_linterna_chava = Sprite2D.new()   # la linterna de Don Chava, tirada y encendida, apuntando al derrumbe
+	_linterna_chava.texture = load(ESC + "prologo/linterna_don_chava.png") as Texture2D
+	_linterna_chava.position = Vector2(436, 1650)
+	_linterna_chava.rotation = -PI / 2.0
+	suelo.add_child(_linterna_chava)
+	_luz_linterna_chava = PointLight2D.new()
+	_luz_linterna_chava.texture = load("res://assets/sprites/luces/cono_linterna.png") as Texture2D
+	_luz_linterna_chava.texture_scale = 0.8
+	_luz_linterna_chava.energy = 1.1
+	_luz_linterna_chava.position = Vector2(436, 1636)
+	_luz_linterna_chava.rotation = -PI / 2.0
+	add_child(_luz_linterna_chava)
+	_respiracion = AudioStreamPlayer2D.new()   # una respiración lenta detrás del derrumbe
+	_respiracion.stream = load("res://assets/audio/efectos/jadeo.wav") as AudioStream
+	_respiracion.pitch_scale = 0.55
+	_respiracion.volume_db = -2.0
+	_respiracion.max_distance = 700.0
+	_respiracion.position = Vector2(450, 1520)
+	_respiracion.finished.connect(_seguir_respirando)
+	add_child(_respiracion)
+
+
+func _armar_tierra(suelo: Node2D) -> void:
+	for t in TIERRA_APAGON:
+		var s := Sprite2D.new()
+		s.texture = load(ESC + "tierra/" + t[0]) as Texture2D
+		s.centered = false
+		s.position = t[1]
+		s.visible = false
+		suelo.add_child(s)
+		_tierra.append(s)
+
+
+func _armar_maniqui() -> void:
+	_maniqui = Sprite2D.new()   # sentado en la banca del patio; aparece después del apagón
+	_maniqui.texture = load(ESC + "prologo/maniqui_sentado.png") as Texture2D
+	_maniqui.scale = Vector2(0.75, 0.75)
+	_maniqui.centered = false
+	_maniqui.offset = Vector2(-32, -80)
+	_maniqui.position = Vector2(1548, 618)
+	_maniqui.visible = false
+	notificador_maniqui = VisibleOnScreenNotifier2D.new()
+	notificador_maniqui.rect = Rect2(-32, -80, 64, 80)
+	_maniqui.add_child(notificador_maniqui)
+	_mundo.add_child(_maniqui)
+
+
+func agregar_interactuable(zona: Rect2, texto: String) -> Interactuable:
+	var i := Interactuable.new()
+	add_child(i)
+	i.configurar(zona, texto)
+	return i
+
+
+func entrar_sotano() -> void:
+	_mover_lalo(SOTANO_LLEGADA, SOTANO)
+	_respirando = true
+	_respiracion.play()
+
+
+func salir_sotano() -> void:
+	_mover_lalo(SALIDA_HUECO, MUNDO)
+
+
+func _mover_lalo(pos: Vector2, limites: Rect2i) -> void:
+	lalo.global_position = pos
+	lalo.velocity = Vector2.ZERO
+	lalo.poner_limites_camara(limites)
+	lalo.camara().reset_smoothing()
+
+
+func recoger_linterna_chava() -> void:
+	_linterna_chava.visible = false
+	_luz_linterna_chava.enabled = false
+
+
+func parar_respiracion() -> void:
+	_respirando = false
+	_respiracion.stop()
+
+
+func _seguir_respirando() -> void:
+	if _respirando:
+		_respiracion.play()
+
+
+## Se va la luz: postes y caseta se apagan y aparece la tierra negra en los caminos.
+func apagon() -> void:
+	for l in _luces_campus:
+		l.enabled = false
+	for t in _tierra:
+		t.visible = true
+
+
+func mostrar_maniqui() -> void:
+	_maniqui.visible = true
+
+
+func ocultar_maniqui() -> void:
+	_maniqui.visible = false
 
 
 func poner_objetivo(texto: String) -> void:

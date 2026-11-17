@@ -1,22 +1,223 @@
 {
-	"_voces": "lalo_calmado, lalo_angustia, chava (normal), chava_debil (débil o el ente). radio=true: la línea suena por el radio.",
+	"_voces": "lalo_calmado, lalo_angustia, chava (normal), chava_debil (débil o el ente). radio=true: la línea suena por el radio. comandante: el jefe de vigilancia. voz vacía (\"\"): sin voz, por ejemplo la estática.",
 	"caseta": [
-		{"quien": "Don Chava", "voz": "chava", "texto": "¿Y la torta, mijo? ¿De qué la trajiste hoy?"},
-		{"quien": "Lalo", "voz": "lalo_calmado", "texto": "De frijoles con queso, Don Chava. Como siempre."},
-		{"quien": "Don Chava", "voz": "chava", "texto": "Ah, qué bueno. Lupita me mandó de huevo... pero ya me la comí en el camión."},
-		{"quien": "Lalo", "voz": "lalo_calmado", "texto": "Pues ahí está su mitad, ándele."},
-		{"quien": "Don Chava", "voz": "chava", "texto": "Gracias, mijo. Bueno, ya son las diez. Me toca el rondín del Central y la obra."},
-		{"quien": "Lalo", "voz": "lalo_calmado", "texto": "Yo hago el del estacionamiento y Medicina."},
-		{"quien": "Don Chava", "voz": "chava", "texto": "Cualquier cosa me hablas por el radio. Y no te duermas, ¿eh?"}
+		{
+			"quien": "Don Chava",
+			"voz": "chava",
+			"texto": "¿Y la torta, mijo? ¿De qué la trajiste hoy?"
+		},
+		{
+			"quien": "Lalo",
+			"voz": "lalo_calmado",
+			"texto": "De frijoles con queso, Don Chava. Como siempre."
+		},
+		{
+			"quien": "Don Chava",
+			"voz": "chava",
+			"texto": "Ah, qué bueno. Lupita me mandó de huevo... pero ya me la comí en el camión."
+		},
+		{
+			"quien": "Lalo",
+			"voz": "lalo_calmado",
+			"texto": "Pues ahí está su mitad, ándele."
+		},
+		{
+			"quien": "Don Chava",
+			"voz": "chava",
+			"texto": "Gracias, mijo. Bueno, ya son las diez. Me toca el rondín del Central y la obra."
+		},
+		{
+			"quien": "Lalo",
+			"voz": "lalo_calmado",
+			"texto": "Yo hago el del estacionamiento y Medicina."
+		},
+		{
+			"quien": "Don Chava",
+			"voz": "chava",
+			"texto": "Cualquier cosa me hablas por el radio. Y no te duermas, ¿eh?"
+		}
 	],
 	"radio_sotano": [
-		{"quien": "Don Chava", "voz": "chava", "radio": true, "texto": "Oye, mijo... ¿tú sabes qué hay abajo del Central? Lo que encontraron los de la obra."},
-		{"quien": "Lalo", "voz": "lalo_calmado", "texto": "Ni idea, Don Chava. Dijeron que nadie se meta hasta que venga Protección Civil."},
-		{"quien": "Don Chava", "voz": "chava", "radio": true, "texto": "Treinta años trabajando aquí y nunca supe que había otro sótano. Lo sellaron con ladrillo, Lalo."},
-		{"quien": "Don Chava", "voz": "chava", "radio": true, "texto": "Uno no sella algo que no quiere esconder."},
-		{"quien": "Lalo", "voz": "lalo_calmado", "texto": "Pues por algo será. No se meta, ¿eh?"},
-		{"quien": "Don Chava", "voz": "chava", "radio": true, "texto": "Nomás me asomo. No me tardo."},
-		{"quien": "Lalo", "voz": "lalo_calmado", "texto": "Don Chava... no sea necio."},
-		{"quien": "Don Chava", "voz": "chava", "radio": true, "texto": "Ahorita te hablo."}
+		{
+			"quien": "Don Chava",
+			"voz": "chava",
+			"radio": true,
+			"texto": "Oye, mijo... ¿tú sabes qué hay abajo del Central? Lo que encontraron los de la obra."
+		},
+		{
+			"quien": "Lalo",
+			"voz": "lalo_calmado",
+			"texto": "Ni idea, Don Chava. Dijeron que nadie se meta hasta que venga Protección Civil."
+		},
+		{
+			"quien": "Don Chava",
+			"voz": "chava",
+			"radio": true,
+			"texto": "Treinta años trabajando aquí y nunca supe que había otro sótano. Lo sellaron con ladrillo, Lalo."
+		},
+		{
+			"quien": "Don Chava",
+			"voz": "chava",
+			"radio": true,
+			"texto": "Uno no sella algo que no quiere esconder."
+		},
+		{
+			"quien": "Lalo",
+			"voz": "lalo_calmado",
+			"texto": "Pues por algo será. No se meta, ¿eh?"
+		},
+		{
+			"quien": "Don Chava",
+			"voz": "chava",
+			"radio": true,
+			"texto": "Nomás me asomo. No me tardo."
+		},
+		{
+			"quien": "Lalo",
+			"voz": "lalo_calmado",
+			"texto": "Don Chava... no sea necio."
+		},
+		{
+			"quien": "Don Chava",
+			"voz": "chava",
+			"radio": true,
+			"texto": "Ahorita te hablo."
+		}
+	],
+	"radio_sin_respuesta": [
+		{
+			"quien": "Lalo",
+			"voz": "lalo_calmado",
+			"texto": "Don Chava, ¿cómo va todo por allá?"
+		},
+		{
+			"quien": "Radio",
+			"voz": "",
+			"radio": true,
+			"texto": "(estática)"
+		},
+		{
+			"quien": "Lalo",
+			"voz": "lalo_calmado",
+			"texto": "¿Don Chava? ¿Me oye?"
+		},
+		{
+			"quien": "Radio",
+			"voz": "",
+			"radio": true,
+			"texto": "(estática)"
+		},
+		{
+			"quien": "Lalo",
+			"voz": "lalo_calmado",
+			"texto": "No sea así, Don Chava... contésteme."
+		}
+	],
+	"sotano_llegada": [
+		{
+			"quien": "Lalo",
+			"voz": "lalo_calmado",
+			"texto": "¿Don Chava?... ¿Está aquí abajo?"
+		},
+		{
+			"quien": "Lalo",
+			"voz": "lalo_calmado",
+			"texto": "La escalera... se derrumbó toda."
+		}
+	],
+	"sotano_linterna": [
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "Esta es su linterna..."
+		},
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "¡Don Chava! ¡Don Chava! ¿Me oye?"
+		}
+	],
+	"sotano_silencio": [
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "..."
+		},
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "Ahorita traigo ayuda, Don Chava. ¡Ahorita vuelvo!"
+		}
+	],
+	"arriba_apagon": [
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "¿Qué...? ¿Se fue la luz?"
+		},
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "Esto no me gusta nada..."
+		}
+	],
+	"maniqui": [
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "¿Y eso? Ese muñeco no estaba ahí..."
+		},
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "Alguien me está jugando una broma... ¿verdad?"
+		}
+	],
+	"comandante": [
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "¡Comandante! ¡Comandante, me oye! Don Chava se metió al sótano del Central y no contesta, ¡algo pasó!"
+		},
+		{
+			"quien": "Comandante",
+			"voz": "comandante",
+			"radio": true,
+			"texto": "...Mendoza... no te... entiendo... se corta..."
+		},
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "¡Necesito ayuda! ¡Mande a alguien!"
+		},
+		{
+			"quien": "Comandante",
+			"voz": "comandante",
+			"radio": true,
+			"texto": "...no salgas del campus... vamos para..."
+		},
+		{
+			"quien": "Radio",
+			"voz": "",
+			"radio": true,
+			"texto": "(estática)"
+		},
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "¿Comandante?... ¿Me escucha?... ¿Comandante?..."
+		}
+	],
+	"reja": [
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "La pluma no sirve sin luz... y la reja está cerrada con candado."
+		},
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "Y el celular sin señal... ¿qué está pasando aquí?"
+		}
 	]
 }

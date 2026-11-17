@@ -6,13 +6,17 @@ extends Node
 
 signal termino
 
-const VOCES: Array[String] = ["lalo_calmado", "lalo_angustia", "chava", "chava_debil"]
+const VOCES: Array[String] = ["lalo_calmado", "lalo_angustia", "chava", "chava_debil", "comandante"]
 ## Letras por segundo y separación mínima entre sílabas de cada voz.
 const RITMO: Dictionary = {
 	"lalo_calmado": [34.0, 0.07], "lalo_angustia": [42.0, 0.055],
-	"chava": [26.0, 0.09], "chava_debil": [20.0, 0.11],
+	"chava": [26.0, 0.09], "chava_debil": [20.0, 0.11], "comandante": [30.0, 0.075],
+	"": [24.0, 99.0],   # sin voz (por ejemplo, solo estática)
 }
-const COLOR_NOMBRE: Dictionary = {"Lalo": Color(0.55, 0.75, 1.0), "Don Chava": Color(1.0, 0.78, 0.4)}
+const COLOR_NOMBRE: Dictionary = {
+	"Lalo": Color(0.55, 0.75, 1.0), "Don Chava": Color(1.0, 0.78, 0.4),
+	"Comandante": Color(0.75, 0.9, 0.7), "Radio": Color(0.6, 0.6, 0.6),
+}
 
 var activo: bool = false
 
@@ -92,7 +96,7 @@ func _mostrar(linea: Dictionary, automatico: bool) -> void:
 			var letra: String = _texto.text[_texto.visible_characters].to_lower()
 			_texto.visible_characters += 1
 			var vocal: String = _vocal(letra)
-			if vocal != "" and tiempo_silaba >= ritmo[1]:
+			if vocal != "" and voz != "" and tiempo_silaba >= ritmo[1]:
 				tiempo_silaba = 0.0
 				_voz.stream = _silabas.get(voz + "_" + vocal)
 				_voz.pitch_scale = randf_range(0.93, 1.07)

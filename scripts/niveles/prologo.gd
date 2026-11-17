@@ -1,7 +1,7 @@
 class_name Prologo
 extends Node
 ## Guion del prólogo (docs/guion.md, "Prólogo: el rondín").
-## Por ahora: la plática en la caseta, Don Chava se va a su rondín y la plática por radio sobre el sótano.
+## Hasta ahora: la caseta, Don Chava se va, el radio, el sótano, el apagón, el maniquí, el Comandante y la reja.
 
 const DIALOGOS: String = "res://data/dialogos/prologo.json"
 ## Ruta de Don Chava: de su silla a la puerta, sale, sube por el camino y voltea a la derecha hacia el patio.
@@ -50,12 +50,95 @@ func iniciar(nivel: Node2D) -> void:
 	await _esperar(0.4)
 	await lalo.levantarse()
 	nivel.ayuda.visible = true
-	nivel.poner_objetivo("Haz tu rondín: estacionamiento y Facultad de Medicina.")
+	nivel.poner_objetivo("Haz tu rondín: revisa el estacionamiento y el patio.")
 
 	# 5. Cuando Lalo sale de la caseta, Don Chava le habla por radio
 	await nivel.salio_caseta
 	await _esperar(5.0)
 	await Dialogos.decir(dialogos["radio_sotano"], true)
+
+	# 6. Don Chava deja de contestar
+	nivel.poner_objetivo("Sigue tu rondín por el estacionamiento y el patio.")
+	await _esperar(25.0)
+	nivel.poner_objetivo("Don Chava no ha vuelto a hablar. Llámalo por radio (Q).")
+	await _esperar_radio()
+	await _decir(dialogos["radio_sin_respuesta"], true)
+	nivel.poner_objetivo("Busca a Don Chava en la obra del Edificio Central.")
+
+	# 7. El sótano: la escalera derrumbada y la linterna de Don Chava
+	var hueco: Interactuable = nivel.agregar_interactuable(Rect2(1740, 880, 184, 150), "bajar al sótano")
+	await hueco.usado
+	hueco.activo = false
+	await _fundido(_negro, 1.0, 0.6)
+	nivel.entrar_sotano()
+	await _esperar(0.4)
+	await _fundido(_negro, 0.0, 0.8)
+	await _decir(dialogos["sotano_llegada"], true)
+	nivel.poner_objetivo("Revisa el sótano.")
+	var linterna: Interactuable = nivel.agregar_interactuable(Rect2(380, 1610, 110, 70), "recoger")
+	await linterna.usado
+	linterna.activo = false
+	nivel.recoger_linterna_chava()
+	lalo.controlable = false
+	await _decir(dialogos["sotano_linterna"])
+	nivel.parar_respiracion()   # la respiración se detiene en cuanto Lalo grita
+	await _esperar(2.0)
+	await _decir(dialogos["sotano_silencio"])
+	lalo.controlable = true
+	nivel.poner_objetivo("Sal del sótano y pide ayuda.")
+
+	# 8. Arriba todo cambió: apagón, tierra negra y el maniquí en la banca
+	var escalera: Interactuable = nivel.agregar_interactuable(Rect2(40, 1580, 90, 70), "subir")
+	await escalera.usado
+	escalera.activo = false
+	await _fundido(_negro, 1.0, 0.6)
+	nivel.apagon()
+	nivel.salir_sotano()
+	nivel.mostrar_maniqui()
+	await _esperar(0.6)
+	await _fundido(_negro, 0.0, 1.0)
+	await _decir(dialogos["arriba_apagon"], true)
+	_vigilar_maniqui(dialogos)
+
+	# 9. La llamada al Comandante
+	nivel.poner_objetivo("Pide ayuda por radio (Q).")
+	await _esperar_radio()
+	await _decir(dialogos["comandante"], true)
+
+	# 10. La reja: no hay forma de salir
+	nivel.poner_objetivo("Ve a la reja de la entrada.")
+	var pluma: Interactuable = nivel.agregar_interactuable(Rect2(440, 980, 250, 90), "revisar la pluma")
+	await pluma.usado
+	pluma.activo = false
+	await _decir(dialogos["reja"], true)
+	nivel.poner_objetivo("No hay forma de salir... (continuará)")
+
+
+## El maniquí: Lalo lo ve en la banca y, cuando deja de verlo, ya no está.
+func _vigilar_maniqui(dialogos: Dictionary) -> void:
+	var notificador: VisibleOnScreenNotifier2D = _nivel.notificador_maniqui
+	if not notificador.is_on_screen():
+		await notificador.screen_entered
+	await _esperar(1.2)
+	await _decir(dialogos["maniqui"], true)
+	if notificador.is_on_screen():
+		await notificador.screen_exited
+	_nivel.ocultar_maniqui()
+
+
+## Espera a que el jugador presione Q (radio) cuando no hay un diálogo en curso.
+func _esperar_radio() -> void:
+	while true:
+		await get_tree().process_frame
+		if not Dialogos.activo and Input.is_action_just_pressed("radio"):
+			return
+
+
+## Igual que Dialogos.decir, pero espera su turno si ya hay otro diálogo en pantalla.
+func _decir(lineas: Array, automatico: bool = false) -> void:
+	while Dialogos.activo:
+		await get_tree().process_frame
+	await Dialogos.decir(lineas, automatico)
 
 
 func _crear_pantalla_negra() -> void:

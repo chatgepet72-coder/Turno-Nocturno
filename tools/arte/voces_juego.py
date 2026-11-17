@@ -18,6 +18,7 @@ VOCES = {  # id: parámetros de la muestra aprobada
     "lalo_angustia": dict(f0=178, dur=0.052, aire=0.04),
     "chava": dict(f0=112, dur=0.085, aire=0.07, grave=0.96),
     "chava_debil": dict(f0=96, dur=0.092, aire=0.2, grave=0.92),
+    "comandante": dict(f0=128, dur=0.068, aire=0.1, grave=0.97),
 }
 np.random.seed(3)
 for voz, p in VOCES.items():
