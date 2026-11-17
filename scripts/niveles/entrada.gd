@@ -35,10 +35,10 @@ const OBJETOS: Array = [
 	["seto_l.png", Vector2(1048, 392), Vector2.ZERO],
 	["banca.png", Vector2(1072, 584), Vector2(72, 20)],
 	["banca.png", Vector2(1512, 584), Vector2(72, 20)],
-	["hueco_con_cinta.png", Vector2(1220, 880), Vector2(130, 90)],
-	["cono.png", Vector2(1380, 900), Vector2(24, 12)],
-	["cono.png", Vector2(1420, 900), Vector2(24, 12)],
-	["excavadora.png", Vector2(1560, 880), Vector2(230, 90)],
+	["excavadora.png", Vector2(1700, 700), Vector2(230, 90)],       # donde termina el patio, junto al Edificio Central
+	["hueco_con_cinta.png", Vector2(1760, 900), Vector2(130, 90)],  # al frente de la excavadora
+	["cono.png", Vector2(1712, 930), Vector2(24, 12)],
+	["cono.png", Vector2(1910, 930), Vector2(24, 12)],
 	["autos/vocho_azul.png", Vector2(16, 664), Vector2(72, 100)],
 	["autos/auto_1_sedan.png", Vector2(112, 664), Vector2(76, 128)],
 	["autos/tsuru_lodo.png", Vector2(256, 664), Vector2(76, 128)],
@@ -67,6 +67,11 @@ const CASETA_PAREDES: Array[Rect2] = [
 	Rect2(688, 1020, 232, 12),                            # pared de abajo
 ]
 const REJA_Y: float = 1036.0
+## Barreras invisibles: la obra solo se alcanza entrando por el patio, no cortando por el pasto.
+const BARRERAS: Array[Rect2] = [
+	Rect2(1000, 817, 16, 260),    # pasto entre el camino de alumnos y la obra (abajo del Museo de Biología)
+	Rect2(1640, 330, 320, 16),    # pasto al norte de la obra (arriba del Edificio Central)
+]
 
 var _mundo: Node2D
 var _techo_caseta: Node2D
@@ -241,6 +246,8 @@ func _armar_bordes() -> void:
 	_forma(bordes, Rect2(-16, 0, 16, MUNDO.size.y))
 	_forma(bordes, Rect2(MUNDO.size.x, 0, 16, MUNDO.size.y))
 	_forma(bordes, Rect2(0, -16, MUNDO.size.x, 16))
+	for r in BARRERAS:
+		_forma(bordes, r)
 	add_child(bordes)
 
 
@@ -249,7 +256,7 @@ func _armar_luces() -> void:
 	for p in POSTES:
 		_luz(radial, p + Vector2(0, 20), 2.2, 1.0, Color(1.0, 0.86, 0.6))
 	_luz(radial, CASETA.get_center(), 1.4, 1.2, Color(1.0, 0.95, 0.85))
-	var torreta := _luz(radial, Vector2(1300, 880), 1.0, 0.9, Color(1.0, 0.55, 0.15))
+	var torreta := _luz(radial, Vector2(1830, 890), 1.0, 0.9, Color(1.0, 0.55, 0.15))
 	var parpadeo := create_tween().set_loops()
 	parpadeo.tween_property(torreta, "energy", 0.2, 0.5)
 	parpadeo.tween_property(torreta, "energy", 0.9, 0.5)
