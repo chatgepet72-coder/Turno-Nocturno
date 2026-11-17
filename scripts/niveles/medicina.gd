@@ -51,6 +51,11 @@ const OBJETOS_MAPA: Array = [
 	["libro_historia", "libro_historia", 1, "archivo", Vector2(0.45, 0.78)],
 	["lista_asistencia", "lista_asistencia", 1, "salon_101", Vector2(0.62, 0.62)],
 ]
+## Obstáculos que no se pueden pisar (se rodean): cuarto -> [centro (0..1), radio en fracción del ancho].
+## Por ahora: el hoyo del piso en los baños de hombres.
+const OBSTACULOS: Dictionary = {
+	"banos_h": [Vector2(0.685, 0.525), 0.085],
+}
 ## Emboscadas: [id, cuarto, zona que dispara (0..1), dónde aparece (0..1)]. El maniquí está escondido
 ## hasta que Lalo pisa la zona; entonces sale por detrás, donde no lo ve. La estática del radio sí lo delata.
 const EMBOSCADAS: Array = [
@@ -158,6 +163,14 @@ func _armar_cuarto(id: String, pos: Vector2) -> void:
 	_forma(muros, Rect2(pos.x, pos.y + tam.y - muro, tam.x, muro))
 	_forma(muros, Rect2(pos.x, pos.y, muro, tam.y))
 	_forma(muros, Rect2(pos.x + tam.x - muro, pos.y, muro, tam.y))
+	if OBSTACULOS.has(id):   # límite invisible alrededor de lo que no se puede pisar
+		var o: Array = OBSTACULOS[id]
+		var circulo := CircleShape2D.new()
+		circulo.radius = tam.x * float(o[1])
+		var cs := CollisionShape2D.new()
+		cs.shape = circulo
+		cs.position = pos + tam * (o[0] as Vector2)
+		muros.add_child(cs)
 	add_child(muros)
 
 
