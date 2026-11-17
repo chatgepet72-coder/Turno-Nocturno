@@ -90,5 +90,17 @@
 		"icono": "documento",
 		"documento": true,
 		"texto": "Grupo 101. Prácticas nocturnas.\n\n1. Aguilar, R. ........ ✓\n2. Cervantes, M. ...... ✓\n3. Domínguez, A. ...... falta\n4. Domínguez, A. ...... falta\n5. Domínguez, A. ...... falta\n\nEl mismo nombre, tres veces, con la misma letra.\nNinguno de los otros alumnos sabe quién es."
+	},
+	"nota_velador_medicina": {
+		"nombre": "Nota del velador de Medicina",
+		"icono": "documento",
+		"documento": true,
+		"texto": "Para el del turno de la noche:\n\nDejé el botiquín y las cajas de clavos de la obra en mi locker de la BODEGA DE LIMPIEZA.\nLa puerta de la bodega se atoró hace semanas y nadie la arregla.\nYo entro por el hueco de la pared del CUARTO DE MÁQUINAS, el que está cerca del piso.\nLa llave de máquinas la guardan en el ARCHIVO.\n\n— Beto, velador de Medicina"
+	},
+	"nota_bodega": {
+		"nombre": "Hoja pegada dentro del locker",
+		"icono": "documento",
+		"documento": true,
+		"texto": "Beto:\nYa no voy a entrar por el hueco.\nAnoche, del otro lado del ducto, algo me jaló el pie.\nNo era un gato. Tenía dedos.\nY estaba frío. Frío como tierra mojada.\n\n— Lo que queda de tu turno"
 	}
 }

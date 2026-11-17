@@ -42,9 +42,27 @@
 			"texto": "Una caseta como la nuestra... con lámpara y radio."
 		},
 		{
+			"quien": "Don Chava",
+			"voz": "chava_debil",
+			"radio": true,
+			"texto": "Mijo... ¿ya trajiste la torta?"
+		},
+		{
+			"quien": "Don Chava",
+			"voz": "chava_debil",
+			"radio": true,
+			"texto": "Hace mucho frío aquí. Hay unos muñecos que se mueven, Lalo... no les des la espalda."
+		},
+		{
 			"quien": "Lalo",
-			"voz": "lalo_calmado",
-			"texto": "Aquí puedo descansar un momento."
+			"voz": "lalo_angustia",
+			"texto": "¡Don Chava! ¿Dónde está? ¡Don Chava!"
+		},
+		{
+			"quien": "Radio",
+			"voz": "",
+			"radio": true,
+			"texto": "(estática)"
 		}
 	],
 	"escaleras_cizalla": [
@@ -83,6 +101,23 @@
 			"quien": "Lalo",
 			"voz": "lalo_angustia",
 			"texto": "Este pasillo da vuelta... no me acordaba de esta parte."
+		},
+		{
+			"quien": "Radio",
+			"voz": "",
+			"radio": true,
+			"texto": "(estática)"
+		},
+		{
+			"quien": "Don Chava",
+			"voz": "chava_debil",
+			"radio": true,
+			"texto": "Eduardo... estoy en el cuarto oscuro. Ven. Aquí estoy."
+		},
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "¿Eduardo...? Don Chava nunca me dice así..."
 		}
 	],
 	"_examinar": [
@@ -134,7 +169,7 @@
 			"salon_104",
 			[
 				0.5,
-				0.5
+				0.74
 			],
 			[
 				"Las sillas están en círculo... mirando hacia el centro.",
@@ -251,5 +286,19 @@
 				"Por un momento me sentí a salvo."
 			]
 		]
+	],
+	"bodega": [
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "La bodega... aquí está el locker de Beto."
+		}
+	],
+	"bodega_puerta": [
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "La puerta está atorada también de este lado. Tengo que regresar por el hueco."
+		}
 	]
 }

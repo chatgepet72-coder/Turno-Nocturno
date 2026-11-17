@@ -54,7 +54,10 @@ Objetivo: probar si el juego da miedo antes de hacer el resto.
 - [x] Control (PlayStation/Xbox) con luz y vibración
 - [x] Bombas molotov (vendas + alcohol)
 - [x] Notas de la historia, cosas para examinar y emboscadas en Medicina
-- [ ] Choque con los muebles de cada cuarto
+- [x] Choque con muebles: sala de simulación (camillas) y Salón 104 (círculo de sillas)
+- [ ] Choque con los muebles del resto de los cuartos
+- [x] Hueco en la pared: Cuarto de máquinas → Bodega (encargo de la nota del velador)
+- [x] Maniquíes escondidos que saltan si no los ves; golpes detrás de puertas cerradas; mensaje falso del ente
 - [x] Tensión: latido y estática del radio cuando hay un enemigo cerca; maniquí más rápido con embestida
 - [ ] Documentos y libreta de Lalo
 - [ ] Puzzle: completar el esqueleto de la vitrina

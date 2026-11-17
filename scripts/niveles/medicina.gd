@@ -50,19 +50,31 @@ const OBJETOS_MAPA: Array = [
 	["reporte_mantenimiento", "reporte_mantenimiento", 1, "maquinas", Vector2(0.72, 0.4)],
 	["libro_historia", "libro_historia", 1, "archivo", Vector2(0.45, 0.78)],
 	["lista_asistencia", "lista_asistencia", 1, "salon_101", Vector2(0.62, 0.62)],
+	["nota_velador_medicina", "nota_velador_medicina", 1, "caseta", Vector2(0.55, 0.3)],
+	# La bodega (solo por el hueco del cuarto de máquinas): el locker de Beto
+	["medicina_bodega_1", "medicina", 1, "bodega", Vector2(0.75, 0.3)],
+	["medicina_bodega_2", "medicina", 1, "bodega", Vector2(0.8, 0.45)],
+	["clavos_bodega", "clavos", 20, "bodega", Vector2(0.5, 0.6)],
+	["nota_bodega", "nota_bodega", 1, "bodega", Vector2(0.62, 0.3)],
 ]
 ## Obstáculos que no se pueden pisar (se rodean): cuarto -> [centro (0..1), radio en fracción del ancho].
 ## Por ahora: el hoyo del piso en los baños de hombres.
 const OBSTACULOS: Dictionary = {
 	"banos_h": [Vector2(0.685, 0.525), 0.085],
 }
-## Emboscadas: [id, cuarto, zona que dispara (0..1), dónde aparece (0..1)]. El maniquí está escondido
-## hasta que Lalo pisa la zona; entonces sale por detrás, donde no lo ve. La estática del radio sí lo delata.
-const EMBOSCADAS: Array = [
-	["emboscada_pasillo", "pasillo", Rect2(0.36, 0.25, 0.05, 0.55), Vector2(0.62, 0.55)],
-	["emboscada_104", "salon_104", Rect2(0.35, 0.35, 0.3, 0.3), Vector2(0.5, 0.86)],
-	["emboscada_banos", "banos_h", Rect2(0.42, 0.3, 0.3, 0.3), Vector2(0.48, 0.86)],
+## Maniquíes escondidos a la vista: quietos en un rincón oscuro. Si la linterna los alumbra se pueden ver
+## y dispararles; si Lalo se acerca sin notarlos, saltan encima. [id, cuarto, posición (0..1)]
+const ESCONDIDOS: Array = [
+	["escondido_pasillo", "pasillo", Vector2(0.62, 0.32)],
+	["escondido_104", "salon_104", Vector2(0.85, 0.2)],
+	["escondido_banos", "banos_h", Vector2(0.14, 0.8)],
+	["escondido_simulacion", "simulacion", Vector2(0.475, 0.5)],
+	["escondido_bodega", "bodega", Vector2(0.18, 0.3)],
 ]
+## Anillo de sillas del Salón 104: [centro (0..1), radio (0..1), cuántas sillas, radio de cada silla (fracción del ancho)]
+const ANILLOS: Dictionary = {"salon_104": [Vector2(0.5, 0.49), Vector2(0.17, 0.17), 12, 0.034]}
+## Huecos en la pared, cerca del piso, para gatear a un cuarto cerrado: [cuarto, posición (0..1)] <-> [cuarto, posición]
+const HUECOS: Array = [[["maquinas", Vector2(0.09, 0.78)], ["bodega", Vector2(0.91, 0.78)]]]
 
 const NOMBRES: Dictionary = {
 	"pasillo": "Pasillo principal", "salon_101": "Salón 101", "salon_102": "Salón 102", "consultorio": "Consultorio",
@@ -163,6 +175,18 @@ func _armar_cuarto(id: String, pos: Vector2) -> void:
 	_forma(muros, Rect2(pos.x, pos.y + tam.y - muro, tam.x, muro))
 	_forma(muros, Rect2(pos.x, pos.y, muro, tam.y))
 	_forma(muros, Rect2(pos.x + tam.x - muro, pos.y, muro, tam.y))
+	for r in d.get("obstaculos", []):   # muebles: camillas, carritos... (de data/medicina_cuartos.json)
+		_forma(muros, Rect2(pos + tam * Vector2(r[0], r[1]), tam * Vector2(r[2], r[3])))
+	if ANILLOS.has(id):   # sillas en círculo
+		var a: Array = ANILLOS[id]
+		for k in int(a[2]):
+			var ang: float = TAU * k / float(a[2])
+			var c := CircleShape2D.new()
+			c.radius = tam.x * float(a[3])
+			var cs := CollisionShape2D.new()
+			cs.shape = c
+			cs.position = pos + tam * ((a[0] as Vector2) + Vector2(cos(ang), sin(ang)) * (a[1] as Vector2))
+			muros.add_child(cs)
 	if OBSTACULOS.has(id):   # límite invisible alrededor de lo que no se puede pisar
 		var o: Array = OBSTACULOS[id]
 		var circulo := CircleShape2D.new()
@@ -216,6 +240,8 @@ func _conectar_puertas() -> void:
 func _puerta(zona: Rect2, texto: String, destino: String, llegada: Vector2) -> void:
 	var i := _interactuable(zona, texto + ": " + NOMBRES[destino])
 	i.usado.connect(_intentar_puerta.bind(destino, llegada))
+	if CERRADAS.get(destino, "x") == "":
+		i.set_meta("cerrada", true)
 
 
 func _intentar_puerta(destino: String, llegada: Vector2) -> void:
@@ -242,6 +268,9 @@ func _decir_lalo(texto: String) -> void:
 ## Puerta dentro del cuarto que regresa al pasillo. En la Entrada, la del pasillo es la de arriba.
 func _puerta_cuarto(id: String, llegada_pasillo: Vector2, por_arriba: bool = false) -> void:
 	var i := _interactuable(_zona_puerta(id, por_arriba), "salir al pasillo")
+	if id == "bodega":   # atorada también por dentro: se sale por el hueco
+		i.usado.connect(func() -> void: Dialogos.decir(_dialogos["bodega_puerta"]))
+		return
 	i.usado.connect(_cruzar.bind("pasillo", llegada_pasillo))
 
 
@@ -397,33 +426,78 @@ func _examinar(lineas: Array) -> void:
 		Dialogos.decir(lineas)
 
 
-func _armar_emboscadas() -> void:
-	for e in EMBOSCADAS:
-		if StringName(e[0]) in GameState.enemigos_eliminados:
-			continue
+func _armar_escondidos() -> void:
+	for e in ESCONDIDOS:
 		var z: Rect2 = _zonas[e[1]]
-		var zona: Rect2 = e[2]
-		var m := _maniqui(e[0], z.position + z.size * (e[3] as Vector2), true)
-		var disparo := Area2D.new()
-		disparo.collision_mask = 2
-		_forma(disparo, Rect2(z.position + z.size * zona.position, z.size * zona.size))
-		add_child(disparo)
-		disparo.body_entered.connect(_saltar.bind(m, z.position + z.size * (e[3] as Vector2), disparo))
+		var m := _maniqui(e[0], z.position + z.size * (e[2] as Vector2))
+		if m != null:
+			m.salta = true
+			m.radio_despertar = 70.0
 
 
-func _saltar(cuerpo: Node2D, m: Maniqui, pos: Vector2, disparo: Area2D) -> void:
-	if not cuerpo is Lalo or not is_instance_valid(m):
+## Huecos en la pared: se cruzan gateando (pantalla negra y sonido de arrastrarse).
+func _armar_huecos() -> void:
+	for h in HUECOS:
+		var a: Array = h[0]
+		var b: Array = h[1]
+		var pa: Vector2 = _zonas[a[0]].position + _zonas[a[0]].size * (a[1] as Vector2)
+		var pb: Vector2 = _zonas[b[0]].position + _zonas[b[0]].size * (b[1] as Vector2)
+		var ia := _interactuable(Rect2(pa - Vector2(36, 36), Vector2(72, 72)), "gatear por el hueco")
+		# Al salir del hueco, Lalo queda hacia adentro del cuarto (lejos de la pared del hueco)
+		ia.usado.connect(_gatear.bind(b[0], pb + Vector2(-50.0 if (b[1] as Vector2).x > 0.5 else 50.0, 0)))
+		var ib := _interactuable(Rect2(pb - Vector2(36, 36), Vector2(72, 72)), "gatear por el hueco")
+		ib.usado.connect(_gatear.bind(a[0], pa + Vector2(-50.0 if (a[1] as Vector2).x > 0.5 else 50.0, 0)))
+
+
+func _gatear(destino: String, llegada: Vector2) -> void:
+	if not lalo.controlable:
 		return
-	disparo.queue_free()
-	await get_tree().create_timer(0.5).timeout
-	m.emboscar(pos)
+	lalo.controlable = false
+	await _transicion.gatear(_mover_a.bind(destino, llegada))
+	lalo.controlable = true
+	hud.avisar(NOMBRES[destino])
+	if _dialogos.has(destino) and not _visto.has(destino):
+		_visto[destino] = true
+		Dialogos.decir(_dialogos[destino], true)
+
+
+## Al pasar junto a una puerta que no abre, a veces alguien golpea del otro lado (una sola vez por puerta).
+func _armar_golpes() -> void:
+	for h in get_children():
+		if h is Interactuable and (h as Interactuable).has_meta("cerrada"):
+			var zona := Area2D.new()
+			zona.collision_mask = 2
+			var forma := CircleShape2D.new()
+			forma.radius = 110.0
+			var cs := CollisionShape2D.new()
+			cs.shape = forma
+			zona.add_child(cs)
+			zona.position = (h as Interactuable).position + Vector2(30, 30)
+			add_child(zona)
+			zona.body_entered.connect(_golpear.bind(zona))
+
+
+func _golpear(cuerpo: Node2D, zona: Area2D) -> void:
+	if not cuerpo is Lalo or randf() > 0.6:
+		return
+	zona.queue_free()
+	await get_tree().create_timer(randf_range(0.3, 1.2)).timeout
+	var s := AudioStreamPlayer2D.new()
+	s.stream = load("res://assets/audio/efectos/golpes_puerta.wav") as AudioStream
+	s.global_position = zona.global_position
+	s.max_distance = 600.0
+	add_child(s)
+	s.play()
+	s.finished.connect(s.queue_free)
 
 
 # ---------- Lo que hay dentro ----------
 func _armar_extras() -> void:
 	_armar_objetos()
 	_armar_examinables()
-	_armar_emboscadas()
+	_armar_escondidos()
+	_armar_huecos()
+	_armar_golpes()
 	# Caseta: lámpara de escritorio encendida y el radio para guardar
 	var c: Rect2 = _zonas["caseta"]
 	var lampara := PointLight2D.new()
@@ -444,8 +518,6 @@ func _armar_extras() -> void:
 	# Maniquíes: uno en el pasillo y uno entre las camillas de la sala de simulación
 	var p: Rect2 = _zonas["pasillo"]
 	_maniqui("medicina_pasillo", p.position + Vector2(p.size.x * 0.14, p.size.y * 0.62))
-	var s: Rect2 = _zonas["simulacion"]
-	_maniqui("medicina_simulacion", s.position + Vector2(s.size.x * 0.5, s.size.y * 0.7))
 	var w: Rect2 = _zonas["pasillo_oeste"]
 	_maniqui("medicina_oeste", w.position + Vector2(w.size.x * 0.5, w.size.y * 0.45))
 

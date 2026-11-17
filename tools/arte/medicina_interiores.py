@@ -1,5 +1,5 @@
 """Interiores de Medicina (arte del equipo): recorta cada cuarto, lo escala al juego y calcula
-paredes y puerta. También la puerta de la transición, las espaldas del maniquí y el rechinido.
+paredes y puerta. También la puerta de la transición, las espaldas del maniquí 
 Uso: python3 -I tools/arte/medicina_interiores.py <zip_corregidos> <imagen_maniqui_28>"""
 import json, os, sys, wave
 import numpy as np
@@ -57,15 +57,5 @@ ref = Image.open(f"{MD}/down_1.png"); W, H = ref.size
 for i, e in enumerate(espaldas, 1):
     e = e.resize((max(1, round(e.width * 66 / e.height)), 66), Image.LANCZOS)
     c = Image.new("RGBA", (max(W, e.width), H)); c.alpha_composite(e, ((c.width - e.width) // 2, H - e.height)); c.save(f"{MD}/up_{i}.png")
-# Rechinido de puerta: fricción que se pega y se suelta, con tono que sube
-SR = 22050; rng = np.random.default_rng(9); n = int(SR * 1.6); t = np.arange(n) / SR
-f0 = 170 + 110 * t / t[-1] + 20 * np.sin(2 * np.pi * 1.3 * t)
-fase = 2 * np.pi * np.cumsum(f0) / SR
-saw = sum(np.sin(k * fase) / k for k in range(1, 18))
-pulsos = (np.sin(2 * np.pi * (11 + 6 * rng.random()) * t) > 0.2).astype(float)
-pulsos = np.convolve(pulsos, np.ones(200) / 200, "same")
-a = saw * (0.35 + 0.65 * pulsos) * np.minimum(1, t / 0.08) * np.minimum(1, (t[-1] - t) / 0.25)
-a = a / np.abs(a).max() * 0.7
-with wave.open(os.path.join(R, "assets", "audio", "efectos", "puerta_rechina.wav"), "wb") as w:
-    w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR); w.writeframes((a * 32767).astype(np.int16).tobytes())
+# El rechinido de la puerta es el del equipo (assets/audio/efectos/puerta_rechina.wav): no se genera aquí.
 print("ok", {k: v["tam"] for k, v in datos.items()})

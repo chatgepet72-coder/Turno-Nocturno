@@ -79,6 +79,19 @@ func cruzar_a_escena(escena: String, punto: String) -> void:
 	GameState.ir_a(escena, punto)
 
 
+## Gatear por un hueco en la pared: sin puerta; todo negro y el sonido de arrastrarse por el ducto.
+func gatear(cambiar: Callable) -> void:
+	visible = true
+	_puerta.modulate.a = 0.0
+	_negro.modulate.a = 0.0
+	await _tween(_negro, "modulate:a", 1.0, 0.4)
+	_sonar(load("res://assets/audio/efectos/gatear.wav") as AudioStream, 1.0)
+	await get_tree().create_timer(2.2).timeout
+	cambiar.call()
+	await _tween(_negro, "modulate:a", 0.0, 0.5)
+	visible = false
+
+
 ## Al cargar una escena: empieza en negro y se aclara.
 func aparecer() -> void:
 	visible = true

@@ -37,6 +37,9 @@ var _espera_quejido: float = 3.0
 var _audio_voz: AudioStreamPlayer2D
 ## Emboscada: escondido (invisible y sin chocar) hasta que el nivel lo hace saltar con emboscar().
 var oculto: bool = false
+## Escondido a la vista: quieto en un rincón oscuro. Si Lalo lo ve, le puede disparar; si se acerca
+## sin notarlo (radio_despertar chico), salta encima de él de inmediato.
+var salta: bool = false
 var _audio: AudioStreamPlayer2D
 
 
@@ -173,6 +176,9 @@ func recibir_clavo(direccion: Vector2) -> void:
 func _despertar() -> void:
 	estado = Estado.PERSIGUIENDO
 	_quejido()
+	if salta:   # salta encima: embestida inmediata
+		_embestida = 0.4
+		_espera_embestida = 2.0
 	_quieto.visible = false
 	_sprite.visible = true
 	_sprite.play("caminar_down")
