@@ -12,9 +12,9 @@ Survival horror en 2D hecho en Godot. Lalo, un velador nocturno, busca a su comp
 
 | Acción | Tecla |
 | --- | --- |
-| Moverse | W A S D |
+| Moverse | W A S D o flechas |
 | Correr | Shift |
-| Apuntar / disparar | Clic derecho / clic izquierdo |
+| Apuntar la linterna | Ratón |
 | Recargar | R |
 | Lanzar objeto | G |
 | Linterna | F |

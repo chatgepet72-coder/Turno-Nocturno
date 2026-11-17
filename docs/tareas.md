@@ -13,8 +13,8 @@ El juego se construye por etapas. Cada etapa termina con algo que se puede jugar
 
 Objetivo: probar si el juego da miedo antes de hacer el resto.
 
-- [ ] Lalo: movimiento desde arriba, caminar y correr
-- [ ] Linterna con cono de luz y oscuridad alrededor
+- [x] Lalo: movimiento desde arriba, caminar y correr
+- [x] Linterna con cono de luz y oscuridad alrededor
 - [ ] Pistola de clavos: apuntar, disparar, recargar, munición limitada
 - [ ] Lanzar objetos que hacen ruido (`EventBus.ruido_emitido`)
 - [ ] Maniquí: se acerca, escucha ruidos, se derriba con clavos
@@ -26,6 +26,9 @@ Objetivo: probar si el juego da miedo antes de hacer el resto.
 - [ ] Sonidos de prueba: pasos, clavos, maniquí, estática
 
 ## Etapa 2: Prólogo completo
+
+- [x] Mapa de la entrada: caseta, estacionamiento, caminos, patio, edificios en C y obra (armado por código en `scripts/niveles/entrada.gd`)
+- [x] Don Chava sentado en la caseta
 
 - [ ] Mapa del prólogo: caseta, estacionamiento, obra y sótano del Edificio Central
 - [ ] Sistema de diálogos y mensajes de radio

@@ -12,7 +12,7 @@ config_version=5
 
 config/name="Turno Nocturno"
 config/description="Survival horror en 2D: un velador busca a su compañero en un campus universitario vacío."
-run/main_scene="res://scenes/main.tscn"
+run/main_scene="res://scenes/niveles/Entrada.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://icon.svg"
 
@@ -33,19 +33,19 @@ window/stretch/mode="viewport"
 
 mover_arriba={
 "deadzone": 0.5,
-"events": [Object(InputEventKey,"physical_keycode":87)]
+"events": [Object(InputEventKey,"physical_keycode":87), Object(InputEventKey,"physical_keycode":4194320)]
 }
 mover_abajo={
 "deadzone": 0.5,
-"events": [Object(InputEventKey,"physical_keycode":83)]
+"events": [Object(InputEventKey,"physical_keycode":83), Object(InputEventKey,"physical_keycode":4194322)]
 }
 mover_izquierda={
 "deadzone": 0.5,
-"events": [Object(InputEventKey,"physical_keycode":65)]
+"events": [Object(InputEventKey,"physical_keycode":65), Object(InputEventKey,"physical_keycode":4194319)]
 }
 mover_derecha={
 "deadzone": 0.5,
-"events": [Object(InputEventKey,"physical_keycode":68)]
+"events": [Object(InputEventKey,"physical_keycode":68), Object(InputEventKey,"physical_keycode":4194321)]
 }
 correr={
 "deadzone": 0.5,
