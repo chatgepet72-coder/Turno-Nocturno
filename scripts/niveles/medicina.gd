@@ -24,13 +24,13 @@ const OBJETOS_MAPA: Array = [
 	# Medicina (cura): en baños, la caseta y la enfermería
 	["medicina_caseta", "medicina", 1, "caseta", Vector2(0.7, 0.72)],
 	["medicina_banos_h", "medicina", 1, "banos_h", Vector2(0.3, 0.72)],
-	["medicina_banos_m", "medicina", 1, "banos_m", Vector2(0.72, 0.62)],
+	["medicina_banos_m", "medicina", 1, "banos_m", Vector2(0.72, 0.7)],
 	["medicina_enfermeria", "medicina", 1, "enfermeria", Vector2(0.5, 0.58)],
 	# Para hacer bombas molotov: vendas + alcohol
 	["alcohol_lab", "alcohol", 1, "laboratorio", Vector2(0.5, 0.58)],
 	["alcohol_enfermeria", "alcohol", 1, "enfermeria", Vector2(0.72, 0.75)],
 	["vendas_consultorio", "vendas", 1, "consultorio", Vector2(0.75, 0.62)],
-	["vendas_maquinas", "vendas", 1, "maquinas", Vector2(0.3, 0.55)],
+	["vendas_maquinas", "vendas", 1, "maquinas", Vector2(0.42, 0.55)],
 	# Llaves y herramientas del puzzle
 	["llave_archivo", "llave_archivo", 1, "consultorio", Vector2(0.62, 0.42)],
 	["llave_maquinas", "llave_maquinas", 1, "archivo", Vector2(0.3, 0.68)],
@@ -39,12 +39,12 @@ const OBJETOS_MAPA: Array = [
 	["clavos_102", "clavos", 10, "salon_102", Vector2(0.35, 0.62)],
 	["clavos_archivo", "clavos", 10, "archivo", Vector2(0.72, 0.45)],
 	["clavos_oeste", "clavos", 10, "pasillo_oeste", Vector2(0.55, 0.3)],
-	["clavos_105", "clavos", 10, "salon_105", Vector2(0.62, 0.68)],
+	["clavos_105", "clavos", 10, "salon_105", Vector2(0.45, 0.8)],
 	# Notas: la historia por pedazos
-	["recado_enfermeria", "recado_enfermeria", 1, "enfermeria", Vector2(0.3, 0.72)],
-	["nota_dia_12", "nota_dia_12", 1, "recepcion", Vector2(0.62, 0.55)],
+	["recado_enfermeria", "recado_enfermeria", 1, "enfermeria", Vector2(0.42, 0.72)],
+	["nota_dia_12", "nota_dia_12", 1, "recepcion", Vector2(0.55, 0.68)],
 	["expediente_salvador", "expediente_salvador", 1, "archivo", Vector2(0.55, 0.55)],
-	["carta_lupita", "carta_lupita", 1, "caseta", Vector2(0.75, 0.45)],
+	["carta_lupita", "carta_lupita", 1, "caseta", Vector2(0.65, 0.5)],
 	["inventario_maniquies", "inventario_maniquies", 1, "simulacion", Vector2(0.75, 0.75)],
 	["diario_estudiante", "diario_estudiante", 1, "salon_104", Vector2(0.3, 0.65)],
 	["reporte_mantenimiento", "reporte_mantenimiento", 1, "maquinas", Vector2(0.72, 0.4)],
@@ -53,7 +53,7 @@ const OBJETOS_MAPA: Array = [
 	["nota_velador_medicina", "nota_velador_medicina", 1, "caseta", Vector2(0.55, 0.3)],
 	# La bodega (solo por el hueco del cuarto de máquinas): el locker de Beto
 	["medicina_bodega_1", "medicina", 1, "bodega", Vector2(0.75, 0.3)],
-	["medicina_bodega_2", "medicina", 1, "bodega", Vector2(0.8, 0.45)],
+	["medicina_bodega_2", "medicina", 1, "bodega", Vector2(0.74, 0.45)],
 	["clavos_bodega", "clavos", 20, "bodega", Vector2(0.5, 0.6)],
 	["nota_bodega", "nota_bodega", 1, "bodega", Vector2(0.62, 0.3)],
 ]
@@ -69,12 +69,15 @@ const ESCONDIDOS: Array = [
 	["escondido_104", "salon_104", Vector2(0.85, 0.2)],
 	["escondido_banos", "banos_h", Vector2(0.14, 0.8)],
 	["escondido_simulacion", "simulacion", Vector2(0.475, 0.5)],
-	["escondido_bodega", "bodega", Vector2(0.18, 0.3)],
+	["escondido_bodega", "bodega", Vector2(0.23, 0.3)],
 ]
 ## Anillo de sillas del Salón 104: [centro (0..1), radio (0..1), cuántas sillas, radio de cada silla (fracción del ancho)]
 const ANILLOS: Dictionary = {"salon_104": [Vector2(0.5, 0.49), Vector2(0.17, 0.17), 12, 0.034]}
 ## Huecos en la pared, cerca del piso, para gatear a un cuarto cerrado: [cuarto, posición (0..1)] <-> [cuarto, posición]
-const HUECOS: Array = [[["maquinas", Vector2(0.09, 0.78)], ["bodega", Vector2(0.91, 0.78)]]]
+const HUECOS: Array = [[["maquinas", Vector2(0.07, 0.44)], ["bodega", Vector2(0.91, 0.78)]]]
+
+## Dentro de los edificios los personajes se dibujan al doble para que cuadren con los muebles del arte.
+const ESCALA_PERSONAJES: float = 2.0
 
 const NOMBRES: Dictionary = {
 	"pasillo": "Pasillo principal", "salon_101": "Salón 101", "salon_102": "Salón 102", "consultorio": "Consultorio",
@@ -90,6 +93,7 @@ var lalo: Lalo
 var hud: Hud
 
 var _datos: Dictionary = {}
+var _muebles: Dictionary = {}       # id -> rectángulos de muebles (data/medicina_muebles.json)
 var _zonas: Dictionary = {}          # id -> Rect2 (posición del cuarto en la escena)
 var _mundo: Node2D
 var _transicion: TransicionPuerta
@@ -100,6 +104,7 @@ var _visto: Dictionary = {}           # cuartos donde ya se dijo el comentario d
 func _ready() -> void:
 	RenderingServer.set_default_clear_color(Color.BLACK)
 	_datos = Dialogos.cargar("res://data/medicina_cuartos.json")
+	_muebles = Dialogos.cargar("res://data/medicina_muebles.json")
 	_dialogos = Dialogos.cargar("res://data/dialogos/medicina.json")
 	var noche := CanvasModulate.new()
 	noche.color = NOCHE
@@ -112,11 +117,12 @@ func _ready() -> void:
 	var todos: Array[String] = []
 	todos.assign(ARRIBA + ABAJO + [OESTE_FONDO, PUNTA_DERECHA, "banos_m"])
 	for i in todos.size():
-		_armar_cuarto(todos[i], Vector2((i % 5) * 1300, 1300 + floori(i / 5.0) * 1150))
+		_armar_cuarto(todos[i], Vector2((i % 5) * 1700, 1300 + floori(i / 5.0) * 1300))
 	_armar_ala_oeste(Vector2(5500, 0))
 	lalo = Lalo.new()
 	lalo.superficies_duras.append(Rect2(-100000, -100000, 200000, 200000))   # todo es piso duro
 	_mundo.add_child(lalo)
+	lalo.escalar(ESCALA_PERSONAJES)
 	_conectar_puertas()
 	_armar_extras()
 	hud = Hud.new()
@@ -175,7 +181,8 @@ func _armar_cuarto(id: String, pos: Vector2) -> void:
 	_forma(muros, Rect2(pos.x, pos.y + tam.y - muro, tam.x, muro))
 	_forma(muros, Rect2(pos.x, pos.y, muro, tam.y))
 	_forma(muros, Rect2(pos.x + tam.x - muro, pos.y, muro, tam.y))
-	for r in d.get("obstaculos", []):   # muebles: camillas, carritos... (de data/medicina_cuartos.json)
+	var muebles: Array = d.get("obstaculos", []) + _muebles.get(id, [])   # camillas, escritorios, repisas...
+	for r in muebles:
 		_forma(muros, Rect2(pos + tam * Vector2(r[0], r[1]), tam * Vector2(r[2], r[3])))
 	if ANILLOS.has(id):   # sillas en círculo
 		var a: Array = ANILLOS[id]
@@ -229,11 +236,36 @@ func _conectar_puertas() -> void:
 		"ir: Pasillo principal")
 	vuelta.usado.connect(_cruzar.bind("pasillo", Vector2(100, medio + 30)))
 	_conectar_ala_oeste()
+	# Letreros con luz en las dos puntas, para que se entienda que por ahí se sigue
+	_letrero("<< ALA OESTE", Vector2(40, arriba - 34), Color(0.9, 0.75, 0.45))
+	_letrero("SALIDA >>", Vector2(tam.size.x - 150, arriba - 34), Color(0.45, 0.95, 0.55))
 	_puerta(Rect2(tam.size.x - 90, medio - 60, 60, 120), "entrar", PUNTA_DERECHA, _llegada(PUNTA_DERECHA, true))
 	_puerta_cuarto(PUNTA_DERECHA, Vector2(tam.size.x - 100, medio + 30), true)
 	# La entrada tiene además la puerta de vidrio que da al patio
 	var salida := _interactuable(_zona_puerta("entrada", false), "salir al patio")
 	salida.usado.connect(_salir_al_patio)
+
+
+## Letrero pintado en la pared con una luz encima; se ve aunque esté oscuro.
+func _letrero(texto: String, pos: Vector2, color: Color) -> void:
+	var l := Label.new()
+	l.text = texto
+	l.position = pos
+	l.add_theme_font_size_override("font_size", 18)
+	l.add_theme_color_override("font_color", color)
+	l.add_theme_color_override("font_outline_color", Color.BLACK)
+	l.add_theme_constant_override("outline_size", 4)
+	var sin_sombra := CanvasItemMaterial.new()
+	sin_sombra.light_mode = CanvasItemMaterial.LIGHT_MODE_UNSHADED
+	l.material = sin_sombra
+	add_child(l)
+	var luz := PointLight2D.new()
+	luz.texture = load("res://assets/sprites/luces/luz_radial.png") as Texture2D
+	luz.texture_scale = 1.1
+	luz.energy = 0.55
+	luz.color = color
+	luz.position = pos + Vector2(55, 70)
+	add_child(luz)
 
 
 ## Puerta en el pasillo que lleva a un cuarto. Si está cerrada, revisa la llave.
@@ -377,9 +409,9 @@ func _armar_objetos() -> void:
 func _recogible(id_unico: String, objeto: String, cantidad: int, pos: Vector2) -> void:
 	var brillo := Sprite2D.new()
 	brillo.texture = load("res://assets/sprites/objetos/iconos/brillo.png") as Texture2D
-	var material := CanvasItemMaterial.new()
-	material.light_mode = CanvasItemMaterial.LIGHT_MODE_UNSHADED
-	brillo.material = material
+	var sin_sombra := CanvasItemMaterial.new()
+	sin_sombra.light_mode = CanvasItemMaterial.LIGHT_MODE_UNSHADED
+	brillo.material = sin_sombra
 	brillo.position = pos
 	add_child(brillo)
 	var t := brillo.create_tween().set_loops()
@@ -432,7 +464,7 @@ func _armar_escondidos() -> void:
 		var m := _maniqui(e[0], z.position + z.size * (e[2] as Vector2))
 		if m != null:
 			m.salta = true
-			m.radio_despertar = 70.0
+			m.radio_despertar = 70.0 * ESCALA_PERSONAJES
 
 
 ## Huecos en la pared: se cruzan gateando (pantalla negra y sonido de arrastrarse).
@@ -480,11 +512,12 @@ func _armar_golpes() -> void:
 func _golpear(cuerpo: Node2D, zona: Area2D) -> void:
 	if not cuerpo is Lalo or randf() > 0.6:
 		return
+	var donde: Vector2 = zona.global_position   # se guarda antes de borrar la zona
 	zona.queue_free()
 	await get_tree().create_timer(randf_range(0.3, 1.2)).timeout
 	var s := AudioStreamPlayer2D.new()
 	s.stream = load("res://assets/audio/efectos/golpes_puerta.wav") as AudioStream
-	s.global_position = zona.global_position
+	s.global_position = donde
 	s.max_distance = 600.0
 	add_child(s)
 	s.play()
@@ -545,6 +578,7 @@ func _maniqui(id: String, pos: Vector2, oculto: bool = false) -> Maniqui:
 	m.objetivo = lalo
 	m.oculto = oculto
 	_mundo.add_child(m)
+	m.escalar(ESCALA_PERSONAJES)
 	m.derribado.connect(func() -> void: GameState.enemigos_eliminados.append(StringName(id)))
 	return m
 

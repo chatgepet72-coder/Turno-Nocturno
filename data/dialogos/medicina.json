@@ -147,7 +147,7 @@
 			"consultorio",
 			[
 				0.3,
-				0.25
+					0.36
 			],
 			[
 				"La sábana de la camilla está manchada... de tierra, no de sangre.",
@@ -191,7 +191,7 @@
 			"banos_m",
 			[
 				0.5,
-				0.35
+					0.62
 			],
 			[
 				"Una mano marcada en el espejo, por dentro del vidrio.",
@@ -223,8 +223,8 @@
 		[
 			"recepcion",
 			[
-				0.4,
-				0.3
+				0.22,
+					0.2
 			],
 			[
 				"El reloj de la pared está parado.",

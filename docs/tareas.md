@@ -55,7 +55,8 @@ Objetivo: probar si el juego da miedo antes de hacer el resto.
 - [x] Bombas molotov (vendas + alcohol)
 - [x] Notas de la historia, cosas para examinar y emboscadas en Medicina
 - [x] Choque con muebles: sala de simulación (camillas) y Salón 104 (círculo de sillas)
-- [ ] Choque con los muebles del resto de los cuartos
+- [x] Choque con los muebles del resto de los cuartos (`data/medicina_muebles.json`)
+- [x] Personajes al doble dentro de Medicina para que cuadren con los muebles; letreros en las puntas del pasillo
 - [x] Hueco en la pared: Cuarto de máquinas → Bodega (encargo de la nota del velador)
 - [x] Maniquíes escondidos que saltan si no los ves; golpes detrás de puertas cerradas; mensaje falso del ente
 - [x] Tensión: latido y estática del radio cuando hay un enemigo cerca; maniquí más rápido con embestida

@@ -56,9 +56,9 @@ func _explotar() -> void:
 	degradado.set_color(0, Color(1.0, 0.85, 0.3))
 	degradado.set_color(1, Color(0.6, 0.05, 0.0, 0.0))
 	particulas.color_ramp = degradado
-	var material := CanvasItemMaterial.new()
-	material.light_mode = CanvasItemMaterial.LIGHT_MODE_UNSHADED   # el fuego se ve en la oscuridad
-	particulas.material = material
+	var sin_sombra := CanvasItemMaterial.new()
+	sin_sombra.light_mode = CanvasItemMaterial.LIGHT_MODE_UNSHADED   # el fuego se ve en la oscuridad
+	particulas.material = sin_sombra
 	add_child(particulas)
 
 	var tiempo: float = 0.0

@@ -113,7 +113,7 @@ func _physics_process(delta: float) -> void:
 		Estado.PERSIGUIENDO:
 			_espera_golpe = maxf(0.0, _espera_golpe - delta)
 			_espera_embestida = maxf(0.0, _espera_embestida - delta)
-			if hacia.length() < 34.0:
+			if hacia.length() < 34.0 * scale.x:
 				velocity = Vector2.ZERO
 				if _espera_golpe == 0.0:
 					_espera_golpe = 0.75
@@ -123,7 +123,7 @@ func _physics_process(delta: float) -> void:
 				_embestida -= delta
 				velocity = hacia.normalized() * velocidad * 2.4
 				move_and_slide()
-			elif hacia.length() < 110.0 and _espera_embestida == 0.0:
+			elif hacia.length() < 110.0 * scale.x and _espera_embestida == 0.0:
 				_embestida = 0.28
 				_espera_embestida = 2.2
 				_sonar("res://assets/audio/efectos/golpe.wav")
@@ -240,6 +240,13 @@ func recibir_fuego() -> void:
 	var t := create_tween().set_loops(6)
 	t.tween_property(_sprite, "modulate", Color(1.6, 0.7, 0.3), 0.15)
 	t.tween_property(_sprite, "modulate", Color(0.4, 0.3, 0.3), 0.15)
+
+
+## Igual que Lalo dentro de los edificios: más grande y más rápido en proporción.
+func escalar(factor: float) -> void:
+	scale = Vector2(factor, factor)
+	velocidad *= factor * 0.85
+	radio_despertar *= factor
 
 
 ## Para la estática del radio: cualquier maniquí en pie (despierto, quieto o escondido).

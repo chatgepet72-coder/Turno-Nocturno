@@ -95,7 +95,7 @@ func _process(delta: float) -> void:
 ## Hacia dónde apunta Lalo: el ratón, o el stick derecho si está usando control.
 func punto_mira() -> Vector2:
 	if usando_mando:
-		return global_position + Vector2(0, -30) + _mira_mando * 120.0
+		return global_position + Vector2(0, -30) * scale + _mira_mando * 120.0 * scale.x
 	return get_global_mouse_position()
 
 
@@ -126,7 +126,7 @@ func _lanzar_molotov() -> void:
 		return
 	GameState.quitar("molotov")
 	var m := Molotov.new()
-	var salida: Vector2 = global_position + MANO[_direccion]
+	var salida: Vector2 = global_position + MANO[_direccion] * scale
 	var hacia: Vector2 = punto_mira() - salida
 	m.global_position = salida
 	m.destino = salida + hacia.limit_length(220.0)
@@ -141,7 +141,7 @@ func _disparar() -> void:
 	if not GameState.gastar_clavo():
 		_sonar_arma("sin_clavos")
 		return
-	var salida: Vector2 = global_position + MANO[_direccion]
+	var salida: Vector2 = global_position + MANO[_direccion] * scale
 	var clavo := Clavo.new()
 	clavo.direccion = (punto_mira() - salida).normalized()
 	clavo.global_position = salida + clavo.direccion * 8.0
@@ -258,16 +258,28 @@ func _peldanos(desde: Vector2, hasta: Vector2, cantidad: int) -> void:
 		await get_tree().create_timer(0.08).timeout
 
 
+## Dentro de los edificios los cuartos están dibujados más grandes: Lalo se agranda para quedar
+## proporcionado con los muebles, y camina más rápido en la misma proporción.
+func escalar(factor: float) -> void:
+	scale = Vector2(factor, factor)
+	var rapidez: float = factor * 0.85
+	velocidad *= rapidez
+	velocidad_corriendo *= rapidez
+	aceleracion *= factor
+	freno *= factor
+	($Camara as Camera2D).scale = Vector2(1.0 / factor, 1.0 / factor)   # que el zoom no cambie
+
+
 func camara() -> Camera2D:
 	return $Camara
 
 
 func poner_limites_camara(limites: Rect2i) -> void:
-	var camara: Camera2D = $Camara
-	camara.limit_left = limites.position.x
-	camara.limit_top = limites.position.y
-	camara.limit_right = limites.end.x
-	camara.limit_bottom = limites.end.y
+	var cam: Camera2D = $Camara
+	cam.limit_left = limites.position.x
+	cam.limit_top = limites.position.y
+	cam.limit_right = limites.end.x
+	cam.limit_bottom = limites.end.y
 
 
 func _animar(entrada: Vector2) -> void:
@@ -294,7 +306,7 @@ func _animar(entrada: Vector2) -> void:
 
 func _sonar_pasos(recorrido: float) -> void:
 	_distancia_paso += recorrido
-	if _distancia_paso < 26.0:
+	if _distancia_paso < 26.0 * scale.x:
 		return
 	_distancia_paso = 0.0
 	var duro: bool = superficies_duras.any(func(r: Rect2) -> bool: return r.has_point(global_position))
