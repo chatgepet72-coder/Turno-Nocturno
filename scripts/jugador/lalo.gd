@@ -3,7 +3,12 @@ extends CharacterBody2D
 ## Lalo: movimiento desde arriba, animación en 4 direcciones, linterna que apunta al ratón y pasos.
 
 const RUTA_CAMINAR: String = "res://assets/sprites/personajes/lalo/caminar/"
+const RUTA_LINTERNA: String = "res://assets/sprites/personajes/lalo/linterna/"
 const DIRECCIONES: Array[String] = ["down", "left", "right", "up"]
+## Dónde queda la mano con la linterna en cada dirección (respecto a los pies).
+const MANO: Dictionary = {
+	"down": Vector2(-2, -23), "right": Vector2(25, -30), "up": Vector2(19, -31), "left": Vector2(-18, -33),
+}
 
 @export var velocidad: float = 80.0
 @export var velocidad_corriendo: float = 140.0
@@ -65,17 +70,24 @@ func poner_limites_camara(limites: Rect2i) -> void:
 
 
 func _animar(entrada: Vector2) -> void:
+	# Con la linterna prendida, Lalo mira hacia donde apunta el ratón; si no, hacia donde camina.
+	var mirada: Vector2 = entrada
+	if _linterna.enabled:
+		mirada = get_global_mouse_position() - global_position
+	if mirada != Vector2.ZERO:
+		if absf(mirada.x) > absf(mirada.y):
+			_direccion = "right" if mirada.x > 0.0 else "left"
+		else:
+			_direccion = "down" if mirada.y > 0.0 else "up"
+	var animacion: String = ("linterna_" if _linterna.enabled else "caminar_") + _direccion
+	_linterna.position = MANO[_direccion]
 	if entrada == Vector2.ZERO:
-		_sprite.play("caminar_" + _direccion)
+		_sprite.play(animacion)
 		_sprite.stop()
 		_sprite.frame = 0
 		return
-	if absf(entrada.x) > absf(entrada.y):
-		_direccion = "right" if entrada.x > 0.0 else "left"
-	else:
-		_direccion = "down" if entrada.y > 0.0 else "up"
 	_sprite.speed_scale = 1.6 if Input.is_action_pressed("correr") else 1.0
-	_sprite.play("caminar_" + _direccion)
+	_sprite.play(animacion)
 
 
 func _sonar_pasos(recorrido: float) -> void:
@@ -93,12 +105,13 @@ func _sonar_pasos(recorrido: float) -> void:
 func _crear_sprite() -> void:
 	var frames := SpriteFrames.new()
 	for dir in DIRECCIONES:
-		var nombre: String = "caminar_" + dir
-		frames.add_animation(nombre)
-		frames.set_animation_speed(nombre, 8.0)
-		frames.set_animation_loop(nombre, true)
-		for i in range(1, 5):
-			frames.add_frame(nombre, load(RUTA_CAMINAR + "%s_%d.png" % [dir, i]) as Texture2D)
+		for juego in [["caminar_", RUTA_CAMINAR], ["linterna_", RUTA_LINTERNA]]:
+			var nombre: String = juego[0] + dir
+			frames.add_animation(nombre)
+			frames.set_animation_speed(nombre, 8.0)
+			frames.set_animation_loop(nombre, true)
+			for i in range(1, 5):
+				frames.add_frame(nombre, load(juego[1] + "%s_%d.png" % [dir, i]) as Texture2D)
 	_sprite = AnimatedSprite2D.new()
 	_sprite.sprite_frames = frames
 	_sprite.animation = "caminar_down"
@@ -129,7 +142,7 @@ func _crear_luces() -> void:
 	_linterna.texture_scale = 1.1
 	_linterna.energy = 1.25
 	_linterna.color = Color(1.0, 0.96, 0.85)
-	_linterna.position = Vector2(0.0, -34.0)
+	_linterna.position = MANO["down"]
 	add_child(_linterna)
 
 	var camara := Camera2D.new()

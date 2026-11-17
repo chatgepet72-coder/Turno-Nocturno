@@ -62,10 +62,11 @@ const OBJETOS: Array = [
 const POSTES: Array[Vector2] = [Vector2(724, 250), Vector2(724, 570), Vector2(972, 390)]
 const CASETA: Rect2 = Rect2(688, 840, 232, 192)
 const CASETA_PAREDES: Array[Rect2] = [
-	Rect2(688, 840, 96, 32), Rect2(820, 840, 100, 32),   # pared de arriba con hueco de la puerta
+	Rect2(688, 840, 96, 32), Rect2(824, 840, 96, 32),    # pared de arriba con hueco de la puerta
 	Rect2(688, 840, 12, 192), Rect2(908, 840, 12, 192),  # paredes laterales
 	Rect2(688, 1020, 232, 12),                            # pared de abajo
 ]
+const PUERTA_CASETA: Rect2 = Rect2(784, 844, 40, 28)
 const REJA_Y: float = 1036.0
 ## Barreras invisibles: la obra solo se alcanza entrando por el patio, no cortando por el pasto.
 const BARRERAS: Array[Rect2] = [
@@ -218,10 +219,16 @@ func _armar_caseta(suelo: Node2D) -> void:
 	_forma(chava, Rect2(-15, -14, 30, 14))
 	_mundo.add_child(chava)
 
+	var puerta := Puerta.new()   # se abre y se cierra con E; Lalo empieza con ella cerrada
+	suelo.add_child(puerta)
+	puerta.configurar(PUERTA_CASETA, Rect2(764, 812, 80, 96),
+		load(ESC + "caseta/puerta_cerrada.png") as Texture2D, load(ESC + "caseta/puerta_abierta.png") as Texture2D)
+
 	_techo_caseta = _objeto("caseta_fuera.png", CASETA.position, Vector2.ZERO)
-	var zona := Area2D.new()   # al entrar, el techo se desvanece para ver el interior
+	var zona := Area2D.new()   # al entrar (o al acercarse a la puerta por fuera) el techo se desvanece
 	zona.collision_mask = 2
 	_forma(zona, Rect2(700, 872, 208, 148))
+	_forma(zona, Rect2(764, 800, 80, 44))
 	zona.body_entered.connect(_al_entrar_caseta)
 	zona.body_exited.connect(_al_salir_caseta)
 	add_child(zona)
@@ -284,7 +291,7 @@ func _crear_lalo() -> void:
 func _crear_hud() -> void:
 	var capa := CanvasLayer.new()
 	var ayuda := Label.new()
-	ayuda.text = "WASD o flechas: caminar   ·   Shift: correr   ·   Ratón: apuntar la linterna   ·   F: prender/apagar"
+	ayuda.text = "WASD o flechas: caminar  ·  Shift: correr  ·  Ratón: apuntar  ·  F: linterna  ·  E: abrir puertas"
 	var estilo := LabelSettings.new()
 	estilo.font_size = 9
 	estilo.font_color = Color(0.9, 0.88, 0.8)
