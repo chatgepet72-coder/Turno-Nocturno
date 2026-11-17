@@ -5,7 +5,7 @@ extends Node2D
 const ESC: String = "res://assets/sprites/escenario/"
 const PISOS: String = "res://assets/sprites/pisos/"
 const MUNDO: Rect2i = Rect2i(0, 0, 1960, 1240)
-const NOCHE: Color = Color(0.10, 0.11, 0.16)
+const NOCHE: Color = Color(0.025, 0.025, 0.04)   # casi negro: sin linterna casi no se ve nada
 
 # Pisos: [textura, rectángulo]
 const SUELO: Array = [

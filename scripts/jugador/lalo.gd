@@ -269,15 +269,15 @@ func _crear_colision() -> void:
 func _crear_luces() -> void:
 	var aura := PointLight2D.new()   # luz tenue alrededor de Lalo para que siempre se le vea
 	aura.texture = load("res://assets/sprites/luces/luz_radial.png") as Texture2D
-	aura.texture_scale = 0.6
-	aura.energy = 0.45
+	aura.texture_scale = 0.32   # sin linterna, Lalo apenas se ve los pies
+	aura.energy = 0.22
 	aura.position = Vector2(0.0, -30.0)
 	add_child(aura)
 
 	_linterna = PointLight2D.new()
 	_linterna.texture = load("res://assets/sprites/luces/cono_linterna.png") as Texture2D
-	_linterna.texture_scale = 1.1
-	_linterna.energy = 1.25
+	_linterna.texture_scale = 1.25
+	_linterna.energy = 1.5
 	_linterna.color = Color(1.0, 0.96, 0.85)
 	_linterna.position = MANO["down"]
 	add_child(_linterna)

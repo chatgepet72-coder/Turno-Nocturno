@@ -5,7 +5,7 @@ extends Node2D
 ## (generado por tools/arte/medicina_interiores.py).
 
 const ARTE: String = "res://assets/sprites/interiores/medicina/"
-const NOCHE: Color = Color(0.07, 0.08, 0.1)
+const NOCHE: Color = Color(0.015, 0.018, 0.022)   # casi negro: sin linterna casi no se ve nada
 const ARRIBA: Array[String] = ["salon_101", "salon_102", "consultorio", "caseta", "laboratorio", "salon_104", "banos_h"]
 const ABAJO: Array[String] = ["simulacion", "escaleras", "recepcion", "salon_105", "archivo", "bodega", "maquinas"]
 const PUNTA_IZQUIERDA: String = "enfermeria"
@@ -87,8 +87,8 @@ func _armar_pasillo() -> void:
 	for fx in [0.15, 0.5, 0.85]:   # lámparas de techo que parpadean
 		var l := PointLight2D.new()
 		l.texture = radial
-		l.texture_scale = 2.4
-		l.energy = 0.7
+		l.texture_scale = 1.6
+		l.energy = 0.4
 		l.color = Color(0.75, 1.0, 0.85)
 		l.position = Vector2(tam.x * fx, tam.y * 0.5)
 		add_child(l)
