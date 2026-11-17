@@ -282,13 +282,13 @@ func _crear_luces() -> void:
 	_linterna.position = MANO["down"]
 	add_child(_linterna)
 
-	var camara := Camera2D.new()
-	camara.name = "Camara"
-	camara.position = Vector2(0.0, -30.0)
-	camara.position_smoothing_enabled = true
-	camara.position_smoothing_speed = 6.0
-	add_child(camara)
-	camara.make_current()
+	var cam := Camera2D.new()
+	cam.name = "Camara"
+	cam.position = Vector2(0.0, -30.0)
+	cam.position_smoothing_enabled = true
+	cam.position_smoothing_speed = 6.0
+	add_child(cam)
+	cam.make_current()
 
 
 func _crear_audio() -> void:

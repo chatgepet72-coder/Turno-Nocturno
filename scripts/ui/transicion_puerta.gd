@@ -57,6 +57,38 @@ func cruzar(cambiar: Callable) -> void:
 	visible = false
 
 
+## Para puertas que llevan a otra escena: toda la transición se reproduce antes de cambiar,
+## porque al cambiar de escena esta transición deja de existir. La escena nueva llama a aparecer().
+func cruzar_a_escena(escena: String, punto: String) -> void:
+	visible = true
+	_negro.modulate.a = 0.0
+	_puerta.modulate.a = 0.0
+	_puerta.texture = _texturas[0]
+	await _tween(_negro, "modulate:a", 1.0, 0.35)
+	await _tween(_puerta, "modulate:a", 1.0, 0.4)
+	await get_tree().create_timer(0.3).timeout
+	_sonar(load("res://assets/audio/efectos/puerta_rechina.wav") as AudioStream, 0.95)
+	for i in range(1, CUADROS):
+		await get_tree().create_timer(0.38).timeout
+		_puerta.texture = _texturas[i]
+	await get_tree().create_timer(0.45).timeout
+	await _tween(_puerta, "modulate:a", 0.0, 0.35)
+	for i in range(3):
+		_sonar(_pasos.pick_random(), randf_range(0.9, 1.05))
+		await get_tree().create_timer(0.32).timeout
+	GameState.ir_a(escena, punto)
+
+
+## Al cargar una escena: empieza en negro y se aclara.
+func aparecer() -> void:
+	visible = true
+	_puerta.modulate.a = 0.0
+	_negro.modulate.a = 1.0
+	await get_tree().create_timer(0.2).timeout
+	await _tween(_negro, "modulate:a", 0.0, 0.6)
+	visible = false
+
+
 func _sonar(stream: AudioStream, tono: float) -> void:
 	_audio.stream = stream
 	_audio.pitch_scale = tono

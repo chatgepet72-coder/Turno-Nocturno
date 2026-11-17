@@ -346,6 +346,9 @@ func _despues_del_prologo() -> void:
 	if GameState.punto_entrada == "puerta_medicina":
 		lalo.global_position = SALIDA_MEDICINA
 		lalo.camara().reset_smoothing()
+		var transicion := TransicionPuerta.new()
+		add_child(transicion)
+		transicion.aparecer()
 	poner_objetivo("Busca a Don Chava en la Facultad de Medicina.")
 	habilitar_medicina()
 
@@ -360,7 +363,7 @@ func _entrar_medicina() -> void:
 	lalo.controlable = false
 	var transicion := TransicionPuerta.new()
 	add_child(transicion)
-	await transicion.cruzar(func() -> void: GameState.ir_a("medicina", "entrada"))
+	transicion.cruzar_a_escena("medicina", "entrada")
 
 
 func _limites(camara: Camera2D) -> void:

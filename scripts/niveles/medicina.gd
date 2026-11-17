@@ -44,7 +44,7 @@ func _ready() -> void:
 	var todos: Array[String] = []
 	todos.assign(ARRIBA + ABAJO + [PUNTA_IZQUIERDA, PUNTA_DERECHA])
 	for i in todos.size():
-		_armar_cuarto(todos[i], Vector2((i % 5) * 1000, 1000 + (i / 5) * 900))
+		_armar_cuarto(todos[i], Vector2((i % 5) * 1000, 1000 + floori(i / 5.0) * 900))
 	lalo = Lalo.new()
 	lalo.superficies_duras.append(Rect2(-100000, -100000, 200000, 200000))   # todo es piso duro
 	_mundo.add_child(lalo)
@@ -61,6 +61,7 @@ func _ready() -> void:
 		_mover_a("caseta", _llegada("caseta", false))
 	else:
 		_mover_a("entrada", _llegada("entrada", false))
+	_transicion.aparecer()
 	hud.poner_objetivo("Busca a Don Chava en la Facultad de Medicina.")
 	if GameState.punto_entrada == "entrada":
 		GameState.guardar("medicina", "entrada")   # guardado automático al llegar desde el patio
@@ -198,7 +199,7 @@ func _mover_a(zona_id: String, pos: Vector2) -> void:
 
 func _salir_al_patio() -> void:
 	lalo.controlable = false
-	await _transicion.cruzar(func() -> void: GameState.ir_a("entrada", "puerta_medicina"))
+	_transicion.cruzar_a_escena("entrada", "puerta_medicina")
 
 
 # ---------- Lo que hay dentro ----------
