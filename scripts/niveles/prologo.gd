@@ -116,9 +116,12 @@ func iniciar(nivel: Node2D) -> void:
 
 	# 10. La reja: no hay forma de salir
 	nivel.poner_objetivo("Ve a la reja de la entrada.")
+	# Sirven las dos salidas: la pluma de los autos y la puerta de alumnos
 	var pluma: Interactuable = nivel.agregar_interactuable(Rect2(440, 980, 250, 90), "revisar la pluma")
-	await pluma.usado
+	var puerta_alumnos: Interactuable = nivel.agregar_interactuable(Rect2(916, 990, 120, 86), "revisar la puerta")
+	await _cualquiera_usado([pluma, puerta_alumnos])
 	pluma.activo = false
+	puerta_alumnos.activo = false
 	await _decir(dialogos["reja"], true)
 	nivel.poner_objetivo("No hay forma de salir... (continuará)")
 
@@ -133,6 +136,15 @@ func _vigilar_maniqui(dialogos: Dictionary) -> void:
 	if notificador.is_on_screen():
 		await notificador.screen_exited
 	_nivel.ocultar_maniqui()
+
+
+## Espera a que el jugador use cualquiera de los interactuables de la lista.
+func _cualquiera_usado(lista: Array[Interactuable]) -> void:
+	var usado: Array[bool] = [false]
+	for i in lista:
+		i.usado.connect(func() -> void: usado[0] = true, CONNECT_ONE_SHOT)
+	while not usado[0]:
+		await get_tree().process_frame
 
 
 ## Espera a que el jugador presione Q (radio) cuando no hay un diálogo en curso.
