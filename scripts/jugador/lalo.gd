@@ -1,5 +1,8 @@
 class_name Lalo
 extends CharacterBody2D
+
+signal vida_cambio(vida: int)
+signal murio
 ## Lalo: movimiento desde arriba, animación en 4 direcciones, linterna que apunta al ratón y pasos.
 
 const RUTA_CAMINAR: String = "res://assets/sprites/personajes/lalo/caminar/"
@@ -15,6 +18,9 @@ const MANO: Dictionary = {
 @export var velocidad_corriendo: float = 140.0
 @export var aceleracion: float = 900.0
 @export var freno: float = 1100.0
+@export var vida_maxima: int = 3
+
+var vida: int = 3
 
 ## Si es false, el jugador no lo controla (escenas, diálogos en persona).
 var controlable: bool = true
@@ -31,6 +37,10 @@ var _pasos_pasto: Array[AudioStream] = []
 var _pasos_metal: Array[AudioStream] = []
 var _audio_pasos: AudioStreamPlayer2D
 var _audio_linterna: AudioStreamPlayer2D
+var _audio_arma: AudioStreamPlayer2D
+var _espera_disparo: float = 0.0
+var _invulnerable: float = 0.0
+var _empuje: Vector2 = Vector2.ZERO
 
 
 func _ready() -> void:
@@ -53,6 +63,10 @@ func _physics_process(delta: float) -> void:
 		velocity = velocity.move_toward(entrada * maxima, aceleracion * delta)
 	else:
 		velocity = velocity.move_toward(Vector2.ZERO, freno * delta)
+	_espera_disparo = maxf(0.0, _espera_disparo - delta)
+	_invulnerable = maxf(0.0, _invulnerable - delta)
+	velocity += _empuje
+	_empuje = _empuje.move_toward(Vector2.ZERO, 900.0 * delta)
 	var antes: Vector2 = global_position
 	move_and_slide()
 	_animar(entrada)
@@ -67,6 +81,50 @@ func _unhandled_input(event: InputEvent) -> void:
 	if controlable and event.is_action_pressed("linterna"):
 		_linterna.enabled = not _linterna.enabled
 		_audio_linterna.play()
+	if controlable and GameState.tiene_pistola:
+		if event.is_action_pressed("disparar"):
+			_disparar()
+		elif event.is_action_pressed("recargar"):
+			if GameState.recargar():
+				_sonar_arma("recarga")
+
+
+## Dispara un clavo hacia el ratón. Hace ruido: los enemigos lo escuchan.
+func _disparar() -> void:
+	if _espera_disparo > 0.0:
+		return
+	_espera_disparo = 0.35
+	if not GameState.gastar_clavo():
+		_sonar_arma("sin_clavos")
+		return
+	var salida: Vector2 = global_position + MANO[_direccion]
+	var clavo := Clavo.new()
+	clavo.direccion = (get_global_mouse_position() - salida).normalized()
+	clavo.global_position = salida + clavo.direccion * 8.0
+	get_parent().add_child(clavo)
+	_sonar_arma("disparo_clavos")
+	EventBus.ruido_emitido.emit(global_position, 320.0)
+
+
+func recibir_dano(cantidad: int, desde: Vector2) -> void:
+	if _invulnerable > 0.0 or vida <= 0:
+		return
+	_invulnerable = 1.0
+	vida -= cantidad
+	vida_cambio.emit(vida)
+	_empuje = (global_position - desde).normalized() * 260.0
+	_sonar_arma("golpe")
+	var t := create_tween()
+	t.tween_property(_sprite, "modulate", Color(1.0, 0.3, 0.3), 0.06)
+	t.tween_property(_sprite, "modulate", Color.WHITE, 0.3)
+	if vida <= 0:
+		controlable = false
+		murio.emit()
+
+
+func _sonar_arma(nombre: String) -> void:
+	_audio_arma.stream = load("res://assets/audio/efectos/%s.wav" % nombre) as AudioStream
+	_audio_arma.play()
 
 
 ## Lalo sentado (sin control) hasta que se llame a levantarse().
@@ -137,16 +195,17 @@ func poner_limites_camara(limites: Rect2i) -> void:
 
 
 func _animar(entrada: Vector2) -> void:
-	# Con la linterna prendida, Lalo mira hacia donde apunta el ratón; si no, hacia donde camina.
+	# Con la linterna prendida o la pistola, Lalo mira hacia donde apunta el ratón; si no, hacia donde camina.
 	var mirada: Vector2 = entrada
-	if _linterna.enabled:
+	if _linterna.enabled or GameState.tiene_pistola:
 		mirada = get_global_mouse_position() - global_position
 	if mirada != Vector2.ZERO:
 		if absf(mirada.x) > absf(mirada.y):
 			_direccion = "right" if mirada.x > 0.0 else "left"
 		else:
 			_direccion = "down" if mirada.y > 0.0 else "up"
-	var animacion: String = ("linterna_" if _linterna.enabled else "caminar_") + _direccion
+	var brazo_extendido: bool = _linterna.enabled or GameState.tiene_pistola
+	var animacion: String = ("linterna_" if brazo_extendido else "caminar_") + _direccion
 	_linterna.position = MANO[_direccion]
 	if entrada == Vector2.ZERO:
 		_sprite.play(animacion)
@@ -243,3 +302,6 @@ func _crear_audio() -> void:
 	_audio_linterna.stream = load("res://assets/audio/efectos/linterna.wav") as AudioStream
 	_audio_linterna.volume_db = -6.0
 	add_child(_audio_linterna)
+	_audio_arma = AudioStreamPlayer2D.new()
+	_audio_arma.volume_db = -3.0
+	add_child(_audio_arma)

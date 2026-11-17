@@ -219,5 +219,75 @@
 			"voz": "lalo_angustia",
 			"texto": "Y el celular sin señal... ¿qué está pasando aquí?"
 		}
+	],
+	"caja": [
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "La caja de herramientas de la obra... la dejaron aquí en la caseta."
+		},
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "Una pistola de clavos... y dos cajas de clavos."
+		},
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "Nomás por si acaso..."
+		}
+	],
+	"chava_radio_hospital": [
+		{
+			"quien": "Don Chava",
+			"voz": "chava_debil",
+			"radio": true,
+			"texto": "...Lalo... mijo, ¿me oyes?... No sé dónde estoy..."
+		},
+		{
+			"quien": "Don Chava",
+			"voz": "chava_debil",
+			"radio": true,
+			"texto": "...huele a alcohol, como a hospital... hay muchas camillas..."
+		},
+		{
+			"quien": "Don Chava",
+			"voz": "chava_debil",
+			"radio": true,
+			"texto": "Ven por mí, Lalo. No me dejes aquí."
+		},
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "¡Don Chava! ¿Dónde está? ¡Contésteme!"
+		},
+		{
+			"quien": "Radio",
+			"voz": "",
+			"radio": true,
+			"texto": "(estática)"
+		},
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "Camillas... huele a hospital... ¡Está en Medicina!"
+		}
+	],
+	"maniqui_derribado": [
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "¿Qué... qué era eso?"
+		},
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "¡Se movía! ¡Esa cosa se movía!"
+		},
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "Aguánteme, Don Chava... ya voy."
+		}
 	]
 }

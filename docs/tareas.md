@@ -15,12 +15,12 @@ Objetivo: probar si el juego da miedo antes de hacer el resto.
 
 - [x] Lalo: movimiento desde arriba, caminar y correr
 - [x] Linterna con cono de luz y oscuridad alrededor
-- [ ] Pistola de clavos: apuntar, disparar, recargar, munición limitada
+- [x] Pistola de clavos: apuntar, disparar, recargar, munición limitada
 - [ ] Lanzar objetos que hacen ruido (`EventBus.ruido_emitido`)
-- [ ] Maniquí: se acerca, escucha ruidos, se derriba con clavos
+- [x] Maniquí: se acerca, escucha ruidos, se derriba con clavos
 - [ ] Sistema de enemigos que regresan (sigue ahí / desaparece / cambia de posición)
 - [ ] Clavar al piso para que no regrese
-- [ ] Vida de Lalo y curación con vendas
+- [x] Vida de Lalo y curación con vendas
 - [ ] Cuarto seguro con guardado
 - [ ] Radio con estática que sube cuando hay enemigos cerca
 - [ ] Sonidos de prueba: pasos, clavos, maniquí, estática
@@ -39,8 +39,8 @@ Objetivo: probar si el juego da miedo antes de hacer el resto.
 - [x] El sótano: escalera derrumbada y linterna de Don Chava
 - [x] Llamada al Comandante y reja cerrada
 - [ ] Mapa de rondines (pantalla del mapa)
-- [ ] Puzzle: llave de la caja de herramientas
-- [ ] Primer enfrentamiento con el maniquí
+- [x] Caja de herramientas en la caseta con la pistola de clavos (sin llave)
+- [x] Primer enfrentamiento con el maniquí
 
 ## Etapa 3: Capítulo 1, Medicina
 

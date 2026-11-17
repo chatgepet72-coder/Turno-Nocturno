@@ -90,7 +90,7 @@ apuntar={
 }
 disparar={
 "deadzone": 0.5,
-"events": [Object(InputEventMouseButton,"button_index":1)]
+"events": [Object(InputEventMouseButton,"button_index":1), Object(InputEventKey,"physical_keycode":32)]
 }
 
 [layer_names]

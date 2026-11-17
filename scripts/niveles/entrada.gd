@@ -108,9 +108,14 @@ var _linterna_chava: Sprite2D
 var _luz_linterna_chava: PointLight2D
 var _respiracion: AudioStreamPlayer2D
 var _respirando: bool = false
+var _caja: Sprite2D
+var _municion: Label
+var _icono_pistola: TextureRect
+var _salud: Label
 
 
 func _ready() -> void:
+	GameState.reiniciar()   # al reiniciar la escena después de morir, todo vuelve a empezar
 	var noche := CanvasModulate.new()
 	noche.color = NOCHE
 	add_child(noche)
@@ -241,6 +246,15 @@ func _armar_caseta(suelo: Node2D) -> void:
 	_objeto("caseta/escritorio.png", Vector2(708, 876), Vector2(80, 26))
 	_objeto("caseta/silla.png", Vector2(794, 880), Vector2.ZERO)
 	_objeto("caseta/casillero.png", Vector2(866, 870), Vector2(40, 22))
+	var caja := StaticBody2D.new()   # la caja de herramientas de la obra, con la pistola de clavos
+	caja.position = Vector2(868, 1014)
+	_caja = Sprite2D.new()
+	_caja.texture = load("res://assets/sprites/objetos/caja_cerrada.png") as Texture2D
+	_caja.centered = false
+	_caja.offset = Vector2(-32, -_caja.texture.get_height())
+	caja.add_child(_caja)
+	_forma(caja, Rect2(-28, -14, 56, 14))
+	_mundo.add_child(caja)
 
 	_objeto("caseta/silla.png", Vector2(726, 938), Vector2.ZERO)   # la silla de Lalo
 	chava = DonChava.new()   # sentado junto al escritorio; el prólogo lo levanta y lo manda a su rondín
@@ -444,6 +458,61 @@ func ocultar_maniqui() -> void:
 	_maniqui.visible = false
 
 
+# ---------- Caja, combate y pantalla de muerte ----------
+func abrir_caja() -> void:
+	_caja.texture = load("res://assets/sprites/objetos/caja_abierta.png") as Texture2D
+	_caja.offset = Vector2(-32, -_caja.texture.get_height())
+
+
+func cerrar_caja() -> void:
+	_caja.texture = load("res://assets/sprites/objetos/caja_cerrada.png") as Texture2D
+	_caja.offset = Vector2(-32, -_caja.texture.get_height())
+
+
+func aparecer_maniqui(pos: Vector2) -> Maniqui:
+	var m := Maniqui.new()
+	m.position = pos
+	m.objetivo = lalo
+	_mundo.add_child(m)
+	return m
+
+
+func _al_cambiar_municion(cargador: int, reserva: int) -> void:
+	_icono_pistola.visible = GameState.tiene_pistola
+	_municion.visible = GameState.tiene_pistola
+	_municion.text = "Clavos %d / %d" % [cargador, reserva]
+
+
+func _al_cambiar_vida(vida: int) -> void:
+	_salud.text = "Salud " + "■".repeat(maxi(vida, 0)) + "□".repeat(maxi(lalo.vida_maxima - vida, 0))
+
+
+func _al_morir() -> void:
+	var capa := CanvasLayer.new()
+	capa.layer = 30
+	var fondo := ColorRect.new()
+	fondo.color = Color(0.25, 0.0, 0.0, 0.0)
+	fondo.size = Vector2(640, 360)
+	capa.add_child(fondo)
+	var texto := Label.new()
+	texto.text = "Te alcanzaron..."
+	var estilo := LabelSettings.new()
+	estilo.font_size = 18
+	estilo.font_color = Color(0.9, 0.85, 0.8)
+	texto.label_settings = estilo
+	texto.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	texto.size = Vector2(640, 40)
+	texto.position = Vector2(0, 160)
+	texto.modulate.a = 0.0
+	capa.add_child(texto)
+	add_child(capa)
+	var t := create_tween()
+	t.tween_property(fondo, "color:a", 0.85, 1.2)
+	t.tween_property(texto, "modulate:a", 1.0, 0.8)
+	t.tween_interval(2.5)
+	t.tween_callback(get_tree().reload_current_scene)
+
+
 func poner_objetivo(texto: String) -> void:
 	_objetivo.text = "Objetivo: " + texto
 	_objetivo.visible = true
@@ -467,7 +536,25 @@ func _crear_hud() -> void:
 	_objetivo.position = Vector2(8, 6)
 	_objetivo.visible = false
 	capa.add_child(_objetivo)
+	_salud = Label.new()
+	_salud.label_settings = estilo
+	_salud.position = Vector2(560, 6)
+	capa.add_child(_salud)
+	_icono_pistola = TextureRect.new()
+	_icono_pistola.texture = load("res://assets/sprites/ui/pistola_clavos.png") as Texture2D
+	_icono_pistola.position = Vector2(560, 300)
+	_icono_pistola.visible = false
+	capa.add_child(_icono_pistola)
+	_municion = Label.new()
+	_municion.label_settings = estilo
+	_municion.position = Vector2(560, 338)
+	_municion.visible = false
+	capa.add_child(_municion)
 	add_child(capa)
+	GameState.municion_cambio.connect(_al_cambiar_municion)
+	lalo.vida_cambio.connect(_al_cambiar_vida)
+	lalo.murio.connect(_al_morir)
+	_al_cambiar_vida(lalo.vida)
 
 
 func _crear_ambiente() -> void:

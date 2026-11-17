@@ -123,7 +123,31 @@ func iniciar(nivel: Node2D) -> void:
 	pluma.activo = false
 	puerta_alumnos.activo = false
 	await _decir(dialogos["reja"], true)
-	nivel.poner_objetivo("No hay forma de salir... (continuará)")
+
+	# 11. La caja de herramientas en la caseta: la pistola de clavos
+	nivel.poner_objetivo("No hay forma de salir. Regresa a la caseta.")
+	var caja: Interactuable = nivel.agregar_interactuable(Rect2(816, 930, 104, 84), "abrir la caja")
+	await caja.usado
+	caja.activo = false
+	lalo.controlable = false
+	nivel.abrir_caja()
+	await _decir(dialogos["caja"])
+	GameState.dar_pistola(GameState.CAPACIDAD_CARGADOR, 20)
+	nivel.cerrar_caja()
+	lalo.controlable = true
+	nivel.ayuda.text = "WASD: caminar  ·  Ratón: apuntar  ·  Clic o Espacio: disparar  ·  R: recargar  ·  F: linterna  ·  E: usar"
+
+	# 12. Don Chava habla por radio: está en un lugar con camillas
+	await _esperar(5.0)
+	await _decir(dialogos["chava_radio_hospital"], true)
+	nivel.poner_objetivo("Ve a la Facultad de Medicina, cruzando el patio.")
+
+	# 13. El primer maniquí: parado frente a Medicina; cuando Lalo se acerca, camina hacia él
+	var maniqui: Maniqui = nivel.aparecer_maniqui(Vector2(1316, 452))
+	await maniqui.derribado
+	await _esperar(1.0)
+	await _decir(dialogos["maniqui_derribado"], true)
+	nivel.poner_objetivo("Busca a Don Chava en Medicina. (Fin del prólogo)")
 
 
 ## El maniquí: Lalo lo ve en la banca y, cuando deja de verlo, ya no está.
