@@ -3,10 +3,11 @@ extends CanvasLayer
 ## Pantalla del jugador: objetivo, ayuda de controles, salud, clavos, avisos y la pantalla de muerte.
 ## La usan todos los niveles.
 
-const AYUDA_BASICA: String = "WASD: caminar  ·  Shift: correr  ·  Ratón: apuntar  ·  F: linterna  ·  E: usar"
-const AYUDA_ARMADO: String = "WASD: caminar  ·  Ratón: apuntar  ·  Clic o Espacio: disparar  ·  R: recargar  ·  F: linterna  ·  E: usar"
+## Una sola línea discreta: los controles completos están en el menú de pausa (Esc).
+const AYUDA: String = "Esc: pausa, mochila y controles"
 
 var ayuda: Label
+var menu: MenuPausa
 
 var _objetivo: Label
 var _salud: Label
@@ -19,7 +20,8 @@ var _lalo: Lalo
 func _ready() -> void:
 	var estilo := _estilo(9)
 	ayuda = _etiqueta(estilo, Vector2(8, 344))
-	ayuda.text = AYUDA_ARMADO if GameState.tiene_pistola else AYUDA_BASICA
+	ayuda.text = AYUDA
+	ayuda.modulate.a = 0.6
 	_objetivo = _etiqueta(estilo, Vector2(8, 6))
 	_objetivo.visible = false
 	_salud = _etiqueta(estilo, Vector2(560, 6))
@@ -34,6 +36,8 @@ func _ready() -> void:
 	_aviso.modulate.a = 0.0
 	GameState.municion_cambio.connect(_al_cambiar_municion)
 	_al_cambiar_municion(GameState.clavos_cargador, GameState.clavos_reserva)
+	menu = MenuPausa.new()
+	add_child(menu)
 
 
 func conectar(lalo: Lalo) -> void:
@@ -48,8 +52,9 @@ func poner_objetivo(texto: String) -> void:
 	_objetivo.visible = true
 
 
+## Al tomar la pistola: un aviso con sus controles (también están en Esc > Controles).
 func armado() -> void:
-	ayuda.text = AYUDA_ARMADO
+	avisar("Clic o Espacio: disparar   ·   R: recargar")
 
 
 ## Mensaje corto en el centro de arriba que se desvanece solo (por ejemplo, "Partida guardada").

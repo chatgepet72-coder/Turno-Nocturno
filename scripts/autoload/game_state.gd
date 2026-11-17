@@ -2,12 +2,14 @@ extends Node
 ## Estado de la partida: progreso, decisiones del jugador y cálculo del final.
 
 signal municion_cambio(cargador: int, reserva: int)
+signal inventario_cambio
 
 enum Final { BUENO, MALO, SECRETO }
 
 const VIDA_MAX_DON_CHAVA: int = 100
 const CAPACIDAD_CARGADOR: int = 10
 const VIDA_MAX_LALO: int = 3
+const ESPACIOS_MOCHILA: int = 8
 const ARCHIVO_PARTIDA: String = "user://partida.json"
 const ESCENAS: Dictionary = {
 	"entrada": "res://scenes/niveles/Entrada.tscn",
@@ -27,9 +29,15 @@ var vida_lalo: int = VIDA_MAX_LALO
 var prologo_completo: bool = false
 ## Dónde aparece Lalo al entrar a una escena (por ejemplo "caseta" o "puerta_medicina").
 var punto_entrada: String = ""
+## Mochila: id del objeto -> cantidad. Los documentos no ocupan espacio.
+var inventario: Dictionary = {}
+var recogidos: Array[String] = []          # objetos del mapa que ya se tomaron (no vuelven a aparecer)
+var puertas_abiertas: Array[String] = []   # puertas con llave que ya se abrieron
+var objetos: Dictionary = {}               # datos de data/objetos.json
 
 
 func _ready() -> void:
+	objetos = JSON.parse_string(FileAccess.get_file_as_string("res://data/objetos.json"))
 	EventBus.mensaje_falso_resuelto.connect(_on_mensaje_falso_resuelto)
 	EventBus.documento_leido.connect(_on_documento_leido)
 	EventBus.enemigo_eliminado_para_siempre.connect(_on_enemigo_eliminado)
@@ -48,6 +56,9 @@ func reiniciar() -> void:
 	vida_lalo = VIDA_MAX_LALO
 	prologo_completo = false
 	punto_entrada = ""
+	inventario.clear()
+	recogidos.clear()
+	puertas_abiertas.clear()
 
 
 # ---------- Escenas y partida guardada ----------
@@ -72,6 +83,7 @@ func guardar(escena: String, punto: String) -> void:
 		"cargador": clavos_cargador, "reserva": clavos_reserva, "prologo": prologo_completo,
 		"documentos": documentos_leidos, "eliminados": enemigos_eliminados,
 		"falsos_totales": mensajes_falsos_totales, "falsos_seguidos": mensajes_falsos_seguidos,
+		"inventario": inventario, "recogidos": recogidos, "puertas": puertas_abiertas,
 	}
 	var archivo := FileAccess.open(ARCHIVO_PARTIDA, FileAccess.WRITE)
 	if archivo == null:
@@ -98,6 +110,11 @@ func continuar() -> bool:
 	enemigos_eliminados.assign(datos.get("eliminados", []))
 	mensajes_falsos_totales = int(datos.get("falsos_totales", 0))
 	mensajes_falsos_seguidos = int(datos.get("falsos_seguidos", 0))
+	var inv: Dictionary = datos.get("inventario", {})
+	for k in inv:
+		inventario[k] = int(inv[k])
+	recogidos.assign(datos.get("recogidos", []))
+	puertas_abiertas.assign(datos.get("puertas", []))
 	ir_a(datos.get("escena", "entrada"), datos.get("punto", ""))
 	return true
 
@@ -106,6 +123,44 @@ func continuar() -> bool:
 func continuar_tras_morir() -> void:
 	if not continuar():
 		nueva_partida()
+
+
+# ---------- Mochila ----------
+func es_documento(id: String) -> bool:
+	return objetos.get(id, {}).get("documento", false)
+
+
+func espacios_usados() -> int:
+	var n: int = 0
+	for id in inventario:
+		if not es_documento(id):
+			n += 1
+	return n
+
+
+## Agrega un objeto. Devuelve false si la mochila está llena.
+func agregar(id: String, cantidad: int = 1) -> bool:
+	if not inventario.has(id) and not es_documento(id) and espacios_usados() >= ESPACIOS_MOCHILA:
+		return false
+	inventario[id] = inventario.get(id, 0) + cantidad
+	inventario_cambio.emit()
+	return true
+
+
+func tiene(id: String) -> bool:
+	return inventario.get(id, 0) > 0
+
+
+func quitar(id: String, cantidad: int = 1) -> void:
+	inventario[id] = inventario.get(id, 0) - cantidad
+	if inventario[id] <= 0:
+		inventario.erase(id)
+	inventario_cambio.emit()
+
+
+func agregar_clavos(cantidad: int) -> void:
+	clavos_reserva += cantidad
+	municion_cambio.emit(clavos_cargador, clavos_reserva)
 
 
 func dar_pistola(cargador: int, reserva: int) -> void:

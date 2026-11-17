@@ -25,7 +25,9 @@ Todo el arte del juego está en `sprites/` al tamaño final (1 pixel de arte = 4
 | `sprites/objetos/clavo.png` | Clavo disparado | Generado por código |
 | `sprites/interiores/medicina/` | Pasillo largo y 17 cuartos de la Facultad de Medicina (versión corregida) | Arte del equipo, recortado y escalado con `tools/arte/medicina_interiores.py` |
 | `sprites/ui/puerta_1..4.png` | Puerta de la transición (4 cuadros) | Arte del equipo |
-| `sprites/enemigos/maniqui/up_*.png` | Maniquí de espaldas | Arte del equipo |
+| `sprites/enemigos/maniqui/*.png` | Maniquí con ojos rojos en 4 direcciones | Arte del equipo (`tools/arte/maniqui_ojos_rojos.py`) |
+| `sprites/interiores/medicina/pasillo_oeste.png` | Ala oeste: un tramo del pasillo girado | Arte del equipo (`tools/arte/ala_oeste_e_iconos.py`) |
+| `sprites/objetos/iconos/` | Íconos de la mochila (llave y documento de magicart99; vendas, cizalla y brillo por código) | `tools/arte/ala_oeste_e_iconos.py` |
 | `sprites/luces/` | Texturas de luz radial y cono de linterna | Generadas por código (`tools/arte/preparar_assets.py`) |
 
 ## Sonido
@@ -39,6 +41,6 @@ Tomado del repositorio `magicart99/Turno-Nocturno`. Licencias y fuentes original
 | `audio/ambiente/lost.ogg`, `ambient_horror.ogg` | Música y tensión ambiental (OpenGameArt) | CC0 |
 | `audio/efectos/door_open.wav`, `puerta.ogg` | Puertas (OpenGameArt) | CC0 |
 | `audio/efectos/disparo_clavos.wav`, `clavo_impacto.wav`, `recarga.wav`, `sin_clavos.wav`, `golpe.wav`, `maniqui_cae.wav` | Sonidos del combate | Sintetizados por código (`tools/arte/pistola_y_maniqui.py`) |
-| `audio/efectos/puerta_rechina.wav` | Rechinido de la puerta en la transición | Sintetizado por código (`tools/arte/medicina_interiores.py`) |
+| `audio/efectos/puerta_rechina.wav` | Rechinido de la puerta en la transición | Generado por el equipo con poppop.ai, recortado (de 0.95 a 3.1 s) |
 | `audio/efectos/paso_metal_*.wav` y `audio/voces/` | Pasos en la escalera metálica y voces de murmullo | Sintetizados por código (`tools/arte/`) |
 | `audio/efectos/radio_estatica.wav` y demás `.wav` | Sintetizados por el equipo de magicart99 | Originales |

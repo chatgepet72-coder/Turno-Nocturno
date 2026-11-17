@@ -41,10 +41,14 @@ var _audio_arma: AudioStreamPlayer2D
 var _espera_disparo: float = 0.0
 var _invulnerable: float = 0.0
 var _empuje: Vector2 = Vector2.ZERO
+var _latido: AudioStreamPlayer
+var _estatica: AudioStreamPlayer
+var _espera_latido: float = 0.0
 
 
 func _ready() -> void:
 	vida = GameState.vida_lalo
+	add_to_group("jugador")
 	collision_layer = 2
 	collision_mask = 1
 	motion_mode = CharacterBody2D.MOTION_MODE_FLOATING
@@ -74,7 +78,8 @@ func _physics_process(delta: float) -> void:
 	_sonar_pasos(global_position.distance_to(antes))
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	_tension(delta)
 	_linterna.rotation = (get_global_mouse_position() - _linterna.global_position).angle()
 
 
@@ -122,6 +127,29 @@ func recibir_dano(cantidad: int, desde: Vector2) -> void:
 	if vida <= 0:
 		controlable = false
 		murio.emit()
+
+
+func curar(cantidad: int) -> void:
+	vida = mini(vida + cantidad, vida_maxima)
+	GameState.vida_lalo = vida
+	vida_cambio.emit(vida)
+
+
+## Tensión: si hay un enemigo despierto cerca, se oye el corazón de Lalo y la estática del radio sube.
+func _tension(delta: float) -> void:
+	var cerca: float = 99999.0
+	for e in get_tree().get_nodes_in_group("enemigos"):
+		if e.has_method("es_amenaza") and e.es_amenaza():
+			cerca = minf(cerca, global_position.distance_to((e as Node2D).global_position))
+	var t: float = clampf(1.0 - (cerca - 60.0) / 280.0, 0.0, 1.0)   # 0 lejos, 1 encima
+	_estatica.volume_db = lerpf(-60.0, -16.0, t)
+	if t <= 0.0:
+		return
+	_espera_latido -= delta
+	if _espera_latido <= 0.0:
+		_espera_latido = lerpf(1.0, 0.38, t)
+		_latido.volume_db = lerpf(-16.0, -1.0, t)
+		_latido.play()
 
 
 func _sonar_arma(nombre: String) -> void:
@@ -304,6 +332,17 @@ func _crear_audio() -> void:
 	_audio_linterna.stream = load("res://assets/audio/efectos/linterna.wav") as AudioStream
 	_audio_linterna.volume_db = -6.0
 	add_child(_audio_linterna)
+	_latido = AudioStreamPlayer.new()
+	_latido.stream = load("res://assets/audio/efectos/latido.wav") as AudioStream
+	add_child(_latido)
+	_estatica = AudioStreamPlayer.new()
+	var est: AudioStreamWAV = load("res://assets/audio/efectos/radio_estatica.wav") as AudioStreamWAV
+	est.loop_mode = AudioStreamWAV.LOOP_FORWARD
+	est.loop_end = est.data.size() >> 1   # muestras (16 bits, mono)
+	_estatica.stream = est
+	_estatica.volume_db = -60.0
+	add_child(_estatica)
+	_estatica.play()
 	_audio_arma = AudioStreamPlayer2D.new()
 	_audio_arma.volume_db = -3.0
 	add_child(_audio_arma)

@@ -1,0 +1,12 @@
+{
+	"vendas": {"nombre": "Vendas", "icono": "vendas", "descripcion": "Para curarse. Recuperan 1 de salud.", "usable": true},
+	"llave_archivo": {"nombre": "Llave del Archivo", "icono": "llave", "descripcion": "Una llave con una etiqueta de cartón: ARCHIVO."},
+	"llave_maquinas": {"nombre": "Llave del cuarto de máquinas", "icono": "llave", "descripcion": "Llave pesada con una etiqueta: MÁQUINAS. Tiene tierra negra en los dientes."},
+	"cizalla": {"nombre": "Cizalla", "icono": "cizalla", "descripcion": "Unas tijeras grandes para cortar cadenas."},
+	"nota_dia_12": {"nombre": "Nota del maestro de obra", "icono": "documento", "documento": true,
+		"texto": "Día 12.\nEncontramos un muro que no sale en los planos, debajo del sótano del Central.\nLadrillo y cal, muy viejo.\nMañana lo tiramos.\n\n— Maestro de obra"},
+	"expediente_salvador": {"nombre": "Expediente de personal", "icono": "documento", "documento": true,
+		"texto": "Salvador Ramírez Ortega (\"Don Chava\").\nVelador nocturno. Ingreso: 1996.\n\nObservaciones: Puntual. Nunca ha faltado a un turno.\nSolicitó cambio de turno en 2019. Negado.\n\nAl reverso, escrito a mano con lápiz: \"Lupita - 55 1234 5678\"."},
+	"recado_enfermeria": {"nombre": "Recado de la enfermera", "icono": "documento", "documento": true,
+		"texto": "Si alguien lee esto: no se queden en las camillas.\nLos muñecos de la sala de simulación\nno amanecen donde los dejamos."}
+}

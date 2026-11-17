@@ -1,18 +1,88 @@
 {
 	"llegada": [
-		{"quien": "Lalo", "voz": "lalo_angustia", "texto": "¿Don Chava? ¿Está aquí?"},
-		{"quien": "Lalo", "voz": "lalo_angustia", "texto": "Huele a alcohol... como él dijo."}
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "¿Don Chava? ¿Está aquí?"
+		},
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "Huele a alcohol... como él dijo."
+		}
 	],
 	"simulacion": [
-		{"quien": "Lalo", "voz": "lalo_angustia", "texto": "Camillas... aquí es donde estaba."},
-		{"quien": "Lalo", "voz": "lalo_angustia", "texto": "¿Don Chava? ...Son puros muñecos."}
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "Camillas... aquí es donde estaba."
+		},
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "¿Don Chava? ...Son puros muñecos."
+		}
 	],
 	"escaleras": [
-		{"quien": "Lalo", "voz": "lalo_angustia", "texto": "La reja de la escalera está cerrada con cadena..."},
-		{"quien": "Lalo", "voz": "lalo_angustia", "texto": "Tengo que encontrar otra forma de subir. (Planta alta: próximamente)"}
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "La reja de la escalera está cerrada con una cadena gruesa..."
+		},
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "Necesito algo para cortarla."
+		}
 	],
 	"caseta": [
-		{"quien": "Lalo", "voz": "lalo_calmado", "texto": "Una caseta como la nuestra... con lámpara y radio."},
-		{"quien": "Lalo", "voz": "lalo_calmado", "texto": "Aquí puedo descansar un momento."}
+		{
+			"quien": "Lalo",
+			"voz": "lalo_calmado",
+			"texto": "Una caseta como la nuestra... con lámpara y radio."
+		},
+		{
+			"quien": "Lalo",
+			"voz": "lalo_calmado",
+			"texto": "Aquí puedo descansar un momento."
+		}
+	],
+	"escaleras_cizalla": [
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "Con esto... ¡listo! La cadena cedió."
+		},
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "Arriba está todo oscuro. (Planta alta: próximamente)"
+		}
+	],
+	"escaleras_abiertas": [
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "La reja ya está abierta. (Planta alta: próximamente)"
+		}
+	],
+	"consultorio": [
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "Un consultorio... la camilla está manchada."
+		},
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "Hay algo brillando en el escritorio."
+		}
+	],
+	"pasillo_oeste": [
+		{
+			"quien": "Lalo",
+			"voz": "lalo_angustia",
+			"texto": "Este pasillo da vuelta... no me acordaba de esta parte."
+		}
 	]
 }

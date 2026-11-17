@@ -8,14 +8,40 @@ const ARTE: String = "res://assets/sprites/interiores/medicina/"
 const NOCHE: Color = Color(0.015, 0.018, 0.022)   # casi negro: sin linterna casi no se ve nada
 const ARRIBA: Array[String] = ["salon_101", "salon_102", "consultorio", "caseta", "laboratorio", "salon_104", "banos_h"]
 const ABAJO: Array[String] = ["simulacion", "escaleras", "recepcion", "salon_105", "archivo", "bodega", "maquinas"]
-const PUNTA_IZQUIERDA: String = "enfermeria"
 const PUNTA_DERECHA: String = "entrada"
+## Ala oeste: sale de la punta izquierda del pasillo principal (el pasillo da vuelta). Enfermería al fondo.
+const OESTE_IZQUIERDA: Array[String] = ["cerrada_profesores", "banos_m", "cerrada_cuarto_oscuro"]
+const OESTE_DERECHA: Array[String] = ["cerrada_aula_106", "cerrada_intendencia", "cerrada_oficina"]
+const OESTE_FONDO: String = "enfermeria"
+## Puertas con llave (se abren una vez y quedan abiertas) o que nunca abren (llave vacía).
+const CERRADAS: Dictionary = {
+	"archivo": "llave_archivo", "maquinas": "llave_maquinas", "bodega": "",
+	"cerrada_profesores": "", "cerrada_cuarto_oscuro": "", "cerrada_aula_106": "",
+	"cerrada_intendencia": "", "cerrada_oficina": "",
+}
+## Objetos en el piso: [id único, objeto, cantidad, cuarto, posición dentro del cuarto (0..1)]
+const OBJETOS_MAPA: Array = [
+	["vendas_enfermeria", "vendas", 1, "enfermeria", Vector2(0.5, 0.55)],
+	["recado_enfermeria", "recado_enfermeria", 1, "enfermeria", Vector2(0.32, 0.72)],
+	["llave_archivo", "llave_archivo", 1, "consultorio", Vector2(0.62, 0.42)],
+	["clavos_102", "clavos", 10, "salon_102", Vector2(0.35, 0.6)],
+	["nota_dia_12", "nota_dia_12", 1, "recepcion", Vector2(0.62, 0.55)],
+	["expediente_salvador", "expediente_salvador", 1, "archivo", Vector2(0.55, 0.55)],
+	["llave_maquinas", "llave_maquinas", 1, "archivo", Vector2(0.3, 0.68)],
+	["clavos_archivo", "clavos", 10, "archivo", Vector2(0.72, 0.45)],
+	["cizalla", "cizalla", 1, "maquinas", Vector2(0.62, 0.6)],
+	["vendas_maquinas", "vendas", 1, "maquinas", Vector2(0.3, 0.5)],
+	["vendas_lab", "vendas", 1, "laboratorio", Vector2(0.5, 0.5)],
+	["clavos_oeste", "clavos", 10, "pasillo_oeste", Vector2(0.55, 0.3)],
+]
 const NOMBRES: Dictionary = {
 	"pasillo": "Pasillo principal", "salon_101": "Salón 101", "salon_102": "Salón 102", "consultorio": "Consultorio",
 	"caseta": "Caseta de vigilancia", "laboratorio": "Laboratorio", "salon_104": "Salón 104", "banos_h": "Baños",
 	"simulacion": "Sala de simulación", "escaleras": "Escaleras", "recepcion": "Recepción y sala de espera",
 	"salon_105": "Salón 105", "archivo": "Archivo", "bodega": "Bodega de limpieza", "maquinas": "Cuarto de máquinas",
-	"enfermeria": "Enfermería", "entrada": "Entrada de Medicina",
+	"enfermeria": "Enfermería", "entrada": "Entrada de Medicina", "pasillo_oeste": "Pasillo del ala oeste",
+	"banos_m": "Baños de mujeres", "cerrada_profesores": "Sala de profesores", "cerrada_cuarto_oscuro": "Cuarto oscuro",
+	"cerrada_aula_106": "Aula 106", "cerrada_intendencia": "Intendencia", "cerrada_oficina": "Oficina",
 }
 
 var lalo: Lalo
@@ -42,9 +68,10 @@ func _ready() -> void:
 
 	_armar_pasillo()
 	var todos: Array[String] = []
-	todos.assign(ARRIBA + ABAJO + [PUNTA_IZQUIERDA, PUNTA_DERECHA])
+	todos.assign(ARRIBA + ABAJO + [OESTE_FONDO, PUNTA_DERECHA, "banos_m"])
 	for i in todos.size():
 		_armar_cuarto(todos[i], Vector2((i % 5) * 1000, 1000 + floori(i / 5.0) * 900))
+	_armar_ala_oeste(Vector2(5500, 0))
 	lalo = Lalo.new()
 	lalo.superficies_duras.append(Rect2(-100000, -100000, 200000, 200000))   # todo es piso duro
 	_mundo.add_child(lalo)
@@ -133,8 +160,13 @@ func _conectar_puertas() -> void:
 		_puerta(Rect2(x - 40, abajo - 44, 80, 44), "entrar", ABAJO[i], _llegada(ABAJO[i], false))
 		_puerta_cuarto(ABAJO[i], Vector2(x, abajo - 8))
 	var medio: float = (arriba + abajo) / 2.0
-	_puerta(Rect2(30, medio - 60, 60, 120), "entrar", PUNTA_IZQUIERDA, _llegada(PUNTA_IZQUIERDA, false))
-	_puerta_cuarto(PUNTA_IZQUIERDA, Vector2(100, medio + 30))
+	# Punta izquierda: el pasillo da vuelta hacia el ala oeste
+	var o: Rect2 = _zonas["pasillo_oeste"]
+	_puerta(Rect2(30, medio - 60, 60, 120), "ir", "pasillo_oeste", Vector2(o.get_center().x, o.end.y - 90))
+	var vuelta := _interactuable(Rect2(o.position.x + o.size.x * 0.27, o.end.y - 80, o.size.x * 0.51, 50),
+		"ir: Pasillo principal")
+	vuelta.usado.connect(_cruzar.bind("pasillo", Vector2(100, medio + 30)))
+	_conectar_ala_oeste()
 	_puerta(Rect2(tam.size.x - 90, medio - 60, 60, 120), "entrar", PUNTA_DERECHA, _llegada(PUNTA_DERECHA, true))
 	_puerta_cuarto(PUNTA_DERECHA, Vector2(tam.size.x - 100, medio + 30), true)
 	# La entrada tiene además la puerta de vidrio que da al patio
@@ -142,10 +174,31 @@ func _conectar_puertas() -> void:
 	salida.usado.connect(_salir_al_patio)
 
 
-## Puerta en el pasillo que lleva a un cuarto.
+## Puerta en el pasillo que lleva a un cuarto. Si está cerrada, revisa la llave.
 func _puerta(zona: Rect2, texto: String, destino: String, llegada: Vector2) -> void:
 	var i := _interactuable(zona, texto + ": " + NOMBRES[destino])
-	i.usado.connect(_cruzar.bind(destino, llegada))
+	i.usado.connect(_intentar_puerta.bind(destino, llegada))
+
+
+func _intentar_puerta(destino: String, llegada: Vector2) -> void:
+	if CERRADAS.has(destino) and destino not in GameState.puertas_abiertas:
+		var llave: String = CERRADAS[destino]
+		if llave == "":
+			_decir_lalo(["No abre. Algo la atora desde adentro.", "Está atascada.", "Cerrada. Ni se mueve."].pick_random())
+			return
+		if not GameState.tiene(llave):
+			_decir_lalo("Está cerrada con llave.")
+			return
+		GameState.quitar(llave)
+		GameState.puertas_abiertas.append(destino)
+		hud.avisar("Usaste: " + GameState.objetos[llave]["nombre"])
+	if _zonas.has(destino):
+		_cruzar(destino, llegada)
+
+
+func _decir_lalo(texto: String) -> void:
+	if not Dialogos.activo:
+		Dialogos.decir([{"quien": "Lalo", "voz": "lalo_angustia", "texto": texto}])
 
 
 ## Puerta dentro del cuarto que regresa al pasillo. En la Entrada, la del pasillo es la de arriba.
@@ -202,8 +255,96 @@ func _salir_al_patio() -> void:
 	_transicion.cruzar_a_escena("entrada", "puerta_medicina")
 
 
+# ---------- Ala oeste ----------
+func _armar_ala_oeste(pos: Vector2) -> void:
+	var d: Dictionary = _datos["pasillo_oeste"]
+	var tam := Vector2(d["tam"][0], d["tam"][1])
+	_fondo("pasillo_oeste", pos)
+	_zonas["pasillo_oeste"] = Rect2(pos, tam)
+	var izq: float = tam.x * d["piso_x"][0]
+	var der: float = tam.x * d["piso_x"][1]
+	var muros := StaticBody2D.new()
+	_forma(muros, Rect2(pos.x, pos.y, izq, tam.y))
+	_forma(muros, Rect2(pos.x + der, pos.y, tam.x - der, tam.y))
+	_forma(muros, Rect2(pos.x, pos.y, tam.x, 30))
+	_forma(muros, Rect2(pos.x, pos.y + tam.y - 30, tam.x, 30))
+	add_child(muros)
+	var l := PointLight2D.new()   # una sola lámpara, la mitad del tiempo apagada
+	l.texture = load("res://assets/sprites/luces/luz_radial.png") as Texture2D
+	l.texture_scale = 1.4
+	l.energy = 0.35
+	l.color = Color(0.75, 1.0, 0.85)
+	l.position = pos + tam / 2.0
+	add_child(l)
+	_parpadear(l)
+
+
+func _conectar_ala_oeste() -> void:
+	var d: Dictionary = _datos["pasillo_oeste"]
+	var o: Rect2 = _zonas["pasillo_oeste"]
+	var izq: float = o.position.x + o.size.x * d["piso_x"][0]
+	var der: float = o.position.x + o.size.x * d["piso_x"][1]
+	for i in 3:
+		var y: float = o.position.y + o.size.y * d["puertas_y"][i]
+		var id: String = OESTE_IZQUIERDA[i]
+		if _zonas.has(id):   # Baños M: el único cuarto que abre en esta ala
+			_puerta(Rect2(izq, y - 40, 44, 80), "entrar", id, _llegada(id, false))
+			_puerta_cuarto(id, Vector2(izq + 40, y + 24))
+		else:
+			_puerta(Rect2(izq, y - 40, 44, 80), "entrar", id, Vector2.ZERO)
+		_puerta(Rect2(der - 44, y - 40, 44, 80), "entrar", OESTE_DERECHA[i], Vector2.ZERO)
+	_puerta(Rect2(izq, o.position.y + 30, der - izq, 50), "entrar", OESTE_FONDO, _llegada(OESTE_FONDO, false))
+	_puerta_cuarto(OESTE_FONDO, Vector2(o.get_center().x, o.position.y + 130))
+
+
+# ---------- Objetos para recoger ----------
+func _armar_objetos() -> void:
+	for o in OBJETOS_MAPA:
+		if o[0] in GameState.recogidos:
+			continue
+		var z: Rect2 = _zonas[o[3]]
+		_recogible(o[0], o[1], o[2], z.position + z.size * (o[4] as Vector2))
+
+
+## Un objeto en el piso: un brillo que se ve aunque esté oscuro, y "E: recoger".
+func _recogible(id_unico: String, objeto: String, cantidad: int, pos: Vector2) -> void:
+	var brillo := Sprite2D.new()
+	brillo.texture = load("res://assets/sprites/objetos/iconos/brillo.png") as Texture2D
+	var material := CanvasItemMaterial.new()
+	material.light_mode = CanvasItemMaterial.LIGHT_MODE_UNSHADED
+	brillo.material = material
+	brillo.position = pos
+	add_child(brillo)
+	var t := brillo.create_tween().set_loops()
+	t.tween_property(brillo, "modulate:a", 0.15, 0.7)
+	t.tween_property(brillo, "modulate:a", 1.0, 0.7)
+	var zona := _interactuable(Rect2(pos - Vector2(24, 24), Vector2(48, 48)), "recoger")
+	zona.usado.connect(_recoger.bind(id_unico, objeto, cantidad, brillo, zona))
+
+
+func _recoger(id_unico: String, objeto: String, cantidad: int, brillo: Sprite2D, zona: Interactuable) -> void:
+	if objeto == "clavos":
+		GameState.agregar_clavos(cantidad)
+		hud.avisar("Recogiste: caja de clavos (+%d)" % cantidad)
+	elif not GameState.agregar(objeto, cantidad):
+		hud.avisar("La mochila está llena")
+		return
+	elif GameState.es_documento(objeto):
+		hud.menu.leer(objeto)
+	else:
+		hud.avisar("Recogiste: " + GameState.objetos[objeto]["nombre"])
+	GameState.recogidos.append(id_unico)
+	var sonido := AudioStreamPlayer.new()
+	sonido.stream = load("res://assets/audio/efectos/recoger.wav") as AudioStream
+	add_child(sonido)
+	sonido.play()
+	brillo.queue_free()
+	zona.queue_free()
+
+
 # ---------- Lo que hay dentro ----------
 func _armar_extras() -> void:
+	_armar_objetos()
 	# Caseta: lámpara de escritorio encendida y el radio para guardar
 	var c: Rect2 = _zonas["caseta"]
 	var lampara := PointLight2D.new()
@@ -220,12 +361,28 @@ func _armar_extras() -> void:
 	var e: Rect2 = _zonas["escaleras"]
 	var subir := _interactuable(Rect2(e.position.x + e.size.x * 0.35, e.position.y + e.size.y * 0.25,
 		e.size.x * 0.3, e.size.y * 0.3), "subir")
-	subir.usado.connect(func() -> void: Dialogos.decir(_dialogos["escaleras"]))
+	subir.usado.connect(_usar_escaleras)
 	# Maniquíes: uno en el pasillo y uno entre las camillas de la sala de simulación
 	var p: Rect2 = _zonas["pasillo"]
 	_maniqui("medicina_pasillo", p.position + Vector2(p.size.x * 0.3, p.size.y * 0.62))
 	var s: Rect2 = _zonas["simulacion"]
 	_maniqui("medicina_simulacion", s.position + Vector2(s.size.x * 0.5, s.size.y * 0.7))
+	var w: Rect2 = _zonas["pasillo_oeste"]
+	_maniqui("medicina_oeste", w.position + Vector2(w.size.x * 0.5, w.size.y * 0.45))
+
+
+## La reja de la escalera: cerrada con cadena hasta tener la cizalla del cuarto de máquinas.
+func _usar_escaleras() -> void:
+	if Dialogos.activo:
+		return
+	if "escaleras" in GameState.puertas_abiertas:
+		Dialogos.decir(_dialogos["escaleras_abiertas"])
+	elif GameState.tiene("cizalla"):
+		GameState.quitar("cizalla")
+		GameState.puertas_abiertas.append("escaleras")
+		Dialogos.decir(_dialogos["escaleras_cizalla"])
+	else:
+		Dialogos.decir(_dialogos["escaleras"])
 
 
 func _maniqui(id: String, pos: Vector2) -> void:

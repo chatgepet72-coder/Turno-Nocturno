@@ -11,7 +11,7 @@ enum Estado { QUIETO, PERSIGUIENDO, DERRIBADO }
 const RUTA: String = "res://assets/sprites/enemigos/maniqui/"
 
 @export var vida: int = 4
-@export var velocidad: float = 36.0
+@export var velocidad: float = 92.0   # Lalo camina a 80 y corre a 140: solo corriendo te escapas
 @export var radio_despertar: float = 200.0
 @export var dano: int = 1
 
@@ -26,17 +26,24 @@ var _atorado: float = 0.0
 var _rodeo: float = 0.0
 var _dir_rodeo: Vector2 = Vector2.ZERO
 var _cuerpo_dano: Area2D
+var _dir_vista: String = "down"
+var _embestida: float = 0.0
+var _espera_embestida: float = 1.0
+var _paso: float = 0.0
+var _audio_pasos: AudioStreamPlayer2D
+var _pasos: Array[AudioStream] = []
 var _audio: AudioStreamPlayer2D
 
 
 func _ready() -> void:
 	collision_layer = 4          # enemigos
+	add_to_group("enemigos")
 	collision_mask = 1
 	motion_mode = CharacterBody2D.MOTION_MODE_FLOATING
 	var frames := SpriteFrames.new()
 	for dir in ["down", "left", "right", "up"]:
 		frames.add_animation("caminar_" + dir)
-		frames.set_animation_speed("caminar_" + dir, 4.5)
+		frames.set_animation_speed("caminar_" + dir, 7.0)
 		for i in range(1, 5):
 			frames.add_frame("caminar_" + dir, load(RUTA + "%s_%d.png" % [dir, i]) as Texture2D)
 	_sprite = AnimatedSprite2D.new()
@@ -69,6 +76,12 @@ func _ready() -> void:
 	add_child(_cuerpo_dano)
 	_audio = AudioStreamPlayer2D.new()
 	add_child(_audio)
+	_audio_pasos = AudioStreamPlayer2D.new()   # pasos pesados: se oyen antes de verlo
+	_audio_pasos.volume_db = 2.0
+	_audio_pasos.max_distance = 520.0
+	add_child(_audio_pasos)
+	for i in range(4):
+		_pasos.append(load("res://assets/audio/pasos/footstep_concrete_00%d.ogg" % i) as AudioStream)
 
 
 func _physics_process(delta: float) -> void:
@@ -81,14 +94,25 @@ func _physics_process(delta: float) -> void:
 				_despertar()
 		Estado.PERSIGUIENDO:
 			_espera_golpe = maxf(0.0, _espera_golpe - delta)
-			if hacia.length() < 28.0:
+			_espera_embestida = maxf(0.0, _espera_embestida - delta)
+			if hacia.length() < 34.0:
 				velocity = Vector2.ZERO
 				if _espera_golpe == 0.0:
-					_espera_golpe = 1.3
+					_espera_golpe = 0.75
 					objetivo.recibir_dano(dano, global_position)
+			elif _embestida > 0.0:
+				# Embestida: se lanza en línea recta hacia donde estaba Lalo
+				_embestida -= delta
+				velocity = hacia.normalized() * velocidad * 2.4
+				move_and_slide()
+			elif hacia.length() < 110.0 and _espera_embestida == 0.0:
+				_embestida = 0.28
+				_espera_embestida = 2.2
+				_sonar("res://assets/audio/efectos/golpe.wav")
 			else:
 				_caminar_hacia(hacia, delta)
-			_animar(velocity if velocity != Vector2.ZERO else hacia)
+			_animar(hacia)
+			_sonar_pasos(delta)
 
 
 ## Camina directo hacia Lalo; si algo lo detiene (la fuente, una banca), rodea el obstáculo un momento.
@@ -134,14 +158,39 @@ func _despertar() -> void:
 	_sprite.play("caminar_down")
 
 
+## Siempre mira hacia Lalo (no hacia donde se desvía al rodear algo). Solo cambia de dirección
+## cuando la diferencia es clara, para que no parpadee entre "de lado" y "de frente".
 func _animar(hacia: Vector2) -> void:
-	var dir: String
-	if absf(hacia.x) > absf(hacia.y):
+	var horizontal: bool = _dir_vista == "left" or _dir_vista == "right"
+	var margen: float = 1.3
+	var dir: String = _dir_vista
+	if horizontal and absf(hacia.y) > absf(hacia.x) * margen:
+		dir = "down" if hacia.y > 0.0 else "up"
+	elif not horizontal and absf(hacia.x) > absf(hacia.y) * margen:
+		dir = "right" if hacia.x > 0.0 else "left"
+	elif horizontal:
 		dir = "right" if hacia.x > 0.0 else "left"
 	else:
 		dir = "down" if hacia.y > 0.0 else "up"
+	_dir_vista = dir
 	if _sprite.animation != "caminar_" + dir or not _sprite.is_playing():
 		_sprite.play("caminar_" + dir)
+
+
+func _sonar_pasos(delta: float) -> void:
+	if velocity == Vector2.ZERO:
+		return
+	_paso -= delta
+	if _paso <= 0.0:
+		_paso = 0.42 if _embestida <= 0.0 else 0.15
+		_audio_pasos.stream = _pasos.pick_random()
+		_audio_pasos.pitch_scale = randf_range(0.55, 0.7)
+		_audio_pasos.play()
+
+
+## Para la tensión de Lalo: solo cuenta si está despierto.
+func es_amenaza() -> bool:
+	return estado == Estado.PERSIGUIENDO
 
 
 func _derribar() -> void:

@@ -48,7 +48,10 @@ Objetivo: probar si el juego da miedo antes de hacer el resto.
 - [x] Transición de puertas al estilo Resident Evil (rechinido y pasos)
 - [ ] Planta alta de Medicina (bodega de esqueletos, anfiteatro, morgue)
 - [ ] Esqueletos (se rearman)
-- [ ] Inventario completo con mochila de 8 espacios
+- [x] Mochila de 8 espacios, objetos para recoger, documentos y menú de pausa con controles
+- [x] Puertas con llave y puertas que no abren; cadena de puzzles (Consultorio → Archivo → Máquinas → Escaleras)
+- [x] Ala oeste: el pasillo da vuelta
+- [x] Tensión: latido y estática del radio cuando hay un enemigo cerca; maniquí más rápido con embestida
 - [ ] Documentos y libreta de Lalo
 - [ ] Puzzle: completar el esqueleto de la vitrina
 - [ ] Jefe: El Donante
