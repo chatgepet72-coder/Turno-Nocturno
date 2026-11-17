@@ -17,11 +17,12 @@ func _ready() -> void:
 	s.texture = load("res://assets/sprites/objetos/clavo.png") as Texture2D
 	add_child(s)
 	var forma := CircleShape2D.new()
-	forma.radius = 3.0
+	forma.radius = 4.0
 	var cs := CollisionShape2D.new()
 	cs.shape = forma
 	add_child(cs)
 	body_entered.connect(_al_chocar)
+	area_entered.connect(_al_tocar_area)
 
 
 func _physics_process(delta: float) -> void:
@@ -35,3 +36,11 @@ func _al_chocar(cuerpo: Node2D) -> void:
 	if cuerpo.has_method("recibir_clavo"):
 		cuerpo.recibir_clavo(direccion)
 	queue_free()
+
+
+## Zonas que reciben daño (el cuerpo completo de los enemigos).
+func _al_tocar_area(area: Area2D) -> void:
+	var dueno: Node = area.get_parent()
+	if dueno != null and dueno.has_method("recibir_clavo"):
+		dueno.recibir_clavo(direccion)
+		queue_free()

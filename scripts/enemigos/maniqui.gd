@@ -22,6 +22,10 @@ var _sprite: AnimatedSprite2D
 var _quieto: Sprite2D
 var _colision: CollisionShape2D
 var _espera_golpe: float = 0.0
+var _atorado: float = 0.0
+var _rodeo: float = 0.0
+var _dir_rodeo: Vector2 = Vector2.ZERO
+var _cuerpo_dano: Area2D
 var _audio: AudioStreamPlayer2D
 
 
@@ -51,6 +55,18 @@ func _ready() -> void:
 	_colision.shape = forma
 	_colision.position = Vector2(0.0, -5.0)
 	add_child(_colision)
+	# Zona que recibe los clavos: todo el cuerpo, de los pies a la cabeza (la colisión de arriba es solo los pies)
+	_cuerpo_dano = Area2D.new()
+	_cuerpo_dano.collision_layer = 4
+	_cuerpo_dano.collision_mask = 0
+	_cuerpo_dano.monitoring = false
+	var forma_cuerpo := RectangleShape2D.new()
+	forma_cuerpo.size = Vector2(30.0, 66.0)
+	var cs_cuerpo := CollisionShape2D.new()
+	cs_cuerpo.shape = forma_cuerpo
+	cs_cuerpo.position = Vector2(0.0, -33.0)
+	_cuerpo_dano.add_child(cs_cuerpo)
+	add_child(_cuerpo_dano)
 	_audio = AudioStreamPlayer2D.new()
 	add_child(_audio)
 
@@ -71,9 +87,29 @@ func _physics_process(delta: float) -> void:
 					_espera_golpe = 1.3
 					objetivo.recibir_dano(dano, global_position)
 			else:
-				velocity = hacia.normalized() * velocidad
-				move_and_slide()
-			_animar(hacia)
+				_caminar_hacia(hacia, delta)
+			_animar(velocity if velocity != Vector2.ZERO else hacia)
+
+
+## Camina directo hacia Lalo; si algo lo detiene (la fuente, una banca), rodea el obstáculo un momento.
+func _caminar_hacia(hacia: Vector2, delta: float) -> void:
+	var directo: Vector2 = hacia.normalized()
+	if _rodeo > 0.0:
+		_rodeo -= delta
+		velocity = (_dir_rodeo * 0.8 + directo * 0.2).normalized() * velocidad
+	else:
+		velocity = directo * velocidad
+	var antes: Vector2 = global_position
+	move_and_slide()
+	if global_position.distance_to(antes) < velocidad * delta * 0.3:
+		_atorado += delta
+	else:
+		_atorado = 0.0
+	if _atorado > 0.35 and _rodeo <= 0.0:
+		_atorado = 0.0
+		_rodeo = 0.7
+		var lado: Vector2 = directo.orthogonal()
+		_dir_rodeo = lado if randf() < 0.5 else -lado
 
 
 func recibir_clavo(direccion: Vector2) -> void:
@@ -111,6 +147,7 @@ func _animar(hacia: Vector2) -> void:
 func _derribar() -> void:
 	estado = Estado.DERRIBADO
 	_colision.set_deferred("disabled", true)
+	_cuerpo_dano.set_deferred("monitorable", false)
 	_quieto.visible = false
 	_sprite.visible = true
 	_sprite.stop()
