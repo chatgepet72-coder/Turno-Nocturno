@@ -31,8 +31,9 @@ Objetivo: probar si el juego da miedo antes de hacer el resto.
 - [x] Don Chava sentado en la caseta
 
 - [ ] Mapa del prólogo: caseta, estacionamiento, obra y sótano del Edificio Central
-- [ ] Sistema de diálogos y mensajes de radio
-- [ ] Plática por radio con Don Chava
+- [x] Sistema de diálogos y mensajes de radio (con voces de murmullo y efecto de radio)
+- [x] Escena inicial: plática en la caseta, Don Chava se levanta y sale a su rondín
+- [x] Plática por radio con Don Chava
 - [ ] El sótano: escalera derrumbada y linterna de Don Chava
 - [ ] Llamada al Comandante y reja cerrada
 - [ ] Mapa de rondines (pantalla del mapa)

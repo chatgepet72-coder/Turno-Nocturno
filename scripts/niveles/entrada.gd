@@ -74,8 +74,17 @@ const BARRERAS: Array[Rect2] = [
 	Rect2(1640, 330, 320, 16),    # pasto al norte de la obra (arriba del Edificio Central)
 ]
 
+## Se emite cuando Lalo sale de la caseta (lo usa el prólogo).
+signal salio_caseta
+
+var lalo: Lalo
+var chava: DonChava
+var puerta: Puerta
+var ayuda: Label
+
 var _mundo: Node2D
 var _techo_caseta: Node2D
+var _objetivo: Label
 
 
 func _ready() -> void:
@@ -103,6 +112,9 @@ func _ready() -> void:
 	_crear_lalo()
 	_crear_hud()
 	_crear_ambiente()
+	var prologo := Prologo.new()
+	add_child(prologo)
+	prologo.iniciar(self)
 
 
 # ---------- Construcción ----------
@@ -204,22 +216,13 @@ func _armar_caseta(suelo: Node2D) -> void:
 	_objeto("caseta/silla.png", Vector2(794, 880), Vector2.ZERO)
 	_objeto("caseta/casillero.png", Vector2(866, 870), Vector2(40, 22))
 
-	var chava := StaticBody2D.new()   # Don Chava sentado junto al escritorio, respirando
+	_objeto("caseta/silla.png", Vector2(726, 938), Vector2.ZERO)   # la silla de Lalo
+	chava = DonChava.new()   # sentado junto al escritorio; el prólogo lo levanta y lo manda a su rondín
 	chava.position = Vector2(812, 950)
-	var frames := SpriteFrames.new()
-	frames.set_animation_speed("default", 1.6)
-	for i in [1, 2]:
-		frames.add_frame("default", load("res://assets/sprites/personajes/don_chava/sentado/sentado_%d.png" % i) as Texture2D)
-	var sprite := AnimatedSprite2D.new()
-	sprite.sprite_frames = frames
-	sprite.centered = false
-	sprite.offset = Vector2(-20, -54)
-	sprite.play()
-	chava.add_child(sprite)
-	_forma(chava, Rect2(-15, -14, 30, 14))
 	_mundo.add_child(chava)
+	_limites(chava.camara)
 
-	var puerta := Puerta.new()   # se abre y se cierra con E; Lalo empieza con ella cerrada
+	puerta = Puerta.new()   # se abre y se cierra con E; Lalo empieza con ella cerrada
 	suelo.add_child(puerta)
 	puerta.configurar(PUERTA_CASETA, Rect2(764, 812, 80, 96),
 		load(ESC + "caseta/puerta_cerrada.png") as Texture2D, load(ESC + "caseta/puerta_abierta.png") as Texture2D)
@@ -242,6 +245,7 @@ func _al_entrar_caseta(cuerpo: Node2D) -> void:
 func _al_salir_caseta(cuerpo: Node2D) -> void:
 	if cuerpo is Lalo:
 		_techo(1.0)
+		salio_caseta.emit()
 
 
 func _techo(alfa: float) -> void:
@@ -281,16 +285,30 @@ func _luz(tex: Texture2D, pos: Vector2, escala: float, energia: float, color: Co
 
 
 func _crear_lalo() -> void:
-	var lalo := Lalo.new()
-	lalo.position = Vector2(730, 1000)
+	lalo = Lalo.new()
+	lalo.position = Vector2(744, 1004)   # sentado frente al escritorio; empieza con el prólogo
 	lalo.superficies_duras = DURAS
 	_mundo.add_child(lalo)
 	lalo.poner_limites_camara(MUNDO)
+	lalo.sentar()
+
+
+func _limites(camara: Camera2D) -> void:
+	camara.limit_left = MUNDO.position.x
+	camara.limit_top = MUNDO.position.y
+	camara.limit_right = MUNDO.end.x
+	camara.limit_bottom = MUNDO.end.y
+
+
+func poner_objetivo(texto: String) -> void:
+	_objetivo.text = "Objetivo: " + texto
+	_objetivo.visible = true
 
 
 func _crear_hud() -> void:
 	var capa := CanvasLayer.new()
-	var ayuda := Label.new()
+	ayuda = Label.new()
+	ayuda.visible = false   # aparece cuando el jugador toma el control
 	ayuda.text = "WASD o flechas: caminar  ·  Shift: correr  ·  Ratón: apuntar  ·  F: linterna  ·  E: abrir puertas"
 	var estilo := LabelSettings.new()
 	estilo.font_size = 9
@@ -300,6 +318,11 @@ func _crear_hud() -> void:
 	ayuda.label_settings = estilo
 	ayuda.position = Vector2(8, 344)
 	capa.add_child(ayuda)
+	_objetivo = Label.new()
+	_objetivo.label_settings = estilo
+	_objetivo.position = Vector2(8, 6)
+	_objetivo.visible = false
+	capa.add_child(_objetivo)
 	add_child(capa)
 
 

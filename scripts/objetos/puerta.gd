@@ -69,6 +69,8 @@ func configurar(hueco: Rect2, zona: Rect2, tex_cerrada: Texture2D, tex_abierta: 
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if Dialogos.activo:
+		return
 	if _jugador_cerca and event.is_action_pressed("interactuar"):
 		poner_abierta(not abierta)
 		get_viewport().set_input_as_handled()

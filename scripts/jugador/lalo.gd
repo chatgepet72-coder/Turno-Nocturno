@@ -3,6 +3,7 @@ extends CharacterBody2D
 ## Lalo: movimiento desde arriba, animación en 4 direcciones, linterna que apunta al ratón y pasos.
 
 const RUTA_CAMINAR: String = "res://assets/sprites/personajes/lalo/caminar/"
+const RUTA_SENTADO: String = "res://assets/sprites/personajes/lalo/sentado/"
 const RUTA_LINTERNA: String = "res://assets/sprites/personajes/lalo/linterna/"
 const DIRECCIONES: Array[String] = ["down", "left", "right", "up"]
 ## Dónde queda la mano con la linterna en cada dirección (respecto a los pies).
@@ -14,6 +15,9 @@ const MANO: Dictionary = {
 @export var velocidad_corriendo: float = 140.0
 @export var aceleracion: float = 900.0
 @export var freno: float = 1100.0
+
+## Si es false, el jugador no lo controla (escenas, diálogos en persona).
+var controlable: bool = true
 
 ## Zonas de piso duro (caminos, estacionamiento, patio). Fuera de ellas los pasos suenan a pasto.
 var superficies_duras: Array[Rect2] = []
@@ -39,6 +43,9 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if not controlable:
+		velocity = Vector2.ZERO
+		return
 	var entrada: Vector2 = Input.get_vector("mover_izquierda", "mover_derecha", "mover_arriba", "mover_abajo")
 	var maxima: float = velocidad_corriendo if Input.is_action_pressed("correr") else velocidad
 	if entrada != Vector2.ZERO:
@@ -56,9 +63,30 @@ func _process(_delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("linterna"):
+	if controlable and event.is_action_pressed("linterna"):
 		_linterna.enabled = not _linterna.enabled
 		_audio_linterna.play()
+
+
+## Lalo sentado (sin control) hasta que se llame a levantarse().
+func sentar() -> void:
+	controlable = false
+	_linterna.enabled = false
+	_sprite.speed_scale = 1.0
+	_sprite.play("sentado")
+
+
+func levantarse() -> void:
+	_sprite.play("levantarse")
+	await _sprite.animation_finished
+	_direccion = "down"
+	_sprite.play("caminar_down")
+	_sprite.stop()
+	controlable = true
+
+
+func camara() -> Camera2D:
+	return $Camara
 
 
 func poner_limites_camara(limites: Rect2i) -> void:
@@ -112,6 +140,15 @@ func _crear_sprite() -> void:
 			frames.set_animation_loop(nombre, true)
 			for i in range(1, 5):
 				frames.add_frame(nombre, load(juego[1] + "%s_%d.png" % [dir, i]) as Texture2D)
+	frames.add_animation("sentado")
+	frames.set_animation_speed("sentado", 1.6)
+	for i in [1, 2]:
+		frames.add_frame("sentado", load(RUTA_SENTADO + "sentado_%d.png" % i) as Texture2D)
+	frames.add_animation("levantarse")
+	frames.set_animation_speed("levantarse", 7.0)
+	frames.set_animation_loop("levantarse", false)
+	for i in range(1, 6):
+		frames.add_frame("levantarse", load(RUTA_SENTADO + "levantarse_%d.png" % i) as Texture2D)
 	_sprite = AnimatedSprite2D.new()
 	_sprite.sprite_frames = frames
 	_sprite.animation = "caminar_down"

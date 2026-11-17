@@ -1,0 +1,22 @@
+{
+	"_voces": "lalo_calmado, lalo_angustia, chava (normal), chava_debil (débil o el ente). radio=true: la línea suena por el radio.",
+	"caseta": [
+		{"quien": "Don Chava", "voz": "chava", "texto": "¿Y la torta, mijo? ¿De qué la trajiste hoy?"},
+		{"quien": "Lalo", "voz": "lalo_calmado", "texto": "De frijoles con queso, Don Chava. Como siempre."},
+		{"quien": "Don Chava", "voz": "chava", "texto": "Ah, qué bueno. Lupita me mandó de huevo... pero ya me la comí en el camión."},
+		{"quien": "Lalo", "voz": "lalo_calmado", "texto": "Pues ahí está su mitad, ándele."},
+		{"quien": "Don Chava", "voz": "chava", "texto": "Gracias, mijo. Bueno, ya son las diez. Me toca el rondín del Central y la obra."},
+		{"quien": "Lalo", "voz": "lalo_calmado", "texto": "Yo hago el del estacionamiento y Medicina."},
+		{"quien": "Don Chava", "voz": "chava", "texto": "Cualquier cosa me hablas por el radio. Y no te duermas, ¿eh?"}
+	],
+	"radio_sotano": [
+		{"quien": "Don Chava", "voz": "chava", "radio": true, "texto": "Oye, mijo... ¿tú sabes qué hay abajo del Central? Lo que encontraron los de la obra."},
+		{"quien": "Lalo", "voz": "lalo_calmado", "texto": "Ni idea, Don Chava. Dijeron que nadie se meta hasta que venga Protección Civil."},
+		{"quien": "Don Chava", "voz": "chava", "radio": true, "texto": "Treinta años trabajando aquí y nunca supe que había otro sótano. Lo sellaron con ladrillo, Lalo."},
+		{"quien": "Don Chava", "voz": "chava", "radio": true, "texto": "Uno no sella algo que no quiere esconder."},
+		{"quien": "Lalo", "voz": "lalo_calmado", "texto": "Pues por algo será. No se meta, ¿eh?"},
+		{"quien": "Don Chava", "voz": "chava", "radio": true, "texto": "Nomás me asomo. No me tardo."},
+		{"quien": "Lalo", "voz": "lalo_calmado", "texto": "Don Chava... no sea necio."},
+		{"quien": "Don Chava", "voz": "chava", "radio": true, "texto": "Ahorita te hablo."}
+	]
+}

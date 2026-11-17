@@ -6,7 +6,10 @@ Survival horror 2D (vista desde arriba) en Godot 4.7. Lalo, velador nocturno de 
 
 - `docs/guion.md`: el guion completo. Es largo: busca la sección que necesitas (`grep -n "## " docs/guion.md`) en lugar de leerlo entero.
 - `docs/tareas.md`: el plan de trabajo por etapas. Marca `[x]` al terminar una tarea.
-- `scripts/autoload/`: `EventBus` (señales globales) y `GameState` (progreso y cálculo del final).
+- `scripts/autoload/`: `EventBus` (señales globales), `GameState` (progreso y cálculo del final) y `Dialogos` (caja de texto, voces y radio).
+- `data/dialogos/*.json`: los textos de los diálogos. Cada línea: `quien`, `voz`, `texto` y opcional `radio: true`.
+- Voces (`assets/audio/voces/`): `lalo_calmado`, `lalo_angustia` (después del sótano), `chava` (normal), `chava_debil` (débil o el ente con su voz). Se generan con `tools/arte/voces_juego.py`.
+- `scripts/niveles/prologo.gd`: el guion del prólogo, paso por paso. `scripts/personajes/don_chava.gd`: Don Chava guionizado (sin IA).
 - `scenes/`: escenas por tipo (`jugador/`, `enemigos/`, `niveles/`, `ui/`, `objetos/`).
 - `scripts/`: scripts con la misma estructura que `scenes/`.
 - `assets/`: `sprites/`, `audio/sfx/`, `audio/musica/`, `audio/ambiente/`, `fuentes/`.

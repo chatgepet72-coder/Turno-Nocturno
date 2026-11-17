@@ -20,6 +20,7 @@ config/icon="res://icon.svg"
 
 EventBus="*res://scripts/autoload/event_bus.gd"
 GameState="*res://scripts/autoload/game_state.gd"
+Dialogos="*res://scripts/autoload/dialogos.gd"
 
 [display]
 
