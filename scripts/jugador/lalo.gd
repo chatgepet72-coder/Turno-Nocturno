@@ -28,6 +28,7 @@ var _direccion: String = "down"
 var _distancia_paso: float = 0.0
 var _pasos_duro: Array[AudioStream] = []
 var _pasos_pasto: Array[AudioStream] = []
+var _pasos_metal: Array[AudioStream] = []
 var _audio_pasos: AudioStreamPlayer2D
 var _audio_linterna: AudioStreamPlayer2D
 
@@ -83,6 +84,44 @@ func levantarse() -> void:
 	_sprite.play("caminar_down")
 	_sprite.stop()
 	controlable = true
+
+
+## Baja los últimos peldaños de una escalera, de espaldas, con un paso de metal por peldaño.
+func bajar_escalera(desde: Vector2, hasta: Vector2) -> void:
+	controlable = false
+	global_position = desde
+	_direccion = "up"
+	_sprite.speed_scale = 0.7
+	_sprite.play("caminar_up")
+	await _peldanos(desde, hasta, 4)
+	_direccion = "down"
+	_sprite.play("caminar_down")
+	_sprite.stop()
+	controlable = true
+
+
+## Camina al pie de la escalera y sube unos peldaños de espaldas.
+func subir_escalera(pie: Vector2, arriba: Vector2) -> void:
+	controlable = false
+	_sprite.speed_scale = 1.0
+	_sprite.play("caminar_up")
+	var t := create_tween()
+	t.tween_property(self, "global_position", pie, maxf(0.2, global_position.distance_to(pie) / velocidad))
+	await t.finished
+	_sprite.speed_scale = 0.7
+	await _peldanos(pie, arriba, 4)
+	_sprite.stop()
+
+
+func _peldanos(desde: Vector2, hasta: Vector2, cantidad: int) -> void:
+	for i in cantidad:
+		var t := create_tween()
+		t.tween_property(self, "global_position", desde.lerp(hasta, float(i + 1) / cantidad), 0.3)
+		_audio_pasos.stream = _pasos_metal.pick_random()
+		_audio_pasos.pitch_scale = randf_range(0.9, 1.1)
+		_audio_pasos.play()
+		await t.finished
+		await get_tree().create_timer(0.08).timeout
 
 
 func camara() -> Camera2D:
@@ -195,6 +234,8 @@ func _crear_audio() -> void:
 	for i in range(4):
 		_pasos_duro.append(load("res://assets/audio/pasos/footstep_concrete_00%d.ogg" % i) as AudioStream)
 		_pasos_pasto.append(load("res://assets/audio/pasos/footstep_grass_00%d.ogg" % i) as AudioStream)
+	for i in range(1, 4):
+		_pasos_metal.append(load("res://assets/audio/efectos/paso_metal_%d.wav" % i) as AudioStream)
 	_audio_pasos = AudioStreamPlayer2D.new()
 	_audio_pasos.volume_db = -10.0
 	add_child(_audio_pasos)

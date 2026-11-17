@@ -12,11 +12,14 @@ const RUTA_RONDIN: Array[Vector2] = [Vector2(788, 500), Vector2(880, 496), Vecto
 var _nivel: Node2D
 var _negro: ColorRect
 var _hora: Label
+var _transicion: TransicionEscalera
 
 
 func iniciar(nivel: Node2D) -> void:
 	_nivel = nivel
 	_crear_pantalla_negra()
+	_transicion = TransicionEscalera.new()
+	add_child(_transicion)
 	var lalo: Lalo = nivel.lalo
 	var chava: DonChava = nivel.chava
 	var dialogos: Dictionary = Dialogos.cargar(DIALOGOS)
@@ -69,13 +72,16 @@ func iniciar(nivel: Node2D) -> void:
 	var hueco: Interactuable = nivel.agregar_interactuable(Rect2(1740, 880, 184, 150), "bajar al sótano")
 	await hueco.usado
 	hueco.activo = false
+	lalo.controlable = false
 	await _fundido(_negro, 1.0, 0.6)
+	await _transicion.reproducir(true)   # la escalera bajando, como las puertas de Resident Evil
 	nivel.entrar_sotano()
-	await _esperar(0.4)
-	await _fundido(_negro, 0.0, 0.8)
+	await _esperar(0.3)
+	_fundido(_negro, 0.0, 0.8)
+	await lalo.bajar_escalera(nivel.SOTANO_ESCALERA_ARRIBA, nivel.SOTANO_LLEGADA)
 	await _decir(dialogos["sotano_llegada"], true)
 	nivel.poner_objetivo("Revisa el sótano.")
-	var linterna: Interactuable = nivel.agregar_interactuable(Rect2(380, 1610, 110, 70), "recoger")
+	var linterna: Interactuable = nivel.agregar_interactuable(Rect2(400, 1650, 104, 66), "recoger")
 	await linterna.usado
 	linterna.activo = false
 	nivel.recoger_linterna_chava()
@@ -88,10 +94,13 @@ func iniciar(nivel: Node2D) -> void:
 	nivel.poner_objetivo("Sal del sótano y pide ayuda.")
 
 	# 8. Arriba todo cambió: apagón, tierra negra y el maniquí en la banca
-	var escalera: Interactuable = nivel.agregar_interactuable(Rect2(40, 1580, 90, 70), "subir")
+	var escalera: Interactuable = nivel.agregar_interactuable(Rect2(118, 1612, 72, 66), "subir")
 	await escalera.usado
 	escalera.activo = false
-	await _fundido(_negro, 1.0, 0.6)
+	await lalo.subir_escalera(nivel.SOTANO_LLEGADA, nivel.SOTANO_ESCALERA_ARRIBA)
+	await _fundido(_negro, 1.0, 0.5)
+	await _transicion.reproducir(false)
+	lalo.controlable = true
 	nivel.apagon()
 	nivel.salir_sotano()
 	nivel.mostrar_maniqui()

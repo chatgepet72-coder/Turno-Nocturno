@@ -16,6 +16,10 @@ Todo el arte del juego está en `sprites/` al tamaño final (1 pixel de arte = 4
 | `sprites/escenario/tierra/` | Tierra negra (rastros, juntas, huellas) | Generada por código (`tools/arte/tierra_v3.py`) |
 | `sprites/pisos/` | Pasto, adoquín, losas, asfalto | Generados por código (`tools/arte/piezas.py`) |
 | `sprites/escenario/caseta/` | Escritorio, casillero, silla, termo | Repositorio `magicart99/Turno-Nocturno` |
+| `sprites/escenario/prologo/sotano.png` | Sótano del Edificio Central: pared agrietada con tubos, piso de concreto, escalera de obra y derrumbe | Arte del equipo, armado por código (`tools/arte/transicion_sotano.py`) |
+| `sprites/ui/escalera_transicion.png` | La escalera de la transición al sótano | Arte del equipo |
+| `sprites/escenario/lapida.png` | Lápida para la cripta del final | Arte del equipo |
+| `sprites/escenario/prologo/linterna_don_chava.png`, `maniqui_sentado.png` | Linterna tirada y maniquí sentado | Generados por código (`tools/arte/prologo_piezas.py`) |
 | `sprites/luces/` | Texturas de luz radial y cono de linterna | Generadas por código (`tools/arte/preparar_assets.py`) |
 
 ## Sonido
@@ -28,4 +32,5 @@ Tomado del repositorio `magicart99/Turno-Nocturno`. Licencias y fuentes original
 | `audio/pasos/Ejimas1.ogg` | Pasos de interior (IgnasD, OpenGameArt) | CC0 |
 | `audio/ambiente/lost.ogg`, `ambient_horror.ogg` | Música y tensión ambiental (OpenGameArt) | CC0 |
 | `audio/efectos/door_open.wav`, `puerta.ogg` | Puertas (OpenGameArt) | CC0 |
+| `audio/efectos/paso_metal_*.wav` y `audio/voces/` | Pasos en la escalera metálica y voces de murmullo | Sintetizados por código (`tools/arte/`) |
 | `audio/efectos/radio_estatica.wav` y demás `.wav` | Sintetizados por el equipo de magicart99 | Originales |

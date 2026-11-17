@@ -68,11 +68,13 @@ const CASETA_PAREDES: Array[Rect2] = [
 ]
 ## Sótano del Edificio Central: un cuarto aparte, fuera del mapa del campus, al que se llega por el hueco.
 const SOTANO: Rect2i = Rect2i(0, 1400, 640, 360)
+## El cuarto es chico (432x264) y está rodeado de oscuridad total.
 const SOTANO_PAREDES: Array[Rect2] = [
-	Rect2(0, 1400, 640, 84), Rect2(0, 1400, 24, 360), Rect2(616, 1400, 24, 360), Rect2(0, 1736, 640, 24),
-	Rect2(350, 1484, 200, 90),   # el derrumbe que tapa la escalera de piedra
+	Rect2(96, 1440, 448, 92), Rect2(96, 1440, 16, 280), Rect2(528, 1440, 16, 280), Rect2(96, 1712, 448, 16),
+	Rect2(320, 1500, 200, 74),   # el derrumbe que tapa la escalera de piedra
 ]
-const SOTANO_LLEGADA: Vector2 = Vector2(80, 1640)
+const SOTANO_ESCALERA_ARRIBA: Vector2 = Vector2(154, 1604)   # donde aparece Lalo al bajar
+const SOTANO_LLEGADA: Vector2 = Vector2(154, 1664)           # pie de la escalera
 const SALIDA_HUECO: Vector2 = Vector2(1830, 1040)
 ## Tierra negra que aparece después del apagón: [archivo, posición]
 const TIERRA_APAGON: Array = [
@@ -339,17 +341,17 @@ func _armar_sotano(suelo: Node2D) -> void:
 		_forma(paredes, r)
 	add_child(paredes)
 	var radial: Texture2D = load("res://assets/sprites/luces/luz_radial.png") as Texture2D
-	_luz(radial, Vector2(76, 1470), 1.0, 0.5, Color(0.6, 0.7, 0.9))   # luz que entra por el hueco de arriba
+	_luz(radial, Vector2(152, 1480), 0.9, 0.5, Color(0.6, 0.7, 0.9))   # luz que entra por el hueco de arriba
 	_linterna_chava = Sprite2D.new()   # la linterna de Don Chava, tirada y encendida, apuntando al derrumbe
 	_linterna_chava.texture = load(ESC + "prologo/linterna_don_chava.png") as Texture2D
-	_linterna_chava.position = Vector2(436, 1650)
+	_linterna_chava.position = Vector2(452, 1688)
 	_linterna_chava.rotation = -PI / 2.0
 	suelo.add_child(_linterna_chava)
 	_luz_linterna_chava = PointLight2D.new()
 	_luz_linterna_chava.texture = load("res://assets/sprites/luces/cono_linterna.png") as Texture2D
 	_luz_linterna_chava.texture_scale = 0.8
 	_luz_linterna_chava.energy = 1.1
-	_luz_linterna_chava.position = Vector2(436, 1636)
+	_luz_linterna_chava.position = Vector2(452, 1680)
 	_luz_linterna_chava.rotation = -PI / 2.0
 	add_child(_luz_linterna_chava)
 	_respiracion = AudioStreamPlayer2D.new()   # una respiración lenta detrás del derrumbe
@@ -357,7 +359,7 @@ func _armar_sotano(suelo: Node2D) -> void:
 	_respiracion.pitch_scale = 0.55
 	_respiracion.volume_db = -2.0
 	_respiracion.max_distance = 700.0
-	_respiracion.position = Vector2(450, 1520)
+	_respiracion.position = Vector2(420, 1530)
 	_respiracion.finished.connect(_seguir_respirando)
 	add_child(_respiracion)
 
@@ -395,7 +397,7 @@ func agregar_interactuable(zona: Rect2, texto: String) -> Interactuable:
 
 
 func entrar_sotano() -> void:
-	_mover_lalo(SOTANO_LLEGADA, SOTANO)
+	_mover_lalo(SOTANO_ESCALERA_ARRIBA, SOTANO)
 	_respirando = true
 	_respiracion.play()
 
