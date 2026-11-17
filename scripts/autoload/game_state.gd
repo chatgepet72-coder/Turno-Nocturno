@@ -8,7 +8,7 @@ enum Final { BUENO, MALO, SECRETO }
 
 const VIDA_MAX_DON_CHAVA: int = 100
 const CAPACIDAD_CARGADOR: int = 10
-const VIDA_MAX_LALO: int = 3
+const VIDA_MAX_LALO: int = 100
 const ESPACIOS_MOCHILA: int = 8
 const ARCHIVO_PARTIDA: String = "user://partida.json"
 const ESCENAS: Dictionary = {

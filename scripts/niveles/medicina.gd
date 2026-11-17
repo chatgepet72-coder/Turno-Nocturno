@@ -21,19 +21,44 @@ const CERRADAS: Dictionary = {
 }
 ## Objetos en el piso: [id único, objeto, cantidad, cuarto, posición dentro del cuarto (0..1)]
 const OBJETOS_MAPA: Array = [
-	["vendas_enfermeria", "vendas", 1, "enfermeria", Vector2(0.5, 0.55)],
-	["recado_enfermeria", "recado_enfermeria", 1, "enfermeria", Vector2(0.32, 0.72)],
+	# Medicina (cura): en baños, la caseta y la enfermería
+	["medicina_caseta", "medicina", 1, "caseta", Vector2(0.7, 0.72)],
+	["medicina_banos_h", "medicina", 1, "banos_h", Vector2(0.3, 0.72)],
+	["medicina_banos_m", "medicina", 1, "banos_m", Vector2(0.72, 0.62)],
+	["medicina_enfermeria", "medicina", 1, "enfermeria", Vector2(0.5, 0.58)],
+	# Para hacer bombas molotov: vendas + alcohol
+	["alcohol_lab", "alcohol", 1, "laboratorio", Vector2(0.5, 0.58)],
+	["alcohol_enfermeria", "alcohol", 1, "enfermeria", Vector2(0.72, 0.75)],
+	["vendas_consultorio", "vendas", 1, "consultorio", Vector2(0.75, 0.62)],
+	["vendas_maquinas", "vendas", 1, "maquinas", Vector2(0.3, 0.55)],
+	# Llaves y herramientas del puzzle
 	["llave_archivo", "llave_archivo", 1, "consultorio", Vector2(0.62, 0.42)],
-	["clavos_102", "clavos", 10, "salon_102", Vector2(0.35, 0.6)],
+	["llave_maquinas", "llave_maquinas", 1, "archivo", Vector2(0.3, 0.68)],
+	["cizalla", "cizalla", 1, "maquinas", Vector2(0.62, 0.62)],
+	# Clavos
+	["clavos_102", "clavos", 10, "salon_102", Vector2(0.35, 0.62)],
+	["clavos_archivo", "clavos", 10, "archivo", Vector2(0.72, 0.45)],
+	["clavos_oeste", "clavos", 10, "pasillo_oeste", Vector2(0.55, 0.3)],
+	["clavos_105", "clavos", 10, "salon_105", Vector2(0.62, 0.68)],
+	# Notas: la historia por pedazos
+	["recado_enfermeria", "recado_enfermeria", 1, "enfermeria", Vector2(0.3, 0.72)],
 	["nota_dia_12", "nota_dia_12", 1, "recepcion", Vector2(0.62, 0.55)],
 	["expediente_salvador", "expediente_salvador", 1, "archivo", Vector2(0.55, 0.55)],
-	["llave_maquinas", "llave_maquinas", 1, "archivo", Vector2(0.3, 0.68)],
-	["clavos_archivo", "clavos", 10, "archivo", Vector2(0.72, 0.45)],
-	["cizalla", "cizalla", 1, "maquinas", Vector2(0.62, 0.6)],
-	["vendas_maquinas", "vendas", 1, "maquinas", Vector2(0.3, 0.5)],
-	["vendas_lab", "vendas", 1, "laboratorio", Vector2(0.5, 0.5)],
-	["clavos_oeste", "clavos", 10, "pasillo_oeste", Vector2(0.55, 0.3)],
+	["carta_lupita", "carta_lupita", 1, "caseta", Vector2(0.75, 0.45)],
+	["inventario_maniquies", "inventario_maniquies", 1, "simulacion", Vector2(0.75, 0.75)],
+	["diario_estudiante", "diario_estudiante", 1, "salon_104", Vector2(0.3, 0.65)],
+	["reporte_mantenimiento", "reporte_mantenimiento", 1, "maquinas", Vector2(0.72, 0.4)],
+	["libro_historia", "libro_historia", 1, "archivo", Vector2(0.45, 0.78)],
+	["lista_asistencia", "lista_asistencia", 1, "salon_101", Vector2(0.62, 0.62)],
 ]
+## Emboscadas: [id, cuarto, zona que dispara (0..1), dónde aparece (0..1)]. El maniquí está escondido
+## hasta que Lalo pisa la zona; entonces sale por detrás, donde no lo ve. La estática del radio sí lo delata.
+const EMBOSCADAS: Array = [
+	["emboscada_pasillo", "pasillo", Rect2(0.36, 0.25, 0.05, 0.55), Vector2(0.62, 0.55)],
+	["emboscada_104", "salon_104", Rect2(0.35, 0.35, 0.3, 0.3), Vector2(0.5, 0.86)],
+	["emboscada_banos", "banos_h", Rect2(0.42, 0.3, 0.3, 0.3), Vector2(0.48, 0.86)],
+]
+
 const NOMBRES: Dictionary = {
 	"pasillo": "Pasillo principal", "salon_101": "Salón 101", "salon_102": "Salón 102", "consultorio": "Consultorio",
 	"caseta": "Caseta de vigilancia", "laboratorio": "Laboratorio", "salon_104": "Salón 104", "banos_h": "Baños",
@@ -70,7 +95,7 @@ func _ready() -> void:
 	var todos: Array[String] = []
 	todos.assign(ARRIBA + ABAJO + [OESTE_FONDO, PUNTA_DERECHA, "banos_m"])
 	for i in todos.size():
-		_armar_cuarto(todos[i], Vector2((i % 5) * 1000, 1000 + floori(i / 5.0) * 900))
+		_armar_cuarto(todos[i], Vector2((i % 5) * 1300, 1300 + floori(i / 5.0) * 1150))
 	_armar_ala_oeste(Vector2(5500, 0))
 	lalo = Lalo.new()
 	lalo.superficies_duras.append(Rect2(-100000, -100000, 200000, 200000))   # todo es piso duro
@@ -342,9 +367,50 @@ func _recoger(id_unico: String, objeto: String, cantidad: int, brillo: Sprite2D,
 	zona.queue_free()
 
 
+# ---------- Cosas para examinar y emboscadas ----------
+func _armar_examinables() -> void:
+	for e in _dialogos.get("_examinar", []):
+		var z: Rect2 = _zonas[e[0]]
+		var pos: Vector2 = z.position + z.size * Vector2(e[1][0], e[1][1])
+		var lineas: Array = []
+		for texto in e[2]:
+			lineas.append({"quien": "Lalo", "voz": "lalo_angustia", "texto": texto})
+		var i := _interactuable(Rect2(pos - Vector2(36, 36), Vector2(72, 72)), "examinar")
+		i.usado.connect(_examinar.bind(lineas))
+
+
+func _examinar(lineas: Array) -> void:
+	if not Dialogos.activo:
+		Dialogos.decir(lineas)
+
+
+func _armar_emboscadas() -> void:
+	for e in EMBOSCADAS:
+		if StringName(e[0]) in GameState.enemigos_eliminados:
+			continue
+		var z: Rect2 = _zonas[e[1]]
+		var zona: Rect2 = e[2]
+		var m := _maniqui(e[0], z.position + z.size * (e[3] as Vector2), true)
+		var disparo := Area2D.new()
+		disparo.collision_mask = 2
+		_forma(disparo, Rect2(z.position + z.size * zona.position, z.size * zona.size))
+		add_child(disparo)
+		disparo.body_entered.connect(_saltar.bind(m, z.position + z.size * (e[3] as Vector2), disparo))
+
+
+func _saltar(cuerpo: Node2D, m: Maniqui, pos: Vector2, disparo: Area2D) -> void:
+	if not cuerpo is Lalo or not is_instance_valid(m):
+		return
+	disparo.queue_free()
+	await get_tree().create_timer(0.5).timeout
+	m.emboscar(pos)
+
+
 # ---------- Lo que hay dentro ----------
 func _armar_extras() -> void:
 	_armar_objetos()
+	_armar_examinables()
+	_armar_emboscadas()
 	# Caseta: lámpara de escritorio encendida y el radio para guardar
 	var c: Rect2 = _zonas["caseta"]
 	var lampara := PointLight2D.new()
@@ -364,7 +430,7 @@ func _armar_extras() -> void:
 	subir.usado.connect(_usar_escaleras)
 	# Maniquíes: uno en el pasillo y uno entre las camillas de la sala de simulación
 	var p: Rect2 = _zonas["pasillo"]
-	_maniqui("medicina_pasillo", p.position + Vector2(p.size.x * 0.3, p.size.y * 0.62))
+	_maniqui("medicina_pasillo", p.position + Vector2(p.size.x * 0.14, p.size.y * 0.62))
 	var s: Rect2 = _zonas["simulacion"]
 	_maniqui("medicina_simulacion", s.position + Vector2(s.size.x * 0.5, s.size.y * 0.7))
 	var w: Rect2 = _zonas["pasillo_oeste"]
@@ -385,15 +451,17 @@ func _usar_escaleras() -> void:
 		Dialogos.decir(_dialogos["escaleras"])
 
 
-func _maniqui(id: String, pos: Vector2) -> void:
+func _maniqui(id: String, pos: Vector2, oculto: bool = false) -> Maniqui:
 	if StringName(id) in GameState.enemigos_eliminados:
-		return
+		return null
 	var m := Maniqui.new()
 	m.position = pos
 	m.radio_despertar = 150.0
 	m.objetivo = lalo
+	m.oculto = oculto
 	_mundo.add_child(m)
 	m.derribado.connect(func() -> void: GameState.enemigos_eliminados.append(StringName(id)))
+	return m
 
 
 func _guardar() -> void:

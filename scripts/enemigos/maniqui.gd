@@ -13,7 +13,7 @@ const RUTA: String = "res://assets/sprites/enemigos/maniqui/"
 @export var vida: int = 4
 @export var velocidad: float = 92.0   # Lalo camina a 80 y corre a 140: solo corriendo te escapas
 @export var radio_despertar: float = 200.0
-@export var dano: int = 1
+@export var dano: int = 25   # 4 golpes de salud completa
 
 var objetivo: Lalo
 var estado: Estado = Estado.QUIETO
@@ -32,6 +32,11 @@ var _espera_embestida: float = 1.0
 var _paso: float = 0.0
 var _audio_pasos: AudioStreamPlayer2D
 var _pasos: Array[AudioStream] = []
+var _quejidos: Array[AudioStream] = []
+var _espera_quejido: float = 3.0
+var _audio_voz: AudioStreamPlayer2D
+## Emboscada: escondido (invisible y sin chocar) hasta que el nivel lo hace saltar con emboscar().
+var oculto: bool = false
 var _audio: AudioStreamPlayer2D
 
 
@@ -82,10 +87,20 @@ func _ready() -> void:
 	add_child(_audio_pasos)
 	for i in range(4):
 		_pasos.append(load("res://assets/audio/pasos/footstep_concrete_00%d.ogg" % i) as AudioStream)
+	for i in range(1, 6):
+		_quejidos.append(load("res://assets/audio/enemigos/eco_%d.mp3" % i) as AudioStream)
+	_audio_voz = AudioStreamPlayer2D.new()   # quejidos: se oyen a lo lejos
+	_audio_voz.max_distance = 700.0
+	_audio_voz.volume_db = -2.0
+	add_child(_audio_voz)
+	if oculto:
+		visible = false
+		_colision.disabled = true
+		_cuerpo_dano.monitorable = false
 
 
 func _physics_process(delta: float) -> void:
-	if objetivo == null or estado == Estado.DERRIBADO:
+	if objetivo == null or estado == Estado.DERRIBADO or oculto:
 		return
 	var hacia: Vector2 = objetivo.global_position - global_position
 	match estado:
@@ -113,6 +128,10 @@ func _physics_process(delta: float) -> void:
 				_caminar_hacia(hacia, delta)
 			_animar(hacia)
 			_sonar_pasos(delta)
+			_espera_quejido -= delta
+			if _espera_quejido <= 0.0:
+				_espera_quejido = randf_range(4.0, 9.0)
+				_quejido()
 
 
 ## Camina directo hacia Lalo; si algo lo detiene (la fuente, una banca), rodea el obstáculo un momento.
@@ -153,6 +172,7 @@ func recibir_clavo(direccion: Vector2) -> void:
 
 func _despertar() -> void:
 	estado = Estado.PERSIGUIENDO
+	_quejido()
 	_quieto.visible = false
 	_sprite.visible = true
 	_sprite.play("caminar_down")
@@ -186,6 +206,39 @@ func _sonar_pasos(delta: float) -> void:
 		_audio_pasos.stream = _pasos.pick_random()
 		_audio_pasos.pitch_scale = randf_range(0.55, 0.7)
 		_audio_pasos.play()
+
+
+func _quejido() -> void:
+	_audio_voz.stream = _quejidos.pick_random()
+	_audio_voz.pitch_scale = randf_range(0.8, 1.0)
+	_audio_voz.play()
+
+
+## Emboscada: aparece de golpe en `pos` (el nivel elige un lugar fuera de la vista) y persigue a Lalo.
+func emboscar(pos: Vector2) -> void:
+	if not oculto:
+		return
+	oculto = false
+	global_position = pos
+	visible = true
+	_colision.disabled = false
+	_cuerpo_dano.monitorable = true
+	_despertar()
+
+
+## El fuego de la molotov: arde, cae y no vuelve a levantarse.
+func recibir_fuego() -> void:
+	if estado == Estado.DERRIBADO or oculto:
+		return
+	_derribar()
+	var t := create_tween().set_loops(6)
+	t.tween_property(_sprite, "modulate", Color(1.6, 0.7, 0.3), 0.15)
+	t.tween_property(_sprite, "modulate", Color(0.4, 0.3, 0.3), 0.15)
+
+
+## Para la estática del radio: cualquier maniquí en pie (despierto, quieto o escondido).
+func esta_vivo() -> bool:
+	return estado != Estado.DERRIBADO
 
 
 ## Para la tensión de Lalo: solo cuenta si está despierto.

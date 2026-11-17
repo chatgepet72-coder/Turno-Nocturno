@@ -18,9 +18,12 @@ const MANO: Dictionary = {
 @export var velocidad_corriendo: float = 140.0
 @export var aceleracion: float = 900.0
 @export var freno: float = 1100.0
-@export var vida_maxima: int = 3
+@export var vida_maxima: int = 100
 
-var vida: int = 3
+var vida: int = 100
+## true si el jugador está usando control (apunta con el stick derecho); false con ratón.
+var usando_mando: bool = false
+var _mira_mando: Vector2 = Vector2.DOWN
 
 ## Si es false, el jugador no lo controla (escenas, diálogos en persona).
 var controlable: bool = true
@@ -80,7 +83,27 @@ func _physics_process(delta: float) -> void:
 
 func _process(delta: float) -> void:
 	_tension(delta)
-	_linterna.rotation = (get_global_mouse_position() - _linterna.global_position).angle()
+	var stick: Vector2 = Input.get_vector("mirar_izquierda", "mirar_derecha", "mirar_arriba", "mirar_abajo")
+	if stick.length() > 0.3:
+		usando_mando = true
+		_mira_mando = stick.normalized()
+	elif usando_mando and velocity.length() > 10.0:
+		_mira_mando = velocity.normalized()   # con control y sin apuntar, la linterna sigue hacia donde camina
+	_linterna.rotation = (punto_mira() - _linterna.global_position).angle()
+
+
+## Hacia dónde apunta Lalo: el ratón, o el stick derecho si está usando control.
+func punto_mira() -> Vector2:
+	if usando_mando:
+		return global_position + Vector2(0, -30) + _mira_mando * 120.0
+	return get_global_mouse_position()
+
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion:
+		usando_mando = false
+	elif event is InputEventJoypadButton or event is InputEventJoypadMotion:
+		usando_mando = true
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -93,6 +116,21 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif event.is_action_pressed("recargar"):
 			if GameState.recargar():
 				_sonar_arma("recarga")
+	if controlable and event.is_action_pressed("lanzar"):
+		_lanzar_molotov()
+
+
+## Lanza una bomba molotov (si hay en la mochila) hacia donde apunta Lalo.
+func _lanzar_molotov() -> void:
+	if not GameState.tiene("molotov"):
+		return
+	GameState.quitar("molotov")
+	var m := Molotov.new()
+	var salida: Vector2 = global_position + MANO[_direccion]
+	var hacia: Vector2 = punto_mira() - salida
+	m.global_position = salida
+	m.destino = salida + hacia.limit_length(220.0)
+	get_parent().add_child(m)
 
 
 ## Dispara un clavo hacia el ratón. Hace ruido: los enemigos lo escuchan.
@@ -105,7 +143,7 @@ func _disparar() -> void:
 		return
 	var salida: Vector2 = global_position + MANO[_direccion]
 	var clavo := Clavo.new()
-	clavo.direccion = (get_global_mouse_position() - salida).normalized()
+	clavo.direccion = (punto_mira() - salida).normalized()
 	clavo.global_position = salida + clavo.direccion * 8.0
 	get_parent().add_child(clavo)
 	_sonar_arma("disparo_clavos")
@@ -121,6 +159,8 @@ func recibir_dano(cantidad: int, desde: Vector2) -> void:
 	vida_cambio.emit(vida)
 	_empuje = (global_position - desde).normalized() * 260.0
 	_sonar_arma("golpe")
+	for d in Input.get_connected_joypads():   # el control vibra con el golpe
+		Input.start_joy_vibration(d, 0.6, 1.0, 0.3)
 	var t := create_tween()
 	t.tween_property(_sprite, "modulate", Color(1.0, 0.3, 0.3), 0.06)
 	t.tween_property(_sprite, "modulate", Color.WHITE, 0.3)
@@ -135,14 +175,20 @@ func curar(cantidad: int) -> void:
 	vida_cambio.emit(vida)
 
 
-## Tensión: si hay un enemigo despierto cerca, se oye el corazón de Lalo y la estática del radio sube.
+## Tensión, como el radio de Silent Hill: la estática sube con CUALQUIER enemigo cerca, aunque esté
+## escondido o quieto (así el jugador sabe que hay algo sin verlo). El corazón solo late con enemigos despiertos.
 func _tension(delta: float) -> void:
 	var cerca: float = 99999.0
+	var cerca_despierto: float = 99999.0
 	for e in get_tree().get_nodes_in_group("enemigos"):
+		var dist: float = global_position.distance_to((e as Node2D).global_position)
+		if e.has_method("esta_vivo") and e.esta_vivo():
+			cerca = minf(cerca, dist)
 		if e.has_method("es_amenaza") and e.es_amenaza():
-			cerca = minf(cerca, global_position.distance_to((e as Node2D).global_position))
-	var t: float = clampf(1.0 - (cerca - 60.0) / 280.0, 0.0, 1.0)   # 0 lejos, 1 encima
-	_estatica.volume_db = lerpf(-60.0, -16.0, t)
+			cerca_despierto = minf(cerca_despierto, dist)
+	var radio: float = clampf(1.0 - (cerca - 80.0) / 420.0, 0.0, 1.0)
+	_estatica.volume_db = lerpf(-60.0, -6.0, radio) if radio > 0.0 else -80.0
+	var t: float = clampf(1.0 - (cerca_despierto - 60.0) / 280.0, 0.0, 1.0)   # 0 lejos, 1 encima
 	if t <= 0.0:
 		return
 	_espera_latido -= delta
@@ -228,7 +274,7 @@ func _animar(entrada: Vector2) -> void:
 	# Con la linterna prendida o la pistola, Lalo mira hacia donde apunta el ratón; si no, hacia donde camina.
 	var mirada: Vector2 = entrada
 	if _linterna.enabled or GameState.tiene_pistola:
-		mirada = get_global_mouse_position() - global_position
+		mirada = punto_mira() - global_position
 	if mirada != Vector2.ZERO:
 		if absf(mirada.x) > absf(mirada.y):
 			_direccion = "right" if mirada.x > 0.0 else "left"
@@ -336,7 +382,8 @@ func _crear_audio() -> void:
 	_latido.stream = load("res://assets/audio/efectos/latido.wav") as AudioStream
 	add_child(_latido)
 	_estatica = AudioStreamPlayer.new()
-	var est: AudioStreamWAV = load("res://assets/audio/efectos/radio_estatica.wav") as AudioStreamWAV
+	# Copia propia: si se cambiara el sonido original, también sonaría en bucle en el radio de guardar
+	var est: AudioStreamWAV = (load("res://assets/audio/efectos/radio_estatica.wav") as AudioStreamWAV).duplicate()
 	est.loop_mode = AudioStreamWAV.LOOP_FORWARD
 	est.loop_end = est.data.size() >> 1   # muestras (16 bits, mono)
 	_estatica.stream = est

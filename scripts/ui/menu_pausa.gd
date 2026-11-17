@@ -14,8 +14,17 @@ Disparar clavos ................ Clic izquierdo o Espacio
 Recargar ....................... R
 Usar, abrir, recoger ........... E
 Radio .......................... Q
+Lanzar molotov ................. G
 Mochila ........................ Tab
-Pausa .......................... Esc"""
+Pausa .......................... Esc
+
+CON CONTROL (PlayStation / Xbox)
+Mover / apuntar ...... stick izquierdo / stick derecho
+Disparar ............. R2 / RT        Linterna ...... R1 / RB
+Correr ............... L1 / LB        Recargar ...... Cuadrado / X
+Usar ................. Cruz / A       Molotov ....... Círculo / B
+Mochila .............. Triángulo / Y  Radio ......... Cruceta arriba
+Pausa ................ Options / Start"""
 
 var _vista: Vista = Vista.OCULTO
 var _fondo: ColorRect
@@ -58,6 +67,9 @@ func _unhandled_input(event: InputEvent) -> void:
 				_mostrar(_volver_a)
 			_:
 				_mostrar(Vista.PRINCIPAL)
+	elif event.is_action_pressed("ui_cancel") and _vista in [Vista.MOCHILA, Vista.CONTROLES]:
+		get_viewport().set_input_as_handled()
+		_mostrar(Vista.PRINCIPAL)
 	elif event.is_action_pressed("inventario"):
 		get_viewport().set_input_as_handled()
 		if _vista == Vista.OCULTO and not Dialogos.activo:
@@ -130,7 +142,7 @@ func _armar_mochila() -> void:
 func _llenar_mochila() -> void:
 	for h in _lista.get_children():
 		h.queue_free()
-	_espacios.text = "Espacios: %d / %d" % [GameState.espacios_usados(), GameState.ESPACIOS_MOCHILA]
+	_espacios.text = "Espacios: %d / %d      Estado: %s" % [GameState.espacios_usados(), GameState.ESPACIOS_MOCHILA, _estado()]
 	_detalle.text = "La mochila está vacía." if GameState.inventario.is_empty() else "Elige un objeto."
 	var primero: Button = null
 	for id in GameState.inventario:
@@ -149,12 +161,27 @@ func _llenar_mochila() -> void:
 		primero.grab_focus.call_deferred()
 
 
+## Como en Silent Hill, el estado se describe con palabras, no con números.
+func _estado() -> String:
+	var v: int = GameState.vida_lalo
+	if v > 75:
+		return "Bien"
+	if v > 50:
+		return "Herido"
+	if v > 25:
+		return "Grave"
+	return "Crítico"
+
+
 func _elegir(id: String) -> void:
 	_seleccion = id
 	var datos: Dictionary = GameState.objetos.get(id, {})
 	var extra: String = ""
 	if datos.get("documento", false):
 		extra = "\n\n(Enter: leer)"
+	elif id in ["vendas", "alcohol"]:
+		extra = "\n\n(Enter: combinar vendas + alcohol)" if GameState.tiene("vendas") and GameState.tiene("alcohol") \
+			else "\n\n(Te falta " + ("alcohol" if id == "vendas" else "vendas") + " para combinar)"
 	elif datos.get("usable", false):
 		extra = "\n\n(Enter: usar)"
 	_detalle.text = datos.get("nombre", id) + "\n\n" + datos.get("descripcion", "Un documento.") + extra
@@ -164,18 +191,24 @@ func _usar(id: String) -> void:
 	var datos: Dictionary = GameState.objetos.get(id, {})
 	if datos.get("documento", false):
 		leer(id)
-	elif id == "vendas":
+	elif id == "medicina":
 		var lalo := get_tree().get_first_node_in_group("jugador") as Lalo
 		if lalo == null or lalo.vida >= lalo.vida_maxima:
 			_detalle.text = "No estás herido."
 			return
-		lalo.curar(1)
-		GameState.quitar("vendas")
-		_detalle.text = "Te vendaste. +1 de salud."
+		lalo.curar(50)
+		GameState.quitar("medicina")
+		_detalle.text = "Tomaste la medicina. Te sientes mejor."
+	elif id in ["vendas", "alcohol"]:
+		if GameState.tiene("vendas") and GameState.tiene("alcohol"):
+			GameState.quitar("vendas")
+			GameState.quitar("alcohol")
+			GameState.agregar("molotov")
+			_detalle.text = "Hiciste una bomba molotov.\nSe lanza con G (o Círculo en el control)."
 
 
 func _armar_controles() -> void:
-	var caja := _panel(Vista.CONTROLES, Vector2(110, 50), Vector2(420, 260))
+	var caja := _panel(Vista.CONTROLES, Vector2(70, 12), Vector2(500, 330))
 	caja.add_child(_titulo("CONTROLES"))
 	var t := _texto(10)
 	t.text = CONTROLES

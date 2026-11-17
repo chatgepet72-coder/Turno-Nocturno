@@ -51,6 +51,10 @@ Objetivo: probar si el juego da miedo antes de hacer el resto.
 - [x] Mochila de 8 espacios, objetos para recoger, documentos y menú de pausa con controles
 - [x] Puertas con llave y puertas que no abren; cadena de puzzles (Consultorio → Archivo → Máquinas → Escaleras)
 - [x] Ala oeste: el pasillo da vuelta
+- [x] Control (PlayStation/Xbox) con luz y vibración
+- [x] Bombas molotov (vendas + alcohol)
+- [x] Notas de la historia, cosas para examinar y emboscadas en Medicina
+- [ ] Choque con los muebles de cada cuarto
 - [x] Tensión: latido y estática del radio cuando hay un enemigo cerca; maniquí más rápido con embestida
 - [ ] Documentos y libreta de Lalo
 - [ ] Puzzle: completar el esqueleto de la vitrina

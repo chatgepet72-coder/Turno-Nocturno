@@ -84,5 +84,172 @@
 			"voz": "lalo_angustia",
 			"texto": "Este pasillo da vuelta... no me acordaba de esta parte."
 		}
+	],
+	"_examinar": [
+		[
+			"salon_101",
+			[
+				0.5,
+				0.3
+			],
+			[
+				"Los pupitres están todos volteados... como si alguien los hubiera aventado.",
+				"Hay tierra en el pizarrón. Alguien escribió algo y lo borró con la mano."
+			]
+		],
+		[
+			"salon_102",
+			[
+				0.4,
+				0.45
+			],
+			[
+				"Un esqueleto de anatomía... tirado en el piso.",
+				"No, mejor no lo toco."
+			]
+		],
+		[
+			"consultorio",
+			[
+				0.3,
+				0.25
+			],
+			[
+				"La sábana de la camilla está manchada... de tierra, no de sangre.",
+				"Tiene la forma de alguien que estuvo acostado."
+			]
+		],
+		[
+			"laboratorio",
+			[
+				0.5,
+				0.35
+			],
+			[
+				"Frascos rotos y un líquido verde que todavía escurre.",
+				"Huele a formol."
+			]
+		],
+		[
+			"salon_104",
+			[
+				0.5,
+				0.5
+			],
+			[
+				"Las sillas están en círculo... mirando hacia el centro.",
+				"En el centro hay un hueco en el piso, del tamaño de una mano."
+			]
+		],
+		[
+			"banos_h",
+			[
+				0.6,
+				0.45
+			],
+			[
+				"El piso está roto. Abajo solo se ve oscuridad.",
+				"...Se oye algo. Como agua corriendo. O como alguien respirando."
+			]
+		],
+		[
+			"banos_m",
+			[
+				0.5,
+				0.35
+			],
+			[
+				"Una mano marcada en el espejo, por dentro del vidrio.",
+				"Eso no se puede hacer desde afuera."
+			]
+		],
+		[
+			"enfermeria",
+			[
+				0.5,
+				0.35
+			],
+			[
+				"Las camas tienen las correas abiertas.",
+				"Como si alguien se hubiera soltado."
+			]
+		],
+		[
+			"simulacion",
+			[
+				0.3,
+				0.4
+			],
+			[
+				"Maniquíes tapados con sábanas.",
+				"Uno de los bultos... ¿se movió?"
+			]
+		],
+		[
+			"recepcion",
+			[
+				0.4,
+				0.3
+			],
+			[
+				"El reloj de la pared está parado.",
+				"Marca las 3:12."
+			]
+		],
+		[
+			"archivo",
+			[
+				0.35,
+				0.35
+			],
+			[
+				"Cajones abiertos y expedientes por todos lados.",
+				"Alguien estuvo buscando algo aquí. Con prisa."
+			]
+		],
+		[
+			"salon_105",
+			[
+				0.5,
+				0.4
+			],
+			[
+				"Hay plantas creciendo entre los pupitres.",
+				"Las raíces salen de las grietas del piso. Tierra negra."
+			]
+		],
+		[
+			"maquinas",
+			[
+				0.4,
+				0.35
+			],
+			[
+				"La caldera está fría.",
+				"Pero las tuberías tiemblan, como si algo pasara por dentro."
+			]
+		],
+		[
+			"entrada",
+			[
+				0.5,
+				0.55
+			],
+			[
+				"Un rastro de arrastre que viene de afuera.",
+				"Algo arrastraron hacia adentro. Algo pesado."
+			]
+		],
+		[
+			"caseta",
+			[
+				0.3,
+				0.72
+			],
+			[
+				"Igual que nuestra caseta. Hasta el mismo termo.",
+				"Por un momento me sentí a salvo."
+			]
+		]
 	]
 }

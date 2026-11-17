@@ -7,7 +7,7 @@ from PIL import Image, ImageOps
 CORR, MANIQUI = sys.argv[1], sys.argv[2]
 R = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DST = os.path.join(R, "assets", "sprites", "interiores", "medicina"); os.makedirs(DST, exist_ok=True)
-ESC = 0.5
+ESC = 0.7   # cuartos más grandes
 # id: (archivo, lado de la puerta "b" abajo / "t" arriba, posición horizontal de la puerta 0..1)
 CUARTOS = {
     "salon_101": ("01_Salon_101_CORREGIDO", "b", .5), "salon_102": ("02_Salon_102_CORREGIDO", "b", .5),
@@ -32,7 +32,7 @@ for cid, (archivo, lado, fx) in CUARTOS.items():
     datos[cid] = {"tam": [w, h], "muro": muro, "puerta": lado, "puerta_x": round(w * fx)}
 # Pasillo largo: 7 puertas arriba y 7 abajo
 p = recortar(Image.open(f"{CORR}/18_Pasillo_Principal_LARGO_CORREGIDO.webp").convert("RGB"))
-p = p.resize((round(p.width * 0.75), round(p.height * 0.75)), Image.LANCZOS); p.save(f"{DST}/pasillo.png")   # el pasillo va más grande que los cuartos
+p = p.resize((round(p.width * 1.0), round(p.height * 1.0)), Image.LANCZOS); p.save(f"{DST}/pasillo.png")   # el pasillo va más grande que los cuartos
 datos["pasillo"] = {"tam": list(p.size), "puertas_x": [.084, .222, .36, .5, .64, .778, .916], "piso": [.27, .78]}
 with open(os.path.join(R, "data", "medicina_cuartos.json"), "w") as f: json.dump(datos, f, indent="\t")
 # Puerta de la transición: 4 cuadros

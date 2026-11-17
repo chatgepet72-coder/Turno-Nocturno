@@ -1,12 +1,94 @@
 {
-	"vendas": {"nombre": "Vendas", "icono": "vendas", "descripcion": "Para curarse. Recuperan 1 de salud.", "usable": true},
-	"llave_archivo": {"nombre": "Llave del Archivo", "icono": "llave", "descripcion": "Una llave con una etiqueta de cartón: ARCHIVO."},
-	"llave_maquinas": {"nombre": "Llave del cuarto de máquinas", "icono": "llave", "descripcion": "Llave pesada con una etiqueta: MÁQUINAS. Tiene tierra negra en los dientes."},
-	"cizalla": {"nombre": "Cizalla", "icono": "cizalla", "descripcion": "Unas tijeras grandes para cortar cadenas."},
-	"nota_dia_12": {"nombre": "Nota del maestro de obra", "icono": "documento", "documento": true,
-		"texto": "Día 12.\nEncontramos un muro que no sale en los planos, debajo del sótano del Central.\nLadrillo y cal, muy viejo.\nMañana lo tiramos.\n\n— Maestro de obra"},
-	"expediente_salvador": {"nombre": "Expediente de personal", "icono": "documento", "documento": true,
-		"texto": "Salvador Ramírez Ortega (\"Don Chava\").\nVelador nocturno. Ingreso: 1996.\n\nObservaciones: Puntual. Nunca ha faltado a un turno.\nSolicitó cambio de turno en 2019. Negado.\n\nAl reverso, escrito a mano con lápiz: \"Lupita - 55 1234 5678\"."},
-	"recado_enfermeria": {"nombre": "Recado de la enfermera", "icono": "documento", "documento": true,
-		"texto": "Si alguien lee esto: no se queden en las camillas.\nLos muñecos de la sala de simulación\nno amanecen donde los dejamos."}
+	"vendas": {
+		"nombre": "Vendas",
+		"icono": "vendas",
+		"descripcion": "Un rollo de vendas. Combinadas con alcohol sirven para hacer una bomba molotov.",
+		"usable": true
+	},
+	"llave_archivo": {
+		"nombre": "Llave del Archivo",
+		"icono": "llave",
+		"descripcion": "Una llave con una etiqueta de cartón: ARCHIVO."
+	},
+	"llave_maquinas": {
+		"nombre": "Llave del cuarto de máquinas",
+		"icono": "llave",
+		"descripcion": "Llave pesada con una etiqueta: MÁQUINAS. Tiene tierra negra en los dientes."
+	},
+	"cizalla": {
+		"nombre": "Cizalla",
+		"icono": "cizalla",
+		"descripcion": "Unas tijeras grandes para cortar cadenas."
+	},
+	"nota_dia_12": {
+		"nombre": "Nota del maestro de obra",
+		"icono": "documento",
+		"documento": true,
+		"texto": "Día 12.\nEncontramos un muro que no sale en los planos, debajo del sótano del Central.\nLadrillo y cal, muy viejo.\nMañana lo tiramos.\n\n— Maestro de obra"
+	},
+	"expediente_salvador": {
+		"nombre": "Expediente de personal",
+		"icono": "documento",
+		"documento": true,
+		"texto": "Salvador Ramírez Ortega (\"Don Chava\").\nVelador nocturno. Ingreso: 1996.\n\nObservaciones: Puntual. Nunca ha faltado a un turno.\nSolicitó cambio de turno en 2019. Negado.\n\nAl reverso, escrito a mano con lápiz: \"Lupita - 55 1234 5678\"."
+	},
+	"recado_enfermeria": {
+		"nombre": "Recado de la enfermera",
+		"icono": "documento",
+		"documento": true,
+		"texto": "Si alguien lee esto: no se queden en las camillas.\nLos muñecos de la sala de simulación\nno amanecen donde los dejamos."
+	},
+	"alcohol": {
+		"nombre": "Alcohol",
+		"icono": "alcohol",
+		"descripcion": "Alcohol de curación. Combinado con vendas sirve para hacer una bomba molotov.",
+		"usable": true
+	},
+	"molotov": {
+		"nombre": "Bomba molotov",
+		"icono": "molotov",
+		"descripcion": "Una botella con alcohol y un trapo. Se lanza con G (o Círculo en el control). El fuego quema a los maniquíes para siempre."
+	},
+	"medicina": {
+		"nombre": "Medicina",
+		"icono": "medicina",
+		"descripcion": "Un frasco de medicina. Cura una buena parte de las heridas.",
+		"usable": true
+	},
+	"carta_lupita": {
+		"nombre": "Recado doblado en la caseta",
+		"icono": "documento",
+		"documento": true,
+		"texto": "Chava:\nTe puse tu torta de huevo y tu suéter en la mochila.\nYa no te quedes dormido en el turno, que el licenciado te tiene en la mira.\nY si oyes cosas raras en ese edificio viejo, no te metas. Tú siempre de curioso.\n\nTe quiere, Lupita."
+	},
+	"inventario_maniquies": {
+		"nombre": "Hoja de inventario de la sala",
+		"icono": "documento",
+		"documento": true,
+		"texto": "SALA DE SIMULACIÓN — Inventario de maniquíes de RCP\n\nLunes: 6\nMartes: 6\nMiércoles: 6\nJueves: 7\nViernes: 7\n\nNota del encargado: nadie ha comprado maniquíes nuevos.\nEl séptimo tiene tierra en las rodillas. ¿Quién lo trajo?"
+	},
+	"diario_estudiante": {
+		"nombre": "Hoja arrancada de un cuaderno",
+		"icono": "documento",
+		"documento": true,
+		"texto": "Nos quedamos a estudiar en el 104 hasta tarde.\nA las 3 empezamos a oír golpes. No venían de la puerta. Venían del PISO.\nToc. Toc. Toc. Como si alguien abajo quisiera salir.\nMariana dijo que su abuela le contó que la universidad se construyó encima de un pueblo.\nNos reímos. Ya no me río."
+	},
+	"reporte_mantenimiento": {
+		"nombre": "Reporte de mantenimiento",
+		"icono": "documento",
+		"documento": true,
+		"texto": "REPORTE DE MANTENIMIENTO #0417\n\nProblema: humedad negra en el cuarto de máquinas y en las coladeras de la planta baja.\nSe limpió el martes. El miércoles volvió.\nNo es humedad. Es tierra. Tierra negra que sube por las coladeras.\n\nSolicito revisión del drenaje. (Sin respuesta)"
+	},
+	"libro_historia": {
+		"nombre": "Libro: Historia de la Ciudad Universitaria",
+		"icono": "documento",
+		"documento": true,
+		"texto": "...en 1953 se adquirieron los terrenos del antiguo pueblo de San Miguel Tlalixco para la construcción de la Ciudad Universitaria.\nLos habitantes fueron reubicados \"sin mayores contratiempos\".\n\n(Alguien escribió en el margen, con letra temblorosa:)\nNO TODOS SE FUERON."
+	},
+	"lista_asistencia": {
+		"nombre": "Lista de asistencia — Anatomía I",
+		"icono": "documento",
+		"documento": true,
+		"texto": "Grupo 101. Prácticas nocturnas.\n\n1. Aguilar, R. ........ ✓\n2. Cervantes, M. ...... ✓\n3. Domínguez, A. ...... falta\n4. Domínguez, A. ...... falta\n5. Domínguez, A. ...... falta\n\nEl mismo nombre, tres veces, con la misma letra.\nNinguno de los otros alumnos sabe quién es."
+	}
 }

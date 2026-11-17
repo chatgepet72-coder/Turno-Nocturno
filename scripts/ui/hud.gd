@@ -10,7 +10,7 @@ var ayuda: Label
 var menu: MenuPausa
 
 var _objetivo: Label
-var _salud: Label
+var _pantalla_vida: PantallaVida
 var _municion: Label
 var _icono_pistola: TextureRect
 var _aviso: Label
@@ -18,13 +18,15 @@ var _lalo: Lalo
 
 
 func _ready() -> void:
+	layer = 8   # encima del efecto de salud (capa 5)
+	_pantalla_vida = PantallaVida.new()
+	add_child(_pantalla_vida)
 	var estilo := _estilo(9)
 	ayuda = _etiqueta(estilo, Vector2(8, 344))
 	ayuda.text = AYUDA
 	ayuda.modulate.a = 0.6
 	_objetivo = _etiqueta(estilo, Vector2(8, 6))
 	_objetivo.visible = false
-	_salud = _etiqueta(estilo, Vector2(560, 6))
 	_icono_pistola = TextureRect.new()
 	_icono_pistola.texture = load("res://assets/sprites/ui/pistola_clavos.png") as Texture2D
 	_icono_pistola.position = Vector2(560, 300)
@@ -72,8 +74,9 @@ func _al_cambiar_municion(cargador: int, reserva: int) -> void:
 	_municion.text = "Clavos %d / %d" % [cargador, reserva]
 
 
+## Sin barra de vida: el estado se ve en la pantalla y en la luz del control (PantallaVida).
 func _al_cambiar_vida(vida: int) -> void:
-	_salud.text = "Salud " + "■".repeat(maxi(vida, 0)) + "□".repeat(maxi(_lalo.vida_maxima - vida, 0))
+	_pantalla_vida.poner_vida(vida)
 
 
 ## "Te alcanzaron..." y después se carga la última partida guardada (o empieza de nuevo si no hay).

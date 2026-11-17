@@ -1,161 +1,161 @@
 {
 	"salon_101": {
 		"tam": [
-			578,
-			572
+			808,
+			802
 		],
-		"muro": 43,
+		"muro": 60,
 		"puerta": "b",
-		"puerta_x": 289
+		"puerta_x": 404
 	},
 	"salon_102": {
 		"tam": [
-			730,
-			551
+			1022,
+			771
 		],
-		"muro": 41,
+		"muro": 58,
 		"puerta": "b",
-		"puerta_x": 365
+		"puerta_x": 511
 	},
 	"consultorio": {
 		"tam": [
-			614,
-			494
+			860,
+			691
 		],
-		"muro": 37,
+		"muro": 52,
 		"puerta": "b",
-		"puerta_x": 307
+		"puerta_x": 430
 	},
 	"caseta": {
 		"tam": [
-			422,
-			484
+			590,
+			678
 		],
-		"muro": 32,
+		"muro": 44,
 		"puerta": "b",
-		"puerta_x": 211
+		"puerta_x": 295
 	},
 	"laboratorio": {
 		"tam": [
-			511,
-			498
+			715,
+			698
 		],
-		"muro": 37,
+		"muro": 52,
 		"puerta": "b",
-		"puerta_x": 256
+		"puerta_x": 358
 	},
 	"salon_104": {
 		"tam": [
-			548,
-			514
+			767,
+			720
 		],
-		"muro": 39,
+		"muro": 54,
 		"puerta": "b",
-		"puerta_x": 274
+		"puerta_x": 384
 	},
 	"banos_h": {
 		"tam": [
-			708,
-			548
+			992,
+			766
 		],
-		"muro": 41,
+		"muro": 57,
 		"puerta": "b",
-		"puerta_x": 340
+		"puerta_x": 476
 	},
 	"banos_m": {
 		"tam": [
-			678,
-			536
+			949,
+			750
 		],
-		"muro": 40,
+		"muro": 56,
 		"puerta": "b",
-		"puerta_x": 339
+		"puerta_x": 474
 	},
 	"enfermeria": {
 		"tam": [
-			644,
-			554
+			901,
+			776
 		],
-		"muro": 42,
+		"muro": 58,
 		"puerta": "t",
-		"puerta_x": 322
+		"puerta_x": 450
 	},
 	"simulacion": {
 		"tam": [
-			652,
-			512
+			913,
+			717
 		],
-		"muro": 38,
+		"muro": 54,
 		"puerta": "t",
-		"puerta_x": 326
+		"puerta_x": 456
 	},
 	"escaleras": {
 		"tam": [
-			610,
-			610
+			854,
+			853
 		],
-		"muro": 46,
+		"muro": 64,
 		"puerta": "t",
-		"puerta_x": 305
+		"puerta_x": 427
 	},
 	"recepcion": {
 		"tam": [
-			645,
-			508
+			903,
+			711
 		],
-		"muro": 38,
+		"muro": 53,
 		"puerta": "t",
-		"puerta_x": 303
+		"puerta_x": 424
 	},
 	"salon_105": {
 		"tam": [
-			628,
-			618
+			878,
+			866
 		],
-		"muro": 46,
+		"muro": 65,
 		"puerta": "t",
-		"puerta_x": 314
+		"puerta_x": 439
 	},
 	"archivo": {
 		"tam": [
-			633,
-			489
+			886,
+			685
 		],
-		"muro": 37,
+		"muro": 51,
 		"puerta": "t",
-		"puerta_x": 475
+		"puerta_x": 664
 	},
 	"bodega": {
 		"tam": [
-			641,
-			502
+			897,
+			703
 		],
-		"muro": 38,
+		"muro": 53,
 		"puerta": "t",
-		"puerta_x": 320
+		"puerta_x": 448
 	},
 	"maquinas": {
 		"tam": [
-			638,
-			522
+			893,
+			731
 		],
-		"muro": 39,
+		"muro": 55,
 		"puerta": "t",
-		"puerta_x": 319
+		"puerta_x": 446
 	},
 	"entrada": {
 		"tam": [
-			576,
-			613
+			807,
+			858
 		],
-		"muro": 43,
+		"muro": 61,
 		"puerta": "b",
-		"puerta_x": 288
+		"puerta_x": 404
 	},
 	"pasillo": {
 		"tam": [
-			1799,
-			426
+			2399,
+			568
 		],
 		"puertas_x": [
 			0.084,
@@ -173,8 +173,8 @@
 	},
 	"pasillo_oeste": {
 		"tam": [
-			426,
-			755
+			568,
+			1007
 		],
 		"puertas_y": [
 			0.167,
