@@ -81,6 +81,8 @@ const TIERRA_APAGON: Array = [
 	["rastro_1.png", Vector2(740, 300)], ["rastro_2.png", Vector2(1040, 450)],
 	["juntas.png", Vector2(1180, 380)], ["huellas.png", Vector2(880, 740)], ["rastro_1.png", Vector2(1640, 560)],
 ]
+const PUERTA_MEDICINA: Rect2 = Rect2(1278, 340, 76, 56)
+const SALIDA_MEDICINA: Vector2 = Vector2(1316, 420)
 const PUERTA_CASETA: Rect2 = Rect2(784, 844, 40, 28)
 const REJA_Y: float = 1036.0
 ## Barreras invisibles: la obra solo se alcanza entrando por el patio, no cortando por el pasto.
@@ -96,10 +98,10 @@ var lalo: Lalo
 var chava: DonChava
 var puerta: Puerta
 var ayuda: Label
+var hud: Hud
 
 var _mundo: Node2D
 var _techo_caseta: Node2D
-var _objetivo: Label
 var _luces_campus: Array[PointLight2D] = []
 var _tierra: Array[Sprite2D] = []
 var _maniqui: Sprite2D
@@ -109,13 +111,9 @@ var _luz_linterna_chava: PointLight2D
 var _respiracion: AudioStreamPlayer2D
 var _respirando: bool = false
 var _caja: Sprite2D
-var _municion: Label
-var _icono_pistola: TextureRect
-var _salud: Label
 
 
 func _ready() -> void:
-	GameState.reiniciar()   # al reiniciar la escena después de morir, todo vuelve a empezar
 	var noche := CanvasModulate.new()
 	noche.color = NOCHE
 	add_child(noche)
@@ -143,9 +141,12 @@ func _ready() -> void:
 	_crear_lalo()
 	_crear_hud()
 	_crear_ambiente()
-	var prologo := Prologo.new()
-	add_child(prologo)
-	prologo.iniciar(self)
+	if GameState.prologo_completo:
+		_despues_del_prologo()
+	else:
+		var prologo := Prologo.new()
+		add_child(prologo)
+		prologo.iniciar(self)
 
 
 # ---------- Construcción ----------
@@ -333,7 +334,33 @@ func _crear_lalo() -> void:
 	lalo.superficies_duras = duras
 	_mundo.add_child(lalo)
 	lalo.poner_limites_camara(MUNDO)
-	lalo.sentar()
+	if not GameState.prologo_completo:
+		lalo.sentar()
+
+
+## El campus como queda después del prólogo: apagón, sin Don Chava, y Lalo en la puerta de Medicina.
+func _despues_del_prologo() -> void:
+	apagon()
+	chava.visible = false
+	chava.process_mode = Node.PROCESS_MODE_DISABLED
+	if GameState.punto_entrada == "puerta_medicina":
+		lalo.global_position = SALIDA_MEDICINA
+		lalo.camara().reset_smoothing()
+	poner_objetivo("Busca a Don Chava en la Facultad de Medicina.")
+	habilitar_medicina()
+
+
+## La puerta de la Facultad de Medicina, en el centro del ala de arriba del patio.
+func habilitar_medicina() -> void:
+	var puerta_medicina := agregar_interactuable(PUERTA_MEDICINA, "entrar a Medicina")
+	puerta_medicina.usado.connect(_entrar_medicina)
+
+
+func _entrar_medicina() -> void:
+	lalo.controlable = false
+	var transicion := TransicionPuerta.new()
+	add_child(transicion)
+	await transicion.cruzar(func() -> void: GameState.ir_a("medicina", "entrada"))
 
 
 func _limites(camara: Camera2D) -> void:
@@ -477,84 +504,16 @@ func aparecer_maniqui(pos: Vector2) -> Maniqui:
 	return m
 
 
-func _al_cambiar_municion(cargador: int, reserva: int) -> void:
-	_icono_pistola.visible = GameState.tiene_pistola
-	_municion.visible = GameState.tiene_pistola
-	_municion.text = "Clavos %d / %d" % [cargador, reserva]
-
-
-func _al_cambiar_vida(vida: int) -> void:
-	_salud.text = "Salud " + "■".repeat(maxi(vida, 0)) + "□".repeat(maxi(lalo.vida_maxima - vida, 0))
-
-
-func _al_morir() -> void:
-	var capa := CanvasLayer.new()
-	capa.layer = 30
-	var fondo := ColorRect.new()
-	fondo.color = Color(0.25, 0.0, 0.0, 0.0)
-	fondo.size = Vector2(640, 360)
-	capa.add_child(fondo)
-	var texto := Label.new()
-	texto.text = "Te alcanzaron..."
-	var estilo := LabelSettings.new()
-	estilo.font_size = 18
-	estilo.font_color = Color(0.9, 0.85, 0.8)
-	texto.label_settings = estilo
-	texto.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	texto.size = Vector2(640, 40)
-	texto.position = Vector2(0, 160)
-	texto.modulate.a = 0.0
-	capa.add_child(texto)
-	add_child(capa)
-	var t := create_tween()
-	t.tween_property(fondo, "color:a", 0.85, 1.2)
-	t.tween_property(texto, "modulate:a", 1.0, 0.8)
-	t.tween_interval(2.5)
-	t.tween_callback(get_tree().reload_current_scene)
-
-
 func poner_objetivo(texto: String) -> void:
-	_objetivo.text = "Objetivo: " + texto
-	_objetivo.visible = true
+	hud.poner_objetivo(texto)
 
 
 func _crear_hud() -> void:
-	var capa := CanvasLayer.new()
-	ayuda = Label.new()
-	ayuda.visible = false   # aparece cuando el jugador toma el control
-	ayuda.text = "WASD o flechas: caminar  ·  Shift: correr  ·  Ratón: apuntar  ·  F: linterna  ·  E: abrir puertas"
-	var estilo := LabelSettings.new()
-	estilo.font_size = 9
-	estilo.font_color = Color(0.9, 0.88, 0.8)
-	estilo.outline_size = 3
-	estilo.outline_color = Color.BLACK
-	ayuda.label_settings = estilo
-	ayuda.position = Vector2(8, 344)
-	capa.add_child(ayuda)
-	_objetivo = Label.new()
-	_objetivo.label_settings = estilo
-	_objetivo.position = Vector2(8, 6)
-	_objetivo.visible = false
-	capa.add_child(_objetivo)
-	_salud = Label.new()
-	_salud.label_settings = estilo
-	_salud.position = Vector2(560, 6)
-	capa.add_child(_salud)
-	_icono_pistola = TextureRect.new()
-	_icono_pistola.texture = load("res://assets/sprites/ui/pistola_clavos.png") as Texture2D
-	_icono_pistola.position = Vector2(560, 300)
-	_icono_pistola.visible = false
-	capa.add_child(_icono_pistola)
-	_municion = Label.new()
-	_municion.label_settings = estilo
-	_municion.position = Vector2(560, 338)
-	_municion.visible = false
-	capa.add_child(_municion)
-	add_child(capa)
-	GameState.municion_cambio.connect(_al_cambiar_municion)
-	lalo.vida_cambio.connect(_al_cambiar_vida)
-	lalo.murio.connect(_al_morir)
-	_al_cambiar_vida(lalo.vida)
+	hud = Hud.new()
+	add_child(hud)
+	hud.conectar(lalo)
+	ayuda = hud.ayuda
+	ayuda.visible = GameState.prologo_completo   # en el prólogo aparece cuando el jugador toma el control
 
 
 func _crear_ambiente() -> void:

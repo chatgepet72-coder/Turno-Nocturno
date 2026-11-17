@@ -1,0 +1,18 @@
+{
+	"llegada": [
+		{"quien": "Lalo", "voz": "lalo_angustia", "texto": "¿Don Chava? ¿Está aquí?"},
+		{"quien": "Lalo", "voz": "lalo_angustia", "texto": "Huele a alcohol... como él dijo."}
+	],
+	"simulacion": [
+		{"quien": "Lalo", "voz": "lalo_angustia", "texto": "Camillas... aquí es donde estaba."},
+		{"quien": "Lalo", "voz": "lalo_angustia", "texto": "¿Don Chava? ...Son puros muñecos."}
+	],
+	"escaleras": [
+		{"quien": "Lalo", "voz": "lalo_angustia", "texto": "La reja de la escalera está cerrada con cadena..."},
+		{"quien": "Lalo", "voz": "lalo_angustia", "texto": "Tengo que encontrar otra forma de subir. (Planta alta: próximamente)"}
+	],
+	"caseta": [
+		{"quien": "Lalo", "voz": "lalo_calmado", "texto": "Una caseta como la nuestra... con lámpara y radio."},
+		{"quien": "Lalo", "voz": "lalo_calmado", "texto": "Aquí puedo descansar un momento."}
+	]
+}

@@ -135,7 +135,7 @@ func iniciar(nivel: Node2D) -> void:
 	GameState.dar_pistola(GameState.CAPACIDAD_CARGADOR, 20)
 	nivel.cerrar_caja()
 	lalo.controlable = true
-	nivel.ayuda.text = "WASD: caminar  ·  Ratón: apuntar  ·  Clic o Espacio: disparar  ·  R: recargar  ·  F: linterna  ·  E: usar"
+	nivel.hud.armado()
 
 	# 12. Don Chava habla por radio: está en un lugar con camillas
 	await _esperar(5.0)
@@ -147,7 +147,9 @@ func iniciar(nivel: Node2D) -> void:
 	await maniqui.derribado
 	await _esperar(1.0)
 	await _decir(dialogos["maniqui_derribado"], true)
-	nivel.poner_objetivo("Busca a Don Chava en Medicina. (Fin del prólogo)")
+	GameState.prologo_completo = true
+	nivel.poner_objetivo("Busca a Don Chava en la Facultad de Medicina.")
+	nivel.habilitar_medicina()
 
 
 ## El maniquí: Lalo lo ve en la banca y, cuando deja de verlo, ya no está.

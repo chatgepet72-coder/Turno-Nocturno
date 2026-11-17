@@ -21,7 +21,7 @@ Objetivo: probar si el juego da miedo antes de hacer el resto.
 - [ ] Sistema de enemigos que regresan (sigue ahí / desaparece / cambia de posición)
 - [ ] Clavar al piso para que no regrese
 - [x] Vida de Lalo y curación con vendas
-- [ ] Cuarto seguro con guardado
+- [x] Cuarto seguro con guardado (caseta de Medicina) y menú Continuar / Nueva partida
 - [ ] Radio con estática que sube cuando hay enemigos cerca
 - [ ] Sonidos de prueba: pasos, clavos, maniquí, estática
 
@@ -44,7 +44,9 @@ Objetivo: probar si el juego da miedo antes de hacer el resto.
 
 ## Etapa 3: Capítulo 1, Medicina
 
-- [ ] Mapa de Medicina (salones, sala de simulación, bodega de esqueletos, anfiteatro)
+- [x] Planta baja de Medicina: pasillo largo y 16 cuartos con arte del equipo
+- [x] Transición de puertas al estilo Resident Evil (rechinido y pasos)
+- [ ] Planta alta de Medicina (bodega de esqueletos, anfiteatro, morgue)
 - [ ] Esqueletos (se rearman)
 - [ ] Inventario completo con mochila de 8 espacios
 - [ ] Documentos y libreta de Lalo

@@ -44,6 +44,7 @@ var _empuje: Vector2 = Vector2.ZERO
 
 
 func _ready() -> void:
+	vida = GameState.vida_lalo
 	collision_layer = 2
 	collision_mask = 1
 	motion_mode = CharacterBody2D.MOTION_MODE_FLOATING
@@ -111,6 +112,7 @@ func recibir_dano(cantidad: int, desde: Vector2) -> void:
 		return
 	_invulnerable = 1.0
 	vida -= cantidad
+	GameState.vida_lalo = vida
 	vida_cambio.emit(vida)
 	_empuje = (global_position - desde).normalized() * 260.0
 	_sonar_arma("golpe")

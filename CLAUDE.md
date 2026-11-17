@@ -9,6 +9,9 @@ Survival horror 2D (vista desde arriba) en Godot 4.7. Lalo, velador nocturno de 
 - `scripts/autoload/`: `EventBus` (señales globales), `GameState` (progreso y cálculo del final) y `Dialogos` (caja de texto, voces y radio).
 - `data/dialogos/*.json`: los textos de los diálogos. Cada línea: `quien`, `voz`, `texto` y opcional `radio: true`.
 - Voces (`assets/audio/voces/`): `lalo_calmado`, `lalo_angustia` (después del sótano), `chava` (normal), `chava_debil` (débil o el ente con su voz). Se generan con `tools/arte/voces_juego.py`.
+- `scripts/ui/hud.gd` (`Hud`): objetivo, salud, clavos, avisos y muerte, para todos los niveles. `scripts/ui/transicion_puerta.gd` y `transicion_escalera.gd`: transiciones estilo Resident Evil.
+- Escenas: `scenes/main.tscn` (menú), `Entrada.tscn` (campus y prólogo), `Medicina.tscn` (planta baja). Se cambia con `GameState.ir_a(escena, punto)`; la partida se guarda con `GameState.guardar()` en `user://partida.json`.
+- `data/medicina_cuartos.json`: medidas de cada cuarto de Medicina (paredes y puertas), generado por `tools/arte/medicina_interiores.py`.
 - `scripts/niveles/prologo.gd`: el guion del prólogo, paso por paso. `scripts/personajes/don_chava.gd`: Don Chava guionizado (sin IA).
 - `scenes/`: escenas por tipo (`jugador/`, `enemigos/`, `niveles/`, `ui/`, `objetos/`).
 - `scripts/`: scripts con la misma estructura que `scenes/`.
