@@ -93,7 +93,7 @@ func _ready() -> void:
 	raiz.modulate.a=0;create_tween().tween_property(raiz,"modulate:a",1,.18)
 func actualizar() -> void:
 	seleccion = ""
-	saldo.text = "Saldo: $%d  ·  Todo a $1  ·  Mochila: máximo 6 suministros" % escuela.campana.monedas if tienda else "Suministros %d/6 · Cada unidad ocupa un espacio · Evidencias en carpeta separada" % Mochila.usados(escuela.jugador.inventario)
+	saldo.text = "Saldo: $%d  ·  Todo a $1  ·  Mochila: máximo 6 suministros" % escuela.campana.monedas if tienda else "Suministros %d/6  ·  Pila %d%%  ·  $%d  ·  Evidencias en carpeta separada" % [Mochila.usados(escuela.jugador.inventario), int(escuela.campana.bateria), escuela.campana.monedas]
 	cantidades.clear();objetos.clear()
 	var lista: Array[String]=escuela.jugador.inventario.duplicate()
 	lista.append("Linterna")

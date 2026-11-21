@@ -19,6 +19,17 @@ var cinematica: VideoStreamPlayer
 var capa_cinematica: Control
 var plano_grande: Control
 
+## Pantalla limpia: el objetivo y los mensajes aparecen un momento y se desvanecen;
+## los números (cordura, mochila, dinero, circuito) viven en la mochila, el plano y la pausa.
+const SEGUNDOS_OBJETIVO: float = 6.0
+const SEGUNDOS_MENSAJE: float = 4.5
+const SEGUNDOS_CONTROLES: float = 15.0   # la línea de controles solo al empezar
+const PILA_BAJA: float = 20.0
+var _objetivo_previo: String = ""
+var _tiempo_objetivo: float = 0.0
+var _mensaje_previo: String = ""
+var _tiempo_mensaje: float = 0.0
+
 func _ready() -> void:
 	layer = 20
 	var raiz := Control.new()
@@ -51,12 +62,7 @@ func _ready() -> void:
 	subtitulo.modulate.a = 0
 	panel = Control.new()
 	panel.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	var mini := preload("res://src/ui/minimapa.gd").new()
-	mini.escuela = escuela
-	mini.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	mini.position = Vector2(-265, 36)
-	mini.size = Vector2(240, 290)
-	raiz.add_child(mini)
+	# El minimapa ya no va en pantalla: el plano completo se abre con V / Tab / gatillos.
 	guia=preload("res://src/ui/guia_objetivo.gd").new()
 	guia.escuela=escuela
 	raiz.add_child(guia)
@@ -84,9 +90,47 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	if is_instance_valid(sigilo_barra):
-		sigilo_barra.visible=escuela.jugando
+		# Solo cuando se usa: agachado o recuperando el aliento.
+		sigilo_barra.visible=escuela.jugando and (escuela.jugador.agachado or escuela.jugador.sigilo<99.5)
 		sigilo_barra.value=escuela.jugador.sigilo
 		sigilo_barra.modulate=Color("ff997f") if escuela.jugador.sigilo<=20 else Color.WHITE
+
+## Se llama cada cuadro mientras se juega. `ayuda` es la acción de lo que está cerca ("[E] Llave maestra").
+func actualizar_juego(delta: float, ayuda_cercana: String) -> void:
+	var campana: Node = escuela.campana
+	var objetivo: String = campana.objetivo()
+	if objetivo != _objetivo_previo:
+		_objetivo_previo = objetivo
+		_tiempo_objetivo = SEGUNDOS_OBJETIVO
+	_tiempo_objetivo = maxf(0.0, _tiempo_objetivo - delta)
+	var gracia: bool = campana.gracia_activa()
+	var lineas: Array[String] = []
+	if _tiempo_objetivo > 0.0:
+		lineas.append(objetivo)
+	if gracia:
+		lineas.append("Recolecta y explora · %02d s antes del Archivero" % ceili(campana.gracia_patio))
+	hud.text = "\n".join(lineas)
+	hud.modulate = Color("ffc4a8") if gracia and campana.gracia_patio <= 10 else Color.WHITE
+	if not gracia:
+		hud.modulate.a = clampf(_tiempo_objetivo, 0.0, 1.0)   # se desvanece el último segundo
+	# Solo avisos que importan en el momento
+	var avisos: Array[String] = []
+	if campana.bateria <= PILA_BAJA:
+		avisos.append("Pila baja · %d%%" % int(campana.bateria))
+	barras.text = "   ·   ".join(avisos)
+	var mensaje: String = escuela.jugador.mensaje
+	if mensaje != _mensaje_previo:
+		_mensaje_previo = mensaje
+		_tiempo_mensaje = SEGUNDOS_MENSAJE
+	_tiempo_mensaje = maxf(0.0, _tiempo_mensaje - delta)
+	var abajo: Array[String] = []
+	if ayuda_cercana != "":
+		abajo.append(ayuda_cercana)
+	if _tiempo_mensaje > 0.0 and mensaje != "":
+		abajo.append(mensaje)
+	if escuela.tiempo < SEGUNDOS_CONTROLES:
+		abajo.append("B / Círculo: sigilo · LT / RT: plano · Y: mochila · Start: pausa" if Controles.usando_mando else "C / Ctrl: sigilo · V / Tab: plano · I: mochila · Esc: pausa")
+	ayuda.text = "\n".join(abajo)
 
 func etiqueta(padre: Node, posicion: Vector2, tamano: int, color: Color) -> Label:
 	var texto := Label.new()

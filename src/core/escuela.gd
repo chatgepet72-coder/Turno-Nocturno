@@ -225,20 +225,10 @@ func _process(delta: float) -> void:
 		Controles.vibrar(peligro * 0.55, 0.16)
 	if Input.is_action_just_pressed("guardar"):
 		guardar_manual()
-	var objetivo: String = campana.objetivo()
-	interfaz.hud.text = "TURNO NOCTURNO    /    %02d:%02d\n%s" % [int(tiempo) / 60, int(tiempo) % 60, objetivo]
-	interfaz.barras.text = "CORDURA %03d   /   RESISTENCIA %03d   /   RUIDO %s   /   OBJETOS %d" % [ceili(jugador.cordura), int(jugador.energia), "ALTO" if jugador.ruido > 0.5 else ("BAJO" if jugador.ruido > 0 else "SILENCIO"), jugador.inventario.size()]
-	if campana.gracia_activa():
-		interfaz.hud.text += "\nRECOLECTA Y EXPLORA · %02d s antes del Archivero" % ceili(campana.gracia_patio)
-	interfaz.hud.modulate = Color("ffc4a8") if campana.gracia_activa() and campana.gracia_patio <= 10 else Color.WHITE
-	interfaz.barras.text += "   /   MOCHILA %d/6" % preload("res://src/player/mochila.gd").usados(jugador.inventario)
-	interfaz.barras.text += "   /   PILA %d%%   /   $%d" % [int(campana.bateria), campana.monedas]
-	interfaz.barras.text += "\nSIGILO %d%% · %.1f s disponibles  /  CIRCUITO: %s"%[int(jugador.sigilo),jugador.sigilo/5.0,campana.alimentado.replace("_"," ") if campana.alimentado!="" else "NINGUNO"]
-	if jugador.agachado: interfaz.barras.text += "  ·  AGACHADO"
 	var cercano: Node2D = jugador.ultimo_escondite if jugador.oculto else jugador.mas_cercano()
 	var ayuda: String = "[%s] %s" % [Controles.boton_interaccion(), "Salir del escondite" if jugador.oculto else cercano.titulo] if is_instance_valid(cercano) else ""
 	if jugador.accion != "": ayuda = ("EXCAVANDO" if jugador.accion == "excavar" else ("ENTRANDO AL ESCONDITE" if jugador.accion == "entrar" else "SALIENDO DEL ESCONDITE")) + " · %d%%" % int(100 * jugador.avance_accion / jugador.duracion_accion)
-	interfaz.ayuda.text = ayuda + "\n" + jugador.mensaje + "\n" + ("B / Círculo: sigilo · LT / RT: plano · Y: mochila · RB: distraer · Start: pausa" if Controles.usando_mando else "C / Ctrl: sigilo · V / Tab: plano · I: mochila · Esc: pausa")
+	interfaz.actualizar_juego(delta, ayuda)
 	for luz in get_tree().get_nodes_in_group("parpadeo"):
 		luz.enabled = zonas.get("Computo",false) and not campana.hechos.get("computo",false)
 		luz.energy = float(luz.get_meta("energia_base", 0.5)) * (0.8 + 0.2 * sin(tiempo * 9.0))
