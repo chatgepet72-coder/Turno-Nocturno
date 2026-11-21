@@ -322,7 +322,8 @@ func mas_cercano() -> Node2D:
 			continue
 		var consulta := PhysicsRayQueryParameters2D.create(global_position, candidato.global_position, 1, [get_rid()])
 		var impacto := get_world_2d().direct_space_state.intersect_ray(consulta)
-		if not impacto.is_empty() and impacto.collider != candidato:
+		# Un mueble en medio no estorba: así se alcanza lo que está encima de un escritorio.
+		if not impacto.is_empty() and impacto.collider != candidato and not (impacto.collider.get("tipo") in ["escondite", "decoracion", "empujar"]):
 			continue
 		distancia = d
 		mejor = candidato

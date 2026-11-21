@@ -86,7 +86,7 @@ func ejecutar() -> void:
 		comprobar(escena.interfaz.menu_actual=="mapa","Back/Share abre mapa · ID %d"%dispositivo)
 		await boton(JOY_BUTTON_B,true,dispositivo);await boton(JOY_BUTTON_B,false,dispositivo)
 		comprobar(escena.jugando,"B/Círculo cierra mapa · ID %d"%dispositivo)
-		j.position=Vector2(2160,1210)
+		j.position=Vector2(2190,1160)   # junto al radio, en su lugar nuevo (Entrada, pared derecha)
 		await esperar()
 		await boton(JOY_BUTTON_A,true,dispositivo);await boton(JOY_BUTTON_A,false,dispositivo)
 		comprobar(escena.campana.hechos.get("radio",false),"A/Cruz interactúa con radio · ID %d"%dispositivo)

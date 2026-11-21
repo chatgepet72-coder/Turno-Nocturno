@@ -8996,7 +8996,7 @@ texture = ExtResource("R9")
 metadata/zona = "Entrada"
 
 [node name="sofa_366" type="CharacterBody2D" parent="Objetos" unique_id=2045956565]
-position = Vector2(2010, 1100)
+position = Vector2(2000, 1230)
 motion_mode = 1
 script = ExtResource("R6")
 tipo = "escondite"
@@ -9011,7 +9011,7 @@ metadata/zona = ""
 shape = SubResource("S499")
 
 [node name="planta_367" type="CharacterBody2D" parent="Objetos" unique_id=730353746]
-position = Vector2(2235, 1010)
+position = Vector2(2262, 978)
 motion_mode = 1
 script = ExtResource("R6")
 titulo = "Planta"
@@ -9025,7 +9025,7 @@ metadata/zona = ""
 shape = SubResource("S500")
 
 [node name="cartelera_368" type="CharacterBody2D" parent="Objetos" unique_id=715896699]
-position = Vector2(2200, 1190)
+position = Vector2(2000, 1060)
 collision_layer = 0
 motion_mode = 1
 script = ExtResource("R6")
@@ -9548,7 +9548,7 @@ texture = ExtResource("R9")
 metadata/zona = "Direccion"
 
 [node name="escritorio_404" type="CharacterBody2D" parent="Objetos" unique_id=116219226]
-position = Vector2(2800, 1055)
+position = Vector2(2790, 1015)
 motion_mode = 1
 script = ExtResource("R6")
 tipo = "escondite"
@@ -9563,7 +9563,7 @@ metadata/zona = ""
 shape = SubResource("S529")
 
 [node name="cajonera_405" type="CharacterBody2D" parent="Objetos" unique_id=2109162388]
-position = Vector2(2805, 1190)
+position = Vector2(3022, 1140)
 motion_mode = 1
 script = ExtResource("R6")
 tipo = "empujar"
@@ -9578,7 +9578,7 @@ metadata/zona = ""
 shape = SubResource("S530")
 
 [node name="archivero_mueble_406" type="CharacterBody2D" parent="Objetos" unique_id=138047391]
-position = Vector2(3010, 1060)
+position = Vector2(3020, 1010)
 motion_mode = 1
 script = ExtResource("R6")
 tipo = "escondite"
@@ -9593,7 +9593,7 @@ metadata/zona = ""
 shape = SubResource("S531")
 
 [node name="breaker_407" type="CharacterBody2D" parent="Objetos" unique_id=3284034]
-position = Vector2(3010, 1200)
+position = Vector2(2735, 1230)
 motion_mode = 1
 script = ExtResource("R6")
 tipo = "breaker"
@@ -9608,7 +9608,8 @@ metadata/zona = ""
 shape = SubResource("S532")
 
 [node name="llave_408" type="CharacterBody2D" parent="Objetos" unique_id=1480417130]
-position = Vector2(2720, 1250)
+position = Vector2(2758, 1003)
+z_index = 1
 collision_layer = 0
 motion_mode = 1
 script = ExtResource("R6")
@@ -9621,7 +9622,8 @@ texture = ExtResource("R35")
 metadata/zona = ""
 
 [node name="termo_409" type="CharacterBody2D" parent="Objetos" unique_id=270314801]
-position = Vector2(2900, 1270)
+position = Vector2(2826, 1001)
+z_index = 1
 collision_layer = 0
 motion_mode = 1
 script = ExtResource("R6")
@@ -9634,7 +9636,8 @@ texture = ExtResource("R36")
 metadata/zona = ""
 
 [node name="grapadora_410" type="CharacterBody2D" parent="Objetos" unique_id=1523510741]
-position = Vector2(2930, 1060)
+position = Vector2(3022, 1122)
+z_index = 1
 collision_layer = 0
 motion_mode = 1
 script = ExtResource("R6")
@@ -9690,7 +9693,7 @@ texture = ExtResource("R9")
 metadata/zona = "Rectoria_Archivo"
 
 [node name="archivero_mueble_414" type="CharacterBody2D" parent="Objetos" unique_id=716445426]
-position = Vector2(3130, 1030)
+position = Vector2(3125, 1005)
 motion_mode = 1
 script = ExtResource("R6")
 tipo = "escondite"
@@ -9705,7 +9708,7 @@ metadata/zona = ""
 shape = SubResource("S534")
 
 [node name="archivero_mueble_415" type="CharacterBody2D" parent="Objetos" unique_id=1951055701]
-position = Vector2(3240, 1030)
+position = Vector2(3195, 1005)
 motion_mode = 1
 script = ExtResource("R6")
 tipo = "escondite"
@@ -9720,7 +9723,7 @@ metadata/zona = ""
 shape = SubResource("S535")
 
 [node name="archivero_mueble_416" type="CharacterBody2D" parent="Objetos" unique_id=2133487690]
-position = Vector2(3370, 1030)
+position = Vector2(3400, 1005)
 motion_mode = 1
 script = ExtResource("R6")
 tipo = "escondite"
@@ -9735,7 +9738,7 @@ metadata/zona = ""
 shape = SubResource("S536")
 
 [node name="escritorio_417" type="CharacterBody2D" parent="Objetos" unique_id=573489510]
-position = Vector2(3180, 1210)
+position = Vector2(3264, 1215)
 motion_mode = 1
 script = ExtResource("R6")
 tipo = "escondite"
@@ -9750,7 +9753,8 @@ metadata/zona = ""
 shape = SubResource("S537")
 
 [node name="expediente_418" type="CharacterBody2D" parent="Objetos" unique_id=393328954]
-position = Vector2(3350, 1180)
+position = Vector2(3236, 1203)
+z_index = 1
 collision_layer = 0
 motion_mode = 1
 script = ExtResource("R6")
@@ -9763,7 +9767,7 @@ texture = ExtResource("R38")
 metadata/zona = ""
 
 [node name="sello_roto_419" type="CharacterBody2D" parent="Objetos" unique_id=1435561584]
-position = Vector2(3390, 1290)
+position = Vector2(3425, 1305)
 collision_layer = 0
 motion_mode = 1
 script = ExtResource("R6")
@@ -9776,7 +9780,8 @@ texture = ExtResource("R39")
 metadata/zona = ""
 
 [node name="gafete_420" type="CharacterBody2D" parent="Objetos" unique_id=738053999]
-position = Vector2(3110, 1290)
+position = Vector2(3296, 1205)
+z_index = 1
 collision_layer = 0
 motion_mode = 1
 script = ExtResource("R6")
@@ -9832,7 +9837,7 @@ texture = ExtResource("R9")
 metadata/zona = "Taller"
 
 [node name="escritorio_424" type="CharacterBody2D" parent="Objetos" unique_id=1471960391]
-position = Vector2(3560, 1060)
+position = Vector2(3545, 1015)
 motion_mode = 1
 script = ExtResource("R6")
 titulo = "Escritorio"
@@ -9846,7 +9851,8 @@ metadata/zona = ""
 shape = SubResource("S539")
 
 [node name="maqueta_425" type="CharacterBody2D" parent="Objetos" unique_id=1169919991]
-position = Vector2(3560, 1040)
+position = Vector2(3545, 998)
+z_index = 1
 collision_layer = 0
 motion_mode = 1
 script = ExtResource("R6")
@@ -9859,7 +9865,7 @@ texture = ExtResource("R41")
 metadata/zona = ""
 
 [node name="estanteria_426" type="CharacterBody2D" parent="Objetos" unique_id=1584900851]
-position = Vector2(3770, 1040)
+position = Vector2(3780, 1005)
 motion_mode = 1
 script = ExtResource("R6")
 titulo = "Estanteria"
@@ -9873,7 +9879,7 @@ metadata/zona = ""
 shape = SubResource("S540")
 
 [node name="caja_427" type="CharacterBody2D" parent="Objetos" unique_id=573130504]
-position = Vector2(3520, 1240)
+position = Vector2(3590, 1285)
 motion_mode = 1
 script = ExtResource("R6")
 tipo = "empujar"
@@ -9888,7 +9894,7 @@ metadata/zona = ""
 shape = SubResource("S541")
 
 [node name="casillero_428" type="CharacterBody2D" parent="Objetos" unique_id=182525476]
-position = Vector2(3770, 1220)
+position = Vector2(3510, 1250)
 motion_mode = 1
 script = ExtResource("R6")
 tipo = "escondite"
@@ -9903,7 +9909,7 @@ metadata/zona = ""
 shape = SubResource("S542")
 
 [node name="fotocopiadora_429" type="CharacterBody2D" parent="Objetos" unique_id=1866072412]
-position = Vector2(3670, 1210)
+position = Vector2(3785, 1150)
 motion_mode = 1
 script = ExtResource("R6")
 titulo = "Fotocopiadora"

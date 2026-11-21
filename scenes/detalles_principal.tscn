@@ -12,7 +12,7 @@
 [node name="DetallesPrincipal" type="Node2D"]
 
 [node name="radio" type="StaticBody2D" parent="."]
-position = Vector2(2180,1210)
+position = Vector2(2236, 1150)
 collision_layer = 0
 collision_mask = 0
 script = ExtResource("1")
@@ -37,7 +37,7 @@ z_index = 6
 mouse_filter = 2
 
 [node name="pala" type="StaticBody2D" parent="."]
-position = Vector2(3260,1160)
+position = Vector2(3420, 1060)
 collision_layer = 0
 collision_mask = 0
 script = ExtResource("1")
@@ -87,7 +87,7 @@ z_index = 6
 mouse_filter = 2
 
 [node name="bitacora" type="StaticBody2D" parent="."]
-position = Vector2(2150,1040)
+position = Vector2(2236, 1075)
 collision_layer = 0
 collision_mask = 0
 script = ExtResource("1")
@@ -112,7 +112,7 @@ z_index = 6
 mouse_filter = 2
 
 [node name="tablero_principal" type="StaticBody2D" parent="."]
-position = Vector2(2030,1020)
+position = Vector2(1985, 975)
 collision_layer = 0
 collision_mask = 0
 script = ExtResource("1")
@@ -146,7 +146,7 @@ mouse_filter = 2
 z_index = 4
 
 [node name="cargador" type="StaticBody2D" parent="."]
-position = Vector2(2190,970)
+position = Vector2(2040, 975)
 collision_layer = 0
 collision_mask = 0
 script = ExtResource("1")
@@ -182,7 +182,7 @@ consumible = true
 [node name="Sprite8" type="Sprite2D" parent="moneda_principal_0"]
 position = Vector2(0, 0)
 texture = ExtResource("7")
-scale = Vector2(0.03827751196172249, 0.03827751196172249)
+scale = Vector2(0.017, 0.017)
 z_index = 5
 
 
@@ -207,7 +207,7 @@ consumible = true
 [node name="Sprite9" type="Sprite2D" parent="moneda_principal_1"]
 position = Vector2(0, 0)
 texture = ExtResource("7")
-scale = Vector2(0.03827751196172249, 0.03827751196172249)
+scale = Vector2(0.017, 0.017)
 z_index = 5
 
 
@@ -232,7 +232,7 @@ consumible = true
 [node name="Sprite10" type="Sprite2D" parent="moneda_principal_2"]
 position = Vector2(0, 0)
 texture = ExtResource("7")
-scale = Vector2(0.03827751196172249, 0.03827751196172249)
+scale = Vector2(0.017, 0.017)
 z_index = 5
 
 
