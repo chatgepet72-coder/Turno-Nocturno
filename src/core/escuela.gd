@@ -21,6 +21,7 @@ var oscuridad: ColorRect
 var destino_salida: String = "salir"
 var autoguardado: float = 0.0
 var campana: Node
+var cuartos: Node2D
 var gatillos_mapa: Dictionary = {}
 var mente: Node
 var inventario_ui: CanvasLayer
@@ -59,6 +60,10 @@ func _ready() -> void:
 	archivero = preload("res://src/enemies/archivero.gd").new()
 	add_child(archivero)
 	crear_oscuridad()
+	cuartos = preload("res://src/world/cuartos.gd").new()
+	cuartos.name = "Cuartos"
+	cuartos.escuela = self
+	add_child(cuartos)
 	interfaz = preload("res://src/ui/interfaz.gd").new()
 	interfaz.escuela = self
 	add_child(interfaz)
@@ -78,6 +83,7 @@ func _ready() -> void:
 	await get_tree().physics_frame
 	await get_tree().physics_frame
 	archivero.construir_rutas()
+	cuartos.ocultar_rotulos()
 	var entrada: String = get_tree().get_meta("entrada_turno", "inicio")
 	get_tree().remove_meta("entrada_turno")
 	if entrada == "nuevo":

@@ -23,12 +23,12 @@ var plano_grande: Control
 ## los números (cordura, mochila, dinero, circuito) viven en la mochila, el plano y la pausa.
 const SEGUNDOS_OBJETIVO: float = 6.0
 const SEGUNDOS_MENSAJE: float = 4.5
-const SEGUNDOS_CONTROLES: float = 15.0   # la línea de controles solo al empezar
 const PILA_BAJA: float = 20.0
 var _objetivo_previo: String = ""
 var _tiempo_objetivo: float = 0.0
 var _mensaje_previo: String = ""
 var _tiempo_mensaje: float = 0.0
+var menu_hint: Label   # lo único fijo en pantalla: cómo abrir el menú con los controles
 
 func _ready() -> void:
 	layer = 20
@@ -52,6 +52,10 @@ func _ready() -> void:
 	ayuda = etiqueta(raiz, Vector2(34, 600), 19, Color("eee9d9"))
 	ayuda.size = Vector2(1200,110)
 	ayuda.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	menu_hint = etiqueta(raiz, Vector2(1010, 684), 15, Color(0.75, 0.8, 0.8, 0.55))
+	menu_hint.size.x = 240
+	menu_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	menu_hint.hide()
 	aviso = etiqueta(raiz, Vector2(0, 170), 33, Color("d6b38a"))
 	aviso.size.x = 1280
 	aviso.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -128,9 +132,9 @@ func actualizar_juego(delta: float, ayuda_cercana: String) -> void:
 		abajo.append(ayuda_cercana)
 	if _tiempo_mensaje > 0.0 and mensaje != "":
 		abajo.append(mensaje)
-	if escuela.tiempo < SEGUNDOS_CONTROLES:
-		abajo.append("B / Círculo: sigilo · LT / RT: plano · Y: mochila · Start: pausa" if Controles.usando_mando else "C / Ctrl: sigilo · V / Tab: plano · I: mochila · Esc: pausa")
 	ayuda.text = "\n".join(abajo)
+	menu_hint.visible = escuela.jugando
+	menu_hint.text = ("Start" if Controles.usando_mando else "Esc") + " · Menú y controles"
 
 func etiqueta(padre: Node, posicion: Vector2, tamano: int, color: Color) -> Label:
 	var texto := Label.new()
@@ -186,6 +190,7 @@ func mostrar(tipo: String) -> void:
 	hud.hide()
 	ayuda.hide()
 	barras.hide()
+	menu_hint.hide()
 	for hijo in columna.get_children():
 		columna.remove_child(hijo)
 		hijo.queue_free()
@@ -307,6 +312,7 @@ func mostrar_mapa() -> void:
 	hud.hide()
 	ayuda.hide()
 	barras.hide()
+	menu_hint.hide()
 	aviso.hide()
 	subtitulo.hide()
 	panel.hide()
@@ -316,37 +322,64 @@ func mostrar_mapa() -> void:
 	plano_grande.color = Color(0.015,0.03,0.05,0.96)
 	plano_grande.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	panel.get_parent().add_child(plano_grande)
-	var titulo := etiqueta(plano_grande,Vector2(42,25),28,Color("def3ed"))
-	titulo.text = "PLANO / " + ("EDIFICIO PRINCIPAL" if escuela.campana.lugar == "principal" else "CAMPUS EXTERIOR")
-	var objetivo := etiqueta(plano_grande,Vector2(42,69),17,Color("f4cb72"))
-	objetivo.text = escuela.campana.objetivo()
+	# Arriba: dónde estás. En medio: el plano. Abajo, como en Resident Evil: qué tienes que buscar o hacer.
+	var en_principal: bool = escuela.campana.lugar == "principal"
+	var titulo := etiqueta(plano_grande,Vector2(42,22),26,Color("def3ed"))
+	titulo.text = "EDIFICIO PRINCIPAL" if en_principal else "CAMPUS EXTERIOR"
+	if en_principal and escuela.cuartos != null and escuela.cuartos.actual != "":
+		var aqui := etiqueta(plano_grande,Vector2(42,58),16,Color("9fb6ba"))
+		aqui.text = "Estás en: " + escuela.cuartos.nombre_visible(escuela.cuartos.actual)
+	var leyenda := etiqueta(plano_grande,Vector2(760,30),14,Color(0.72,0.82,0.84,0.7))
+	leyenda.size.x = 480
+	leyenda.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	leyenda.text = "▲ Lalo    ! Destino    ━ Ruta    □ Refugio"
 	var plano := preload("res://src/ui/mapa_campus.gd").new()
 	plano.escuela = escuela
 	plano.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	plano.offset_left = 36
-	plano.offset_top = 112
+	plano.offset_top = 92
 	plano.offset_right = -36
-	plano.offset_bottom = -105
+	plano.offset_bottom = -138
 	plano_grande.add_child(plano)
-	if escuela.campana.lugar == "campus":
-		var estado := etiqueta(plano_grande,Vector2(65,165),22,Color("d6e7df"))
-		estado.text = "CIERRA TU TURNO"
-		var pasos := etiqueta(plano_grande,Vector2(65,215),18,Color("a9c4c8"))
-		pasos.text = "01 / PRINCIPAL\nRegistrar la salida\n\n02 / PATIO\nRecuperar nota y USB\n\n03 / SERVICIOS\nHablar con Talleres\n\n04 / VIGILANCIA\nEntregar el reporte"
-		var destino := etiqueta(plano_grande,Vector2(900,175),20,Color("f4cb72"))
-		destino.text = "DESTINO ACTUAL"
-		var pista := etiqueta(plano_grande,Vector2(900,220),18,Color("d6e7df"))
-		pista.size.x = 290
-		pista.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		pista.text = guia.texto + "\n\nEl mapa está completo desde el inicio. La línea dorada te lleva al siguiente objetivo.\n\n" + ("Servicios: pendiente de autorización" if escuela.campana.etapa < 3 else "Servicios: acceso autorizado") + "\n\n" + ("Estacionamiento: cerrado" if escuela.campana.etapa < 4 else "Estacionamiento: abierto")
-	var leyenda := etiqueta(plano_grande,Vector2(42,635),16,Color("b8d2d7"))
-	leyenda.text = "▲ Lalo   ! Destino   ━ Ruta   □ Refugio   ◎ Recuerdo   • Interacción   |   El plano pausa el turno."
+	var caja := PanelContainer.new()
+	caja.position = Vector2(36, 600)
+	caja.size = Vector2(1208, 96)
+	var estilo := StyleBoxFlat.new()
+	estilo.bg_color = Color(0.02, 0.035, 0.05, 0.95)
+	estilo.border_color = Color("8a6a3c")
+	estilo.set_border_width_all(1)
+	estilo.border_width_top = 2
+	estilo.content_margin_left = 22
+	estilo.content_margin_right = 22
+	estilo.content_margin_top = 12
+	estilo.content_margin_bottom = 12
+	caja.add_theme_stylebox_override("panel", estilo)
+	plano_grande.add_child(caja)
+	var fila := HBoxContainer.new()
+	fila.add_theme_constant_override("separation", 24)
+	caja.add_child(fila)
+	var textos := VBoxContainer.new()
+	textos.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	fila.add_child(textos)
+	var rotulo := Label.new()
+	rotulo.text = "OBJETIVO"
+	rotulo.add_theme_font_size_override("font_size", 14)
+	rotulo.add_theme_color_override("font_color", Color("c9a46a"))
+	textos.add_child(rotulo)
+	var objetivo := Label.new()
+	objetivo.text = escuela.campana.objetivo().trim_prefix("N1 · ").trim_prefix("N2 · ").trim_prefix("N3 · ").trim_prefix("N4 · ")
+	if guia.texto != "" and guia.texto.to_lower() not in objetivo.text.to_lower():
+		objetivo.text += "\nBusca: " + guia.texto
+	objetivo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	objetivo.add_theme_font_size_override("font_size", 20)
+	objetivo.add_theme_color_override("font_color", Color("eee6d4"))
+	textos.add_child(objetivo)
 	var cerrar := Button.new()
-	cerrar.text = "Cerrar · V / Tab / LT / RT / Esc"
-	cerrar.position = Vector2(875,660)
-	cerrar.size = Vector2(365,40)
+	cerrar.text = "Cerrar"
+	cerrar.custom_minimum_size = Vector2(120, 40)
+	cerrar.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	cerrar.pressed.connect(escuela.continuar)
-	plano_grande.add_child(cerrar)
+	fila.add_child(cerrar)
 	cerrar.grab_focus()
 
 func enfocar(id: int) -> void:
@@ -362,6 +395,7 @@ func reproducir_muerte() -> void:
 	hud.hide()
 	ayuda.hide()
 	barras.hide()
+	menu_hint.hide()
 	aviso.hide()
 	subtitulo.hide()
 	var foco := get_viewport().gui_get_focus_owner()

@@ -59,6 +59,10 @@ func interactuar(jugador: CharacterBody2D) -> String:
 		"salida":
 			return escuela.campana.interactuar("salida_principal")
 		"puerta":
+			# En el edificio principal las puertas se cruzan con la transición (estilo Resident Evil).
+			if escuela.cuartos != null and escuela.cuartos.activo() and jugador == escuela.jugador:
+				escuela.cuartos.cruzar(self)
+				return ""
 			if abierto:
 				var consulta := PhysicsShapeQueryParameters2D.new()
 				var volumen := RectangleShape2D.new()

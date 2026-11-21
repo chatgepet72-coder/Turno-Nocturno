@@ -102,12 +102,14 @@ func ejecutar() -> void:
 	var puerta := objeto("Puerta: Entrada")
 	comprobar(puerta != null, "Puerta de Entrada existe")
 	if puerta != null:
+		# Las puertas del edificio se cruzan con la transición estilo Resident Evil.
+		var lado_antes: float = signf(jugador.global_position.y - puerta.global_position.y)
 		puerta.interactuar(jugador)
-		await esperar()
-		comprobar(puerta.abierto and puerta.get_node("Colision").disabled, "Puerta abre y libera colisión")
+		await create_timer(4.0).timeout
+		comprobar(escena.jugando and signf(jugador.global_position.y - puerta.global_position.y) == -lado_antes, "Puerta: transición y Lalo aparece del otro lado")
 		puerta.interactuar(jugador)
-		await esperar()
-		comprobar(not puerta.abierto and not puerta.get_node("Colision").disabled, "Puerta cierra y restaura colisión")
+		await create_timer(4.0).timeout
+		comprobar(escena.jugando and signf(jugador.global_position.y - puerta.global_position.y) == lado_antes and not puerta.abierto and not puerta.get_node("Colision").disabled, "Puerta: regresa por la misma puerta y sigue cerrada")
 	var expediente := objeto("Expediente de Lalo")
 	expediente.interactuar(jugador)
 	comprobar(not jugador.inventario.has("Expediente de Lalo"), "Expediente requiere llave")
