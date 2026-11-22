@@ -29,6 +29,7 @@ Abre `project.godot` en Godot, espera la importación y pulsa F5. Selecciona **I
 | Mapa completo | V / Tab / M | LT |
 | Disparar clavos | Clic izquierdo | RT / R2 |
 | Recargar | R | Cruceta abajo |
+| Lanzar molotov | G | Cruceta arriba |
 | Mochila | I | Y / Triángulo |
 | Distracción | Q | RB / R1 |
 | Pausa | Esc | Start / Options |

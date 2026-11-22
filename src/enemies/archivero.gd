@@ -64,6 +64,8 @@ func construir_rutas() -> void:
 		for x in range(rejilla.region.size.x):
 			consulta.transform = Transform2D(0, Vector2(x + 0.5, y + 0.5) * celda)
 			rejilla.set_point_solid(Vector2i(x, y), not get_world_2d().direct_space_state.intersect_shape(consulta, 1).is_empty())
+	if escuela.cuartos != null:
+		escuela.cuartos.cerrar_refugio(rejilla, celda)   # el cuarto seguro queda fuera de sus rutas
 	lista = true
 	recalcular = 0
 
@@ -91,6 +93,7 @@ func despertar() -> void:
 
 func escuchar(posicion: Vector2, intensidad: float) -> void:
 	if escuela.campana.gracia_activa() or intensidad <= 0: return
+	if escuela.cuartos != null and escuela.cuartos.en_refugio(posicion): return   # en el cuarto seguro no se oye nada
 	if not activo:
 		if intensidad >= 0.7 and escuela.tiempo > 8:
 			despertar()
@@ -172,6 +175,8 @@ func _physics_process(delta: float) -> void:
 
 func comprobar_captura() -> void:
 	var jugador: CharacterBody2D = escuela.jugador
+	if escuela.cuartos != null and escuela.cuartos.en_refugio(jugador.global_position):
+		return
 	if not jugador.protegido_en_refugio() and global_position.distance_to(jugador.global_position) < 30:
 		var consulta := PhysicsRayQueryParameters2D.create(global_position, jugador.global_position, 1, [get_rid(), jugador.get_rid()])
 		if get_world_2d().direct_space_state.intersect_ray(consulta).is_empty():

@@ -19,7 +19,9 @@ La historia entregada al profesor (documento "Turno Nocturno — El Último Cuat
 - `src/enemies/archivero.gd`: el Archivero (no se puede matar).
 - `src/enemies/enemigo.gd` (`Enemigo`): base de los enemigos que sí se pelean; lee `assets/sprites/enemigos/<tipo>/animaciones.json`. Cada tipo en `la_baja.gd`, `el_desvelado.gd`, `el_expediente.gd`, `el_sinodal.gd`. Dónde aparecen: `data/enemigos.json` (lo arma `encuentros.gd`).
 - `src/player/pistola_clavos.gd` y `clavo.gd`: la pistola de clavos. Un enemigo tirado se clava al piso con 3 clavos más y ya no se levanta.
-- `src/world/cuartos.gd`: solo se ve el cuarto actual y las puertas se cruzan con `src/ui/transicion_puerta.gd`.
+- `src/world/cuartos.gd`: solo se ve el cuarto actual y las puertas se cruzan con `src/ui/transicion_puerta.gd`. Ahí están los cuartos con llave (`LLAVES`) y el cuarto seguro (`REFUGIO`, el Taller: ni el Archivero ni los enemigos entran).
+- `data/enemigos.json`: cuándo aparece cada enemigo (`aparece`: inicio, zona, hecho, etapa, objeto) y los objetos del mundo: recogibles y puntos (`src/world/punto_interes.gd`: examinar, candado de 4 números, mesa de trabajo).
+- Puzzle del Taller: el reloj de la Entrada (11:59 p. m.) y el memorándum de Dirección (formato de 24 horas) dan la combinación 2359 de la caja de llaves (`src/ui/candado.gd`).
 - `src/story/`: historia (`campana.gd` guarda los hechos; `relato_turno.gd` los diálogos).
 - `src/ui/`, `src/world/`, `src/audio/` (`AudioManager`, autoload).
 - `tests/`: pruebas que corren con `godot --headless --path . --script res://tests/<archivo>.gd`.

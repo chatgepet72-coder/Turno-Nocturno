@@ -3,7 +3,7 @@ const CAPACIDAD := 6
 const Productos = preload("res://src/world/productos_cafeteria.gd")
 
 static func ocupa(item: String) -> bool:
-	return Productos.PRODUCTOS.has(item) or item in ["Termo de cafe", "Extintor", "Grapadora", "Caja de clavos"]
+	return Productos.PRODUCTOS.has(item) or item in ["Termo de cafe", "Extintor", "Grapadora", "Caja de clavos", "Alcohol", "Trapo", "Molotov"]
 
 static func usados(inventario: Array) -> int:
 	var total := 0

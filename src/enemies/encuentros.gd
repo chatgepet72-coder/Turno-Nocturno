@@ -10,6 +10,8 @@ const TIPOS: Dictionary = {
 }
 
 var escuela: Node2D
+var _pendientes: Array = []      # enemigos del archivo que todavía no aparecen
+var _reloj: float = 0.0
 
 
 func armar() -> void:
@@ -17,23 +19,25 @@ func armar() -> void:
 	if not datos is Dictionary:
 		push_error("encuentros: no se pudo leer data/enemigos.json")
 		return
-	for e in datos.get("enemigos", []):
-		if not TIPOS.has(e.tipo):
-			continue
-		var enemigo: Enemigo = TIPOS[e.tipo].new()
-		enemigo.id = e.id
-		enemigo.escuela = escuela
-		enemigo.name = "enemigo_" + e.id
-		enemigo.position = Vector2(e.pos[0], e.pos[1])
-		add_child(enemigo)
-		if ("enemigo_" + e.id) in escuela.recogidos:
-			enemigo.call_deferred("_quedar_clavado", false)
+	_pendientes = datos.get("enemigos", []).duplicate()
+	_revisar_apariciones()
 	var objetos: Node = escuela.get_node("Objetos")
 	for o in datos.get("objetos", []):
 		var nombre: String = "combate_" + o.id
-		if nombre in escuela.recogidos or objetos.has_node(nombre):
+		if objetos.has_node(nombre):
 			continue
-		var r := preload("res://src/world/recogible.gd").new()
+		if nombre in escuela.recogidos and o.get("clase", "recogible") != "punto":
+			continue   # ya recogido (los puntos se quedan; la caja abierta se marca al cargar)
+		var r: Node2D
+		if o.get("clase", "recogible") == "punto":
+			r = preload("res://src/world/punto_interes.gd").new()
+			r.tipo = o.get("tipo", "examinar")
+			r.texto = o.get("texto", "")
+			r.combinacion = o.get("combinacion", "")
+			r.premio = o.get("premio", "")
+		else:
+			r = preload("res://src/world/recogible.gd").new()
+			r.texto = o.get("texto", "")
 		r.name = nombre
 		r.titulo = o.titulo
 		r.icono = o.icono
@@ -41,6 +45,79 @@ func armar() -> void:
 		r.position = Vector2(o.pos[0], o.pos[1])
 		r.z_index = int(o.get("z", 0))
 		objetos.add_child(r)
+
+
+func _process(delta: float) -> void:
+	if escuela == null or not escuela.jugando or _pendientes.is_empty():
+		return
+	_reloj -= delta
+	if _reloj <= 0.0:
+		_reloj = 1.0
+		_revisar_apariciones()
+
+
+## Los enemigos aparecen conforme avanza la historia, y nunca frente a Lalo.
+func _revisar_apariciones() -> void:
+	for e in _pendientes.duplicate():
+		if not TIPOS.has(e.tipo):
+			_pendientes.erase(e)
+			continue
+		if not _cumple(str(e.get("aparece", "inicio"))):
+			continue
+		var pos := Vector2(e.pos[0], e.pos[1])
+		var lugar: String = e.get("lugar", "principal")
+		if _lo_veria_aparecer(pos, lugar):
+			continue
+		_pendientes.erase(e)
+		var enemigo: Enemigo = TIPOS[e.tipo].new()
+		enemigo.id = e.id
+		enemigo.lugar = lugar
+		enemigo.territorio = float(e.get("territorio", 0.0))
+		enemigo.escuela = escuela
+		enemigo.name = "enemigo_" + e.id
+		enemigo.position = pos
+		add_child(enemigo)
+		if ("enemigo_" + e.id) in escuela.recogidos:
+			enemigo.call_deferred("_quedar_clavado", false)
+
+
+## Solo para pruebas: hace aparecer a todos sin esperar el avance.
+func forzar_todos() -> void:
+	for e in _pendientes:
+		e["aparece"] = "inicio"
+	_lo_veria_aparecer_desactivado = true
+	_revisar_apariciones()
+	_lo_veria_aparecer_desactivado = false
+
+
+var _lo_veria_aparecer_desactivado: bool = false
+
+
+func _cumple(condicion: String) -> bool:
+	var partes := condicion.split(":", true, 1)
+	var valor: String = partes[1] if partes.size() > 1 else ""
+	match partes[0]:
+		"inicio":
+			return true
+		"zona":
+			return bool(escuela.zonas.get(valor, false)) and escuela.partida_iniciada and escuela.tiempo > 1.0
+		"hecho":
+			return bool(escuela.campana.hechos.get(valor, false))
+		"etapa":
+			return int(escuela.campana.etapa) >= int(valor)
+		"objeto":
+			return escuela.jugador.inventario.has(valor)
+	return false
+
+
+## Si Lalo está en el mismo cuarto (o a la vista, afuera), espera: no aparece de la nada frente a él.
+func _lo_veria_aparecer(pos: Vector2, lugar: String) -> bool:
+	if _lo_veria_aparecer_desactivado or escuela.campana.lugar != lugar or not escuela.partida_iniciada:
+		return false
+	var j: Vector2 = escuela.jugador.global_position
+	if lugar == "principal" and escuela.cuartos != null:
+		return escuela.cuartos.cuarto_en(j) == escuela.cuartos.cuarto_en(pos)
+	return absf(pos.x - j.x) < 540.0 and absf(pos.y - j.y) < 310.0
 
 
 ## Al cargar una partida: quita lo recogido y deja tirados a los que ya estaban clavados.

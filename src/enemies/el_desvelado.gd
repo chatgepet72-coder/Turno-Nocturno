@@ -3,7 +3,9 @@ extends Enemigo
 ## En la oscuridad corre a tirones. De cerca da un termazo; de lejos avienta el termo, que deja un charco.
 
 const ESPERA_TERMO: float = 7.0
+const ESPERA_GRITO: float = 25.0
 var _termo: float = 3.0
+var _grito: float = 0.0
 var alumbrado: bool = false
 
 
@@ -21,6 +23,13 @@ func _configurar() -> void:
 
 func _actualizar_especial(delta: float) -> void:
 	_termo = maxf(0.0, _termo - delta)
+	_grito = maxf(0.0, _grito - delta)
+	# Al ver a Lalo, grita: el bostezo se oye en todo el lugar y atrae al Archivero.
+	if estado == "PERSIGUE" and _grito <= 0.0:
+		_grito = ESPERA_GRITO
+		escuela.sonidos.efecto("grito", global_position, -2.0)
+		escuela.emitir_ruido(jugador().global_position, 1.6)
+		jugador().mensaje = "¡Ese grito se oyó en todo el campus! El Archivero viene."
 	alumbrado = _lo_alumbra()
 	if alumbrado and estado in ["PERSIGUE", "ALERTA"]:
 		# Congelado a media pose, con la boca abierta: no se mueve mientras lo ves

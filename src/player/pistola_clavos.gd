@@ -42,7 +42,11 @@ func _physics_process(delta: float) -> void:
 	_espera = maxf(0.0, _espera - delta)
 	_aviso_tiempo = maxf(0.0, _aviso_tiempo - delta)
 	_contador.visible = escuela.jugando and tiene_arma() and (_aviso_tiempo > 0.0 or _recargando > 0.0)
-	if not escuela.jugando or not tiene_arma():
+	if not escuela.jugando:
+		return
+	if not tiene_arma():
+		if Input.is_action_just_pressed("lanzar") and jugador.inventario.has("Molotov") and not jugador.oculto and jugador.accion == "":
+			lanzar_molotov()
 		return
 	if _recargando > 0.0:
 		_recargando -= delta
@@ -53,7 +57,9 @@ func _physics_process(delta: float) -> void:
 		return
 	if jugador.oculto or jugador.accion != "" or jugador.bloqueo_entrada > 0.0:
 		return
-	if Input.is_action_just_pressed("recargar"):
+	if Input.is_action_just_pressed("lanzar") and jugador.inventario.has("Molotov"):
+		lanzar_molotov()
+	elif Input.is_action_just_pressed("recargar"):
 		recargar()
 	elif Input.is_action_pressed("disparar") and _espera <= 0.0:
 		disparar()
@@ -97,3 +103,17 @@ func recargar() -> void:
 func _mostrar() -> void:
 	_aviso_tiempo = 3.0
 	_contador.text = ("Recargando…" if _recargando > 0.0 else "Clavos %d / %d" % [cargados, CARGADOR]) + "   ·   Cajas %d" % cajas()
+
+
+func lanzar_molotov() -> void:
+	jugador.inventario.erase("Molotov")
+	var m := preload("res://src/player/molotov.gd").new()
+	m.escuela = escuela
+	var destino: Vector2 = jugador.global_position + jugador.apuntado * 220.0
+	var rayo := PhysicsRayQueryParameters2D.create(jugador.global_position, destino, 1, [jugador.get_rid()])
+	var choque := jugador.get_world_2d().direct_space_state.intersect_ray(rayo)
+	if not choque.is_empty():
+		destino = choque.position - jugador.apuntado * 16.0
+	m.destino = destino
+	m.global_position = jugador.global_position + Vector2(0, -30)
+	escuela.add_child(m)

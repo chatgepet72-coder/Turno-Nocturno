@@ -17,6 +17,8 @@ static var _avisado_clavar: bool = false
 
 var tipo: String = ""
 var id: String = ""
+var lugar: String = "principal"     # "principal" (edificio) o "campus" (afuera)
+var territorio: float = 0.0          # afuera no hay cuartos: radio desde su casa donde caza
 var escuela: Node2D
 var sprite: AnimatedSprite2D
 var datos: Dictionary = {}
@@ -153,9 +155,11 @@ func _mirar_hacia(v: Vector2) -> void:
 func _physics_process(delta: float) -> void:
 	if escuela == null:
 		return
-	var en_principal: bool = escuela.campana.lugar == "principal"
-	visible = en_principal
-	if not en_principal or not escuela.jugando:
+	var aqui: bool = escuela.campana.lugar == lugar
+	visible = aqui
+	# Escondido en el otro lugar: que los clavos no le peguen
+	(get_node("Cuerpo") as Area2D).collision_layer = CAPA_CUERPOS if aqui and estado != "CLAVADO" else 0
+	if not aqui or not escuela.jugando:
 		velocity = Vector2.ZERO
 		sprite.pause()
 		return
@@ -164,7 +168,7 @@ func _physics_process(delta: float) -> void:
 		_revisar_guardado = 1.0
 		if ("enemigo_" + id) in escuela.recogidos and estado != "CLAVADO":
 			_quedar_clavado(false)
-	if cuarto == "" and escuela.cuartos != null:
+	if cuarto == "" and territorio <= 0.0 and escuela.cuartos != null:
 		cuarto = escuela.cuartos.cuarto_en(casa)
 	tiempo_estado += delta
 	espera_ataque = maxf(0.0, espera_ataque - delta)
@@ -206,7 +210,13 @@ func jugador() -> CharacterBody2D:
 
 
 func jugador_en_mi_cuarto() -> bool:
-	return escuela.cuartos == null or escuela.cuartos.cuarto_en(jugador().global_position) == cuarto
+	return _dentro_de_mi_zona(jugador().global_position)
+
+
+func _dentro_de_mi_zona(punto: Vector2) -> bool:
+	if territorio > 0.0:
+		return punto.distance_to(casa) < territorio
+	return escuela.cuartos == null or escuela.cuartos.cuarto_en(punto) == cuarto
 
 
 func ve_a_lalo() -> bool:
@@ -234,9 +244,9 @@ func _percibir() -> void:
 
 ## Lo llama escuela.emitir_ruido: solo oye lo que pasa en su cuarto.
 func escuchar(posicion: Vector2, intensidad: float) -> void:
-	if estado in ["CAIDO", "CLAVADO", "ATACA"] or escuela.cuartos == null:
+	if estado in ["CAIDO", "CLAVADO", "ATACA"] or escuela.campana.lugar != lugar:
 		return
-	if escuela.cuartos.cuarto_en(posicion) != cuarto:
+	if not _dentro_de_mi_zona(posicion):
 		return
 	if global_position.distance_to(posicion) > (140.0 + intensidad * 520.0) * oido:
 		return
@@ -455,3 +465,21 @@ func _vibrar(fuerza: float, duracion: float) -> void:
 func _boton_interaccion() -> String:
 	var c: Node = get_node_or_null("/root/Controles")
 	return c.boton_interaccion() if c != null else "E"
+
+
+## Fuego (molotov): los de papel arden y ya no regresan; El Sinodal aguanta más.
+func recibir_fuego() -> void:
+	if estado == "CLAVADO":
+		return
+	if tipo == "el_sinodal" and estado != "CAIDO":
+		vida -= 6.0
+		if vida > 0.0:
+			aturdir(2.5)
+			return
+	if estado != "CAIDO":
+		_caer(Vector2.RIGHT if randf() < 0.5 else Vector2.LEFT)
+	_quedar_clavado(false)
+	var t := create_tween()
+	t.tween_property(sprite, "modulate", Color(1.0, 0.45, 0.15), 0.2)
+	t.tween_property(sprite, "modulate", Color(0.18, 0.15, 0.14), 1.6)
+	jugador().mensaje = "Ardió como papel. Ese ya no regresa."

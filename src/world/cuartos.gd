@@ -12,6 +12,11 @@ const NOMBRES: Dictionary = {
 	"Taller": "Taller", "Bano_H": "Baño de hombres", "Bano_M": "Baño de mujeres",
 }
 
+## Cuartos cerrados con llave (se revisa al entrar; de adentro siempre se puede salir).
+const LLAVES: Dictionary = {"Taller": "Llave del taller"}
+## Cuarto seguro: ni el Archivero ni los enemigos entran. Ahí se guarda y se fabrican armas.
+const REFUGIO: String = "Taller"
+
 var escuela: Node2D
 var cuartos: Dictionary = {}       # nombre -> Rect2 en coordenadas del mundo
 var actual: String = ""
@@ -105,6 +110,11 @@ func cruzar(puerta: Node2D) -> bool:
 	var destino := _llegada_libre(puerta.global_position, lado)
 	if destino == Vector2.INF:
 		return false
+	var cuarto_destino := cuarto_en(destino)
+	if LLAVES.has(cuarto_destino) and not jugador.inventario.has(LLAVES[cuarto_destino]):
+		escuela.sonidos.efecto("metal", puerta.global_position, -8.0)
+		jugador.mensaje = "Cerrada con llave. La placa dice: TALLER · CONSERJERÍA."
+		return false
 	escuela.jugando = false
 	escuela.emitir_ruido(puerta.global_position, 0.35)
 	await transicion.cruzar(func() -> void:
@@ -117,7 +127,27 @@ func cruzar(puerta: Node2D) -> bool:
 	, func(efecto: String) -> void: escuela.sonidos.efecto(efecto, Vector2.INF, -4.0 if efecto == "puerta" else -10.0))
 	escuela.jugando = true
 	jugador.mensaje = nombre_visible(actual)
+	if actual == REFUGIO and not escuela.campana.hechos.get("refugio_visto", false):
+		escuela.campana.hechos["refugio_visto"] = true
+		escuela.relato.decir("LALO · Aquí no se oye nada… Ni pasos, ni papeles. Aquí no entran.")
+		escuela.relato.decir("En la mesa de trabajo puedes guardar la partida y fabricar armas.")
 	return true
+
+
+## Lalo está en el cuarto seguro (el Archivero no lo atrapa ni lo oye ahí).
+func en_refugio(punto: Vector2) -> bool:
+	return activo() and cuartos.has(REFUGIO) and (cuartos[REFUGIO] as Rect2).has_point(punto)
+
+
+## El Archivero no puede trazar rutas que entren al cuarto seguro.
+func cerrar_refugio(rejilla: AStarGrid2D, celda: float) -> void:
+	if not activo() or not cuartos.has(REFUGIO):
+		return
+	var r: Rect2 = cuartos[REFUGIO]
+	for y in range(floori(r.position.y / celda), ceili(r.end.y / celda)):
+		for x in range(floori(r.position.x / celda), ceili(r.end.x / celda)):
+			if rejilla.is_in_boundsv(Vector2i(x, y)):
+				rejilla.set_point_solid(Vector2i(x, y), true)
 
 
 ## Busca un punto libre del otro lado de la puerta (sin muebles encima).

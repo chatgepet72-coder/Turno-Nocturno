@@ -22,8 +22,42 @@ func ejecutar() -> void:
 	e.partida_iniciada = true; e.jugando = true; e.interfaz.jugar()
 	e.archivero.activo = false; e.archivero.set_physics_process(false)
 	var j: CharacterBody2D = e.jugador
-	check(e.encuentros.get_child_count() == 8, "Aparecen los 8 enemigos del archivo")
+	check(e.encuentros.get_child_count() == 2, "Al empezar solo hay 2 Bajas (%d)" % e.encuentros.get_child_count())
 	check(e.get_node("Objetos").has_node("combate_pistola_taller"), "La pistola está en el Taller")
+	# El Taller está cerrado: candado 2359 con la pista del reloj y el memorándum
+	var puerta_taller: Node = null
+	for o in e.get_node("Objetos").get_children():
+		if o.get("titulo") == "Puerta: Taller": puerta_taller = o
+	j.global_position = puerta_taller.global_position + Vector2(0, -50)
+	await create_timer(0.2).timeout
+	puerta_taller.interactuar(j)
+	await create_timer(4.5).timeout
+	check(e.cuartos.cuarto_en(j.global_position) == "Pasillo", "Sin llave no se entra al Taller")
+	var caja: Node = e.get_node("Objetos/combate_caja_llaves")
+	caja.interactuar(j)
+	await create_timer(0.2).timeout
+	var candado: Node = null
+	for c in e.get_children():
+		if c.get_script() != null and str(c.get_script().resource_path).ends_with("candado.gd"): candado = c
+	check(candado != null and not e.jugando, "La caja de llaves abre el candado y pausa el juego")
+	candado._numeros.assign([1, 2, 3, 4]); candado._probar()
+	check(not j.inventario.has("Llave del taller"), "Una combinación equivocada no abre")
+	candado._numeros.assign([2, 3, 5, 9]); candado._probar()
+	await create_timer(0.2).timeout
+	check(j.inventario.has("Llave del taller") and e.jugando, "2359 abre la caja y da la llave del taller")
+	puerta_taller.interactuar(j)
+	await create_timer(4.5).timeout
+	check(e.cuartos.cuarto_en(j.global_position) == "Taller", "Con la llave se entra al Taller")
+	check(e.cuartos.en_refugio(j.global_position), "El Taller es el cuarto seguro")
+	e.archivero.activo = true
+	e.archivero.global_position = j.global_position + Vector2(10, 0)
+	e.archivero.comprobar_captura()
+	check(e.jugando, "El Archivero no atrapa a Lalo en el cuarto seguro")
+	e.archivero.activo = false
+	e.archivero.global_position = Vector2(3264, 670)
+	j.inventario.append("Alcohol"); j.inventario.append("Trapo")
+	e.encuentros.forzar_todos()
+	check(e.encuentros.get_child_count() == 9, "Con todo el avance hay 9 enemigos (%d)" % e.encuentros.get_child_count())
 	# Recoger la pistola
 	var pistola: Node = e.get_node("Objetos/combate_pistola_taller")
 	j.global_position = pistola.global_position + Vector2(0, 50)
@@ -65,7 +99,9 @@ func ejecutar() -> void:
 	await foto("baja_ataca")
 	# El Desvelado se congela con la linterna
 	j.set_physics_process(false)   # que el ratón no cambie hacia dónde apunta en la prueba
-	var des := enemigo("desvelado_computo")
+	var des := enemigo("desvelado_patio")
+	des.lugar = "principal"; des.territorio = 0.0; des.cuarto = ""
+	des.global_position = Vector2(300, 1230); des.casa = des.global_position
 	j.global_position = des.global_position + Vector2(200, -40)
 	j.cordura = 100
 	j.apuntado = j.global_position.direction_to(des.global_position)
@@ -83,7 +119,9 @@ func ejecutar() -> void:
 	check(not exp.escondido, "El Expediente sale de su escondite cuando Lalo pasa cerca")
 	await foto("expediente")
 	# El Sinodal
-	var sin: Enemigo = enemigo("sinodal_pasillo")
+	var sin: Enemigo = enemigo("sinodal_estacionamiento")
+	sin.lugar = "principal"; sin.territorio = 0.0; sin.cuarto = ""
+	sin.global_position = Vector2(420, 680); sin.casa = sin.global_position
 	j.linterna = true
 	j.global_position = sin.global_position + Vector2(140, 0)
 	j.apuntado = Vector2.LEFT
@@ -91,5 +129,18 @@ func ejecutar() -> void:
 	await create_timer(1.0).timeout
 	await foto("sinodal")
 	check(sin.estado in ["PERSIGUE", "ATACA"], "El Sinodal persigue (" + sin.estado + ")")
+	# Molotov: fabricarla en la mesa y quemar a una Baja
+	var mesa: Node = e.get_node("Objetos/combate_mesa_trabajo")
+	check(j.inventario.has("Alcohol") and j.inventario.has("Trapo"), "Lalo tiene alcohol y trapo")
+	j.inventario.erase("Alcohol"); j.inventario.erase("Trapo"); j.inventario.append("Molotov")
+	var aula: Enemigo = enemigo("baja_aula_03")
+	j.cordura = 100
+	j.global_position = aula.global_position + Vector2(-150, 60)
+	var m := preload("res://src/player/molotov.gd").new()
+	m.escuela = e; m.destino = aula.global_position; m.global_position = j.global_position
+	e.add_child(m)
+	await create_timer(1.5).timeout
+	check(aula.estado == "CLAVADO", "La molotov quema a La Baja y ya no regresa (" + aula.estado + ")")
+	await foto("molotov")
 	print("RESULTADO enemigos: %d fallos" % fallos)
 	quit()

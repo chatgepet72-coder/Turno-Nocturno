@@ -5,6 +5,7 @@ extends Node2D
 @export var titulo: String = "Caja de clavos"
 @export var icono: String = "res://assets/sprites/caja.png"
 @export var tamano: float = 20.0      # alto en pantalla del dibujo
+@export var texto: String = ""        # se narra al recogerlo (notas y documentos)
 var tipo: String = "recoger"
 var abierto: bool = false
 
@@ -26,6 +27,8 @@ func interactuar(jugador: CharacterBody2D) -> String:
 	escuela.recogidos.append(str(name))
 	jugador.inventario.append(titulo)
 	escuela.sonidos.efecto("recoger", global_position)
+	for linea in texto.split("\n", false):
+		escuela.relato.decir(linea)
 	queue_free()
 	if titulo == "Pistola de clavos":
 		escuela.anunciar("PISTOLA DE CLAVOS", "Clic izquierdo / RT para disparar · R / cruceta abajo para recargar")

@@ -1,21 +1,258 @@
 {
-	"_nota": "Dónde aparece cada enemigo y cada objeto de combate. Posiciones en el mapa del edificio principal (x, y). Cada enemigo solo se mueve dentro de su cuarto.",
+	"_nota": "Dónde y cuándo aparece cada enemigo y cada objeto de combate. 'lugar': principal (edificio) o campus (afuera). 'aparece': inicio | zona:<Circuito encendido> | hecho:<clave de campana.hechos> | etapa:<número mínimo> | objeto:<en la mochila>. Afuera no hay cuartos: 'territorio' es el radio donde caza.",
 	"enemigos": [
-		{"id": "baja_pasillo_1", "tipo": "la_baja", "pos": [1250, 700]},
-		{"id": "baja_pasillo_2", "tipo": "la_baja", "pos": [2950, 640]},
-		{"id": "baja_aula_03", "tipo": "la_baja", "pos": [1000, 250]},
-		{"id": "baja_auditorio", "tipo": "la_baja", "pos": [1450, 1200]},
-		{"id": "desvelado_computo", "tipo": "el_desvelado", "pos": [300, 1230]},
-		{"id": "expediente_rectoria", "tipo": "el_expediente", "pos": [3160, 1270]},
-		{"id": "expediente_aula_08", "tipo": "el_expediente", "pos": [1080, 1270]},
-		{"id": "sinodal_pasillo", "tipo": "el_sinodal", "pos": [420, 680]}
+		{
+			"id": "baja_pasillo_1",
+			"tipo": "la_baja",
+			"lugar": "principal",
+			"pos": [
+				1250,
+				700
+			],
+			"aparece": "inicio"
+		},
+		{
+			"id": "baja_aula_03",
+			"tipo": "la_baja",
+			"lugar": "principal",
+			"pos": [
+				1000,
+				250
+			],
+			"aparece": "inicio"
+		},
+		{
+			"id": "baja_auditorio",
+			"tipo": "la_baja",
+			"lugar": "principal",
+			"pos": [
+				1450,
+				1200
+			],
+			"aparece": "objeto:Pistola de clavos"
+		},
+		{
+			"id": "expediente_rectoria",
+			"tipo": "el_expediente",
+			"lugar": "principal",
+			"pos": [
+				3160,
+				1270
+			],
+			"aparece": "zona:Rectoria_Archivo"
+		},
+		{
+			"id": "expediente_aula_08",
+			"tipo": "el_expediente",
+			"lugar": "principal",
+			"pos": [
+				1080,
+				1270
+			],
+			"aparece": "zona:Computo"
+		},
+		{
+			"id": "baja_pasillo_2",
+			"tipo": "la_baja",
+			"lugar": "principal",
+			"pos": [
+				2950,
+				640
+			],
+			"aparece": "hecho:computo"
+		},
+		{
+			"id": "desvelado_patio",
+			"tipo": "el_desvelado",
+			"lugar": "campus",
+			"pos": [
+				1150,
+				1640
+			],
+			"territorio": 650,
+			"aparece": "etapa:2"
+		},
+		{
+			"id": "baja_cafeteria",
+			"tipo": "la_baja",
+			"lugar": "campus",
+			"pos": [
+				1600,
+				760
+			],
+			"territorio": 420,
+			"aparece": "etapa:3"
+		},
+		{
+			"id": "sinodal_estacionamiento",
+			"tipo": "el_sinodal",
+			"lugar": "campus",
+			"pos": [
+				1250,
+				2700
+			],
+			"territorio": 700,
+			"aparece": "etapa:4"
+		}
 	],
 	"objetos": [
-		{"id": "pistola_taller", "titulo": "Pistola de clavos", "icono": "res://assets/sprites/armas/pistola_clavos.png", "tamano": 16, "pos": [3585, 1003], "z": 1},
-		{"id": "clavos_entrada", "titulo": "Caja de clavos", "icono": "res://assets/sprites/caja.png", "tamano": 16, "pos": [2050, 1290], "z": 0},
-		{"id": "clavos_taller", "titulo": "Caja de clavos", "icono": "res://assets/sprites/caja.png", "tamano": 16, "pos": [3780, 1270], "z": 0},
-		{"id": "clavos_direccion", "titulo": "Caja de clavos", "icono": "res://assets/sprites/caja.png", "tamano": 16, "pos": [2735, 1290], "z": 0},
-		{"id": "clavos_aula_02", "titulo": "Caja de clavos", "icono": "res://assets/sprites/caja.png", "tamano": 16, "pos": [700, 380], "z": 0},
-		{"id": "clavos_computo", "titulo": "Caja de clavos", "icono": "res://assets/sprites/caja.png", "tamano": 16, "pos": [700, 1300], "z": 0}
-	]
+		{
+			"id": "pistola_taller",
+			"titulo": "Pistola de clavos",
+			"icono": "res://assets/sprites/armas/pistola_clavos.png",
+			"tamano": 16,
+			"pos": [
+				3585,
+				1003
+			],
+			"z": 1
+		},
+		{
+			"id": "clavos_taller",
+			"titulo": "Caja de clavos",
+			"icono": "res://assets/sprites/caja.png",
+			"tamano": 16,
+			"pos": [
+				3780,
+				1270
+			],
+			"z": 0
+		},
+		{
+			"id": "clavos_direccion",
+			"titulo": "Caja de clavos",
+			"icono": "res://assets/sprites/caja.png",
+			"tamano": 16,
+			"pos": [
+				2735,
+				1290
+			],
+			"z": 0
+		},
+		{
+			"id": "clavos_aula_02",
+			"titulo": "Caja de clavos",
+			"icono": "res://assets/sprites/caja.png",
+			"tamano": 16,
+			"pos": [
+				700,
+				380
+			],
+			"z": 0
+		},
+		{
+			"id": "clavos_computo",
+			"titulo": "Caja de clavos",
+			"icono": "res://assets/sprites/caja.png",
+			"tamano": 16,
+			"pos": [
+				700,
+				1300
+			],
+			"z": 0
+		},
+		{
+			"id": "memorandum",
+			"clase": "recogible",
+			"titulo": "Memorándum de conserjería",
+			"icono": "res://assets/sprites/papeles.png",
+			"tamano": 12,
+			"pos": [
+				2795,
+				1004
+			],
+			"z": 1,
+			"texto": "«A conserjería: la caja de llaves de la Entrada ahora abre con la hora del cierre del sistema, en formato de 24 horas.»\n«Ya no la anoten en la pared.»"
+		},
+		{
+			"id": "reloj_entrada",
+			"clase": "punto",
+			"tipo": "examinar",
+			"titulo": "Reloj de la sala de espera",
+			"icono": "res://assets/sprites/reloj.png",
+			"tamano": 20,
+			"pos": [
+				2225,
+				926
+			],
+			"z": 0,
+			"texto": "El reloj de la sala de espera se detuvo.\nMarca las 11:59 de la noche. La hora en que me quedé dormido."
+		},
+		{
+			"id": "caja_llaves",
+			"clase": "punto",
+			"tipo": "candado",
+			"titulo": "Caja de llaves de conserjería",
+			"icono": "res://assets/sprites/breaker.png",
+			"tamano": 24,
+			"pos": [
+				1962,
+				1150
+			],
+			"z": 0,
+			"combinacion": "2359",
+			"premio": "Llave del taller"
+		},
+		{
+			"id": "mesa_trabajo",
+			"clase": "punto",
+			"tipo": "mesa",
+			"titulo": "Mesa de trabajo · guardar y fabricar",
+			"icono": "",
+			"pos": [
+				3505,
+				1032
+			],
+			"z": 0
+		},
+		{
+			"id": "alcohol_bano_m",
+			"clase": "recogible",
+			"titulo": "Alcohol",
+			"icono": "res://assets/sprites/limpieza.png",
+			"tamano": 18,
+			"pos": [
+				3700,
+				390
+			],
+			"z": 0
+		},
+		{
+			"id": "trapo_bano_h",
+			"clase": "recogible",
+			"titulo": "Trapo",
+			"icono": "res://assets/sprites/papeles.png",
+			"tamano": 12,
+			"pos": [
+				2760,
+				400
+			],
+			"z": 0
+		},
+		{
+			"id": "alcohol_computo",
+			"clase": "recogible",
+			"titulo": "Alcohol",
+			"icono": "res://assets/sprites/limpieza.png",
+			"tamano": 18,
+			"pos": [
+				120,
+				1290
+			],
+			"z": 0
+		},
+		{
+			"id": "trapo_auditorio",
+			"clase": "recogible",
+			"titulo": "Trapo",
+			"icono": "res://assets/sprites/papeles.png",
+			"tamano": 12,
+			"pos": [
+				1830,
+				1290
+			],
+			"z": 0
+		}
+	],
+	"_nota_objetos": "Objetos: clase 'recogible' (se lleva a la mochila; 'texto' se narra al recogerlo) o 'punto' (examinar, candado o mesa). Puzzle del Taller: el reloj de la Entrada marca 11:59 de la noche y el memorándum de Dirección dice que la caja de llaves usa esa hora en formato de 24 horas: 2359."
 }
