@@ -26,6 +26,8 @@ var cuartos: Node2D
 ## Solo existe al correr el juego desde el editor de Godot (F5): en el juego exportado para los
 ## jugadores no hay botón, ni tecla, ni aviso. Se activa con F9 o desde el menú de pausa. No se guarda.
 var modo_prueba: bool = false
+## Vista en primera persona (rama primera-persona). Para ver el 2D de antes: variable de entorno TURNO_2D=1.
+var vista_fp: Node3D
 
 
 static func modo_admin_disponible() -> bool:
@@ -82,6 +84,11 @@ func _ready() -> void:
 	encuentros.escuela = self
 	add_child(encuentros)
 	encuentros.armar()
+	if DisplayServer.get_name() != "headless" and OS.get_environment("TURNO_2D") != "1":
+		vista_fp = preload("res://src/fp/primera_persona.gd").new()
+		vista_fp.name = "PrimeraPersona"
+		vista_fp.escuela = self
+		add_child(vista_fp)
 	var pistola := preload("res://src/player/pistola_clavos.gd").new()
 	pistola.name = "PistolaClavos"
 	jugador.add_child(pistola)

@@ -35,6 +35,7 @@ var jadeo: float = 0.0
 var carrera_agotada := false
 var refugio_aceptado := false
 var distancia_animada := 0.0
+var rumbo_fp: float = -PI / 2.0   # en primera persona: hacia dónde mira la cámara (ángulo en el mapa)
 var mancha: float = 0.0   # segundos con la linterna manchada de tinta (escupitajo de La Baja)
 const CONSUMO_SIGILO := 5.0
 @onready var escuela: Node2D = get_parent()
@@ -101,6 +102,10 @@ func _physics_process(delta: float) -> void:
 			agachado = not agachado
 			mensaje = "Agachado: reserva limitada. Vigila el medidor de sigilo." if agachado else "De pie. Recuperando el aliento."
 	var entrada := Input.get_vector("izquierda", "derecha", "arriba", "abajo", 0.38)
+	if en_primera_persona():
+		# Adelante es hacia donde mira la cámara
+		var frente := Vector2.from_angle(rumbo_fp)
+		entrada = frente * -entrada.y + frente.rotated(PI / 2.0) * entrada.x
 	if is_instance_valid(escuela.mente) and escuela.mente.inversion > 0: entrada = -entrada
 	if energia <= 2: carrera_agotada = true
 	if energia >= 25 or not Input.is_action_pressed("correr"): carrera_agotada = false
@@ -115,7 +120,9 @@ func _physics_process(delta: float) -> void:
 	if escuela.campana.refresco > 0: ruido *= 0.65
 	sprite.modulate.a = 0.0 if oculto else 1.0
 	$Linterna.enabled = linterna and not oculto
-	if Controles.usando_mando and Controles.mando >= 0:
+	if en_primera_persona():
+		apuntado = Vector2.from_angle(rumbo_fp)
+	elif Controles.usando_mando and Controles.mando >= 0:
 		var palanca := Vector2(Input.get_joy_axis(Controles.mando, JOY_AXIS_RIGHT_X), Input.get_joy_axis(Controles.mando, JOY_AXIS_RIGHT_Y))
 		if palanca.length() > 0.34:
 			apuntado = palanca.normalized()
@@ -328,6 +335,9 @@ func mas_cercano() -> Node2D:
 		var d: float = global_position.distance_to(candidato.global_position)
 		if d >= distancia:
 			continue
+		# En primera persona solo se usa lo que tienes enfrente
+		if en_primera_persona() and d > 20.0 and apuntado.dot((candidato.global_position - global_position).normalized()) < 0.35:
+			continue
 		var consulta := PhysicsRayQueryParameters2D.create(global_position, candidato.global_position, 1, [get_rid()])
 		var impacto := get_world_2d().direct_space_state.intersect_ray(consulta)
 		# Un mueble en medio no estorba: así se alcanza lo que está encima de un escritorio.
@@ -354,3 +364,9 @@ func protegido_en_refugio() -> bool:
 func _en_modo_prueba() -> bool:
 	var e: Node = get_parent()
 	return e != null and e.get("modo_prueba") == true and OS.has_feature("editor")
+
+
+func en_primera_persona() -> bool:
+	var e: Node = get_parent()
+	var vista: Variant = e.get("vista_fp") if e != null else null
+	return vista != null and is_instance_valid(vista) and vista.activa

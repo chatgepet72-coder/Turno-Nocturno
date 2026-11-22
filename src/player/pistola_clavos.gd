@@ -83,6 +83,8 @@ func disparar() -> void:
 	clavo.global_position = salida
 	escuela.add_child(clavo)
 	escuela.sonidos.efecto("disparo_clavos", Vector2.INF, -6.0)
+	if escuela.vista_fp != null:
+		escuela.vista_fp.avisar_disparo()
 	escuela.emitir_ruido(jugador.global_position, RUIDO_DISPARO)
 	Controles.vibrar(0.2, 0.06)
 	_mostrar()

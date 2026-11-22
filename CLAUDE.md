@@ -4,6 +4,8 @@ Juego de terror psicológico en 2D (vista desde arriba) en Godot 4.7.2, renderer
 
 ## Ramas del repositorio
 
+- `primera-persona`: la versión en primera persona (en desarrollo). `src/fp/`: `primera_persona.gd` (cámara, mirar, linterna en el pecho, enemigos como dibujos que miran a la cámara) y `mundo_3d.gd` (levanta en 3D el edificio a partir del mapa 2D, que sigue mandando: choques, enemigos, puzzles). Afuera (campus) y el teaser todavía se ven en 2D. Para jugar la vista 2D en esta rama: `TURNO_2D=1`.
+
 - `el-ultimo-cuatrimestre`: **aquí se trabaja**. Empezó como copia exacta del proyecto del equipo (repositorio `magicart99/Turno-Nocturno`, commit `089943e`).
 - `magicart99-original`: copia de respaldo de ese proyecto. No se toca.
 - `main` y `respaldo-nuestra-version`: la versión anterior (Lalo velador, Don Chava, Facultad de Medicina, pistola de clavos, molotov). No se toca; de ahí se copian sistemas.
