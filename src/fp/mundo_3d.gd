@@ -14,6 +14,8 @@ var escuela: Node2D
 var _objetos_3d: Dictionary = {}   # nodo 2D -> nodo 3D (para quitarlo cuando se recoge)
 var _puertas: Dictionary = {}      # puerta 2D -> [hoja izquierda, hoja derecha]
 var _luces: Dictionary = {}        # PointLight2D -> OmniLight3D
+var _forzadas: Dictionary = {}     # puerta 2D -> [abierta, sentido] durante una transición
+var velocidad_puertas: float = 0.2
 
 
 static func a3d(p: Vector2, altura: float = 0.0) -> Vector3:
@@ -46,9 +48,15 @@ func sincronizar() -> void:
 		if not is_instance_valid(p):
 			continue
 		var abierta: bool = p.abierto
+		var sentido: float = 1.0
+		var rapidez: float = 0.2
+		if _forzadas.has(p):
+			abierta = _forzadas[p][0]
+			sentido = _forzadas[p][1]
+			rapidez = velocidad_puertas
 		var hojas: Array = _puertas[p]
-		(hojas[0] as Node3D).rotation.y = lerp_angle((hojas[0] as Node3D).rotation.y, (-1.35 if abierta else 0.0), 0.2)
-		(hojas[1] as Node3D).rotation.y = lerp_angle((hojas[1] as Node3D).rotation.y, (1.35 if abierta else 0.0), 0.2)
+		(hojas[0] as Node3D).rotation.y = lerp_angle((hojas[0] as Node3D).rotation.y, (-1.35 * sentido if abierta else 0.0), rapidez)
+		(hojas[1] as Node3D).rotation.y = lerp_angle((hojas[1] as Node3D).rotation.y, (1.35 * sentido if abierta else 0.0), rapidez)
 	for l2 in _luces:
 		var l3: OmniLight3D = _luces[l2]
 		if is_instance_valid(l2):
@@ -393,19 +401,20 @@ func _en_pared(o2: Node2D, sp: Sprite2D, nombre: String) -> void:
 	_objetos_3d[o2] = mi
 
 
-## Puerta doble con marco, dintel encima (sin huecos) y las hojas que se abren si el Archivero pasa.
-func _puerta(o2: Node2D, sp: Sprite2D) -> void:
+## Puerta doble de escuela, armada en 3D (sin dibujo pegado): hojas de lámina pintada con ventanilla
+## de vidrio alambrado, barra de empuje, placa de patada y bisagras; marco metálico y dintel hasta el techo.
+## Las hojas se abren solas cuando el Archivero pasa o durante la transición de puerta.
+func _puerta(o2: Node2D, _sp: Sprite2D) -> void:
 	var pos: Vector2 = o2.global_position
 	var hueco: float = 96.0 * ESC
 	var base := a3d(pos)
 	var muro := M.repetida("yeso", 2.0)
-	var marco := M.color(Color(0.22, 0.2, 0.19), 0.5, 0.3)
-	# Dintel: rellena la pared de la altura de la puerta al techo
+	var marco := M.color(Color(0.17, 0.18, 0.19), 0.45, 0.6)
 	caja(base + Vector3(0, (ALTO + ALTO_PUERTA) / 2.0, 0), Vector3(hueco + 0.1, ALTO - ALTO_PUERTA, 0.34), muro)
-	caja(base + Vector3(0, ALTO_PUERTA + 0.04, 0), Vector3(hueco + 0.14, 0.08, 0.38), marco)
+	caja(base + Vector3(0, ALTO_PUERTA + 0.05, 0), Vector3(hueco + 0.16, 0.1, 0.38), marco)
 	for lado in [-1, 1]:
-		caja(base + Vector3(lado * (hueco / 2 + 0.03), ALTO_PUERTA / 2, 0), Vector3(0.08, ALTO_PUERTA, 0.38), marco)
-	var tex: Texture2D = sp.texture if sp != null else load("res://assets/sprites/puerta_cerrada.png")
+		caja(base + Vector3(lado * (hueco / 2 + 0.04), ALTO_PUERTA / 2, 0), Vector3(0.1, ALTO_PUERTA, 0.38), marco)
+	caja(base + Vector3(0, 0.01, 0), Vector3(hueco, 0.02, 0.3), M.color(Color(0.3, 0.3, 0.3), 0.4, 0.7))   # umbral
 	var hojas: Array = []
 	for lado in [-1, 1]:
 		var bisagra := Node3D.new()
@@ -414,8 +423,57 @@ func _puerta(o2: Node2D, sp: Sprite2D) -> void:
 		var hoja := Node3D.new()
 		hoja.position = Vector3(-lado * hueco / 4, 0, 0)
 		bisagra.add_child(hoja)
-		caja(Vector3(0, ALTO_PUERTA / 2, 0), Vector3(hueco / 2 - 0.02, ALTO_PUERTA - 0.02, 0.05), M.color(Color(0.36, 0.24, 0.16), 0.6), hoja)
-		for cara in [1, -1]:
-			lamina(Vector3(0, ALTO_PUERTA / 2, cara * 0.028), hueco / 2 - 0.04, ALTO_PUERTA - 0.06, tex, Vector3(0, 0, cara), hoja)
+		_hoja_de_puerta(hoja, hueco / 2 - 0.02, lado)
 		hojas.append(bisagra)
 	_puertas[o2] = hojas
+
+
+func _hoja_de_puerta(hoja: Node3D, ancho: float, lado: int) -> void:
+	var pintura := M.color(Color(0.24, 0.32, 0.33), 0.55, 0.25)       # lámina verde azulado gastada
+	var orilla := M.color(Color(0.15, 0.19, 0.2), 0.5, 0.4)
+	var metal := M.color(Color(0.62, 0.63, 0.62), 0.3, 0.9)
+	var vidrio := StandardMaterial3D.new()
+	vidrio.albedo_color = Color(0.05, 0.08, 0.1, 0.55)
+	vidrio.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	vidrio.roughness = 0.08
+	vidrio.metallic = 0.3
+	var alto: float = ALTO_PUERTA - 0.03
+	var grueso: float = 0.05
+	# Cuerpo de la hoja dejando el hueco de la ventanilla (arriba, del lado de en medio)
+	var vx: float = lado * -ancho * 0.18        # la ventanilla va cargada hacia el centro de la puerta doble
+	var vw: float = ancho * 0.32
+	var vy0: float = 1.25
+	var vy1: float = 1.95
+	caja(Vector3(0, vy0 / 2, 0), Vector3(ancho, vy0, grueso), pintura, hoja)
+	caja(Vector3(0, (vy1 + alto) / 2, 0), Vector3(ancho, alto - vy1, grueso), pintura, hoja)
+	var izq: float = -ancho / 2
+	var der: float = ancho / 2
+	var vent_izq: float = vx - vw / 2
+	var vent_der: float = vx + vw / 2
+	caja(Vector3((izq + vent_izq) / 2, (vy0 + vy1) / 2, 0), Vector3(vent_izq - izq, vy1 - vy0, grueso), pintura, hoja)
+	caja(Vector3((vent_der + der) / 2, (vy0 + vy1) / 2, 0), Vector3(der - vent_der, vy1 - vy0, grueso), pintura, hoja)
+	caja(Vector3(vx, (vy0 + vy1) / 2, 0), Vector3(vw, vy1 - vy0, 0.012), vidrio, hoja)
+	# Marco de la ventanilla y alambre del vidrio
+	for y in [vy0, vy1]:
+		caja(Vector3(vx, y, 0), Vector3(vw + 0.04, 0.025, grueso + 0.01), orilla, hoja)
+	for x in [vent_izq, vent_der]:
+		caja(Vector3(x, (vy0 + vy1) / 2, 0), Vector3(0.025, vy1 - vy0 + 0.04, grueso + 0.01), orilla, hoja)
+	for k in range(1, 4):
+		caja(Vector3(vx, vy0 + (vy1 - vy0) * k / 4.0, 0), Vector3(vw, 0.003, 0.014), metal, hoja)
+	for cara in [1, -1]:
+		var z: float = cara * (grueso / 2 + 0.01)
+		caja(Vector3(0, 0.15, z * 0.9), Vector3(ancho - 0.04, 0.26, 0.006), metal, hoja)                 # placa de patada
+		caja(Vector3(0, 1.0, z * 2.2), Vector3(ancho * 0.7, 0.045, 0.04), metal, hoja)                    # barra de empuje
+		for x in [-ancho * 0.33, ancho * 0.33]:
+			caja(Vector3(x, 1.0, z * 1.4), Vector3(0.03, 0.06, 0.04), metal, hoja)
+	for y in [0.3, 1.1, 1.9]:   # bisagras
+		caja(Vector3(lado * ancho / 2, y, 0), Vector3(0.03, 0.12, 0.07), metal, hoja)
+
+
+## Durante la transición se fuerza abrir o cerrar una puerta. sentido: +1 abre hacia +Z, -1 hacia -Z.
+func forzar_puerta(puerta: Node2D, abierta: bool, sentido: float) -> void:
+	_forzadas[puerta] = [abierta, sentido]
+
+
+func soltar_puerta(puerta: Node2D) -> void:
+	_forzadas.erase(puerta)

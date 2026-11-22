@@ -109,6 +109,8 @@ func _mostrar() -> void:
 
 func lanzar_molotov() -> void:
 	jugador.inventario.erase("Molotov")
+	if escuela.vista_fp != null:
+		escuela.vista_fp.avisar_molotov()
 	var m := preload("res://src/player/molotov.gd").new()
 	m.escuela = escuela
 	var destino: Vector2 = jugador.global_position + jugador.apuntado * 220.0

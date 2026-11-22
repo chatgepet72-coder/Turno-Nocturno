@@ -1,0 +1,73 @@
+{
+  "personaje": "lalo_manos_primera_persona",
+  "tamano_cuadro": [
+    640,
+    360
+  ],
+  "fondo": "transparente",
+  "posicion": "Se dibuja a pantalla completa: coloca el cuadro en (0, 0) y escálalo al tamaño de la pantalla (×3 para 1920 × 1080, con filtro \"nearest\").",
+  "animaciones": {
+    "reposo": {
+      "cuadros": 4,
+      "fps": 6,
+      "loop": true,
+      "archivos": [
+        "frames/reposo_01.png",
+        "frames/reposo_02.png",
+        "frames/reposo_03.png",
+        "frames/reposo_04.png"
+      ],
+      "hoja": "sheets/reposo.png"
+    },
+    "disparo": {
+      "cuadros": 3,
+      "fps": 15,
+      "loop": false,
+      "archivos": [
+        "frames/disparo_01.png",
+        "frames/disparo_02.png",
+        "frames/disparo_03.png"
+      ],
+      "hoja": "sheets/disparo.png",
+      "nota": "El clavo sale en el cuadro 1 (aplica el disparo ahí). Luego regresa a \"reposo\"."
+    },
+    "recarga": {
+      "cuadros": 6,
+      "fps": 8,
+      "loop": false,
+      "archivos": [
+        "frames/recarga_01.png",
+        "frames/recarga_02.png",
+        "frames/recarga_03.png",
+        "frames/recarga_04.png",
+        "frames/recarga_05.png",
+        "frames/recarga_06.png"
+      ],
+      "hoja": "sheets/recarga.png",
+      "nota": "Cuadros 2-3 sale la tira vieja, 4 llega la nueva, 5 entra. Recarga completa al terminar el cuadro 6."
+    },
+    "molotov": {
+      "cuadros": 4,
+      "fps": 10,
+      "loop": false,
+      "archivos": [
+        "frames/molotov_01.png",
+        "frames/molotov_02.png",
+        "frames/molotov_03.png",
+        "frames/molotov_04.png"
+      ],
+      "hoja": "sheets/molotov.png",
+      "nota": "La botella sale de la mano en el cuadro 4: crea ahí el proyectil del molotov."
+    },
+    "sin_arma": {
+      "cuadros": 2,
+      "fps": 3,
+      "loop": true,
+      "archivos": [
+        "frames/sin_arma_01.png",
+        "frames/sin_arma_02.png"
+      ],
+      "hoja": "sheets/sin_arma.png"
+    }
+  }
+}

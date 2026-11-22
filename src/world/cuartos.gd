@@ -117,14 +117,19 @@ func cruzar(puerta: Node2D) -> bool:
 		return false
 	escuela.jugando = false
 	escuela.emitir_ruido(puerta.global_position, 0.35)
-	await transicion.cruzar(func() -> void:
+	var cambiar := func() -> void:
 		jugador.global_position = destino
 		jugador.velocity = Vector2.ZERO
 		var camara := jugador.get_node("Camera2D") as Camera2D
 		camara.reset_smoothing()
 		actual = cuarto_en(destino)
 		queue_redraw()
-	, func(efecto: String) -> void: escuela.sonidos.efecto(efecto, Vector2.INF, -4.0 if efecto == "puerta" else -10.0))
+	var sonar := func(efecto: String) -> void: escuela.sonidos.efecto(efecto, Vector2.INF, -4.0 if efecto == "puerta" else -10.0)
+	var vista: Variant = escuela.get("vista_fp")
+	if vista != null and vista.activa:
+		await vista.transicion_puerta_doble(puerta, destino, cambiar, sonar)   # en primera persona: la puerta doble en 3D
+	else:
+		await transicion.cruzar(cambiar, sonar)
 	escuela.jugando = true
 	jugador.mensaje = nombre_visible(actual)
 	if actual == REFUGIO and not escuela.campana.hechos.get("refugio_visto", false):
