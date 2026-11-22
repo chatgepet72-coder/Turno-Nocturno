@@ -113,6 +113,8 @@ func _physics_process(delta: float) -> void:
 	energia = clampf(energia + ((-15.0 if escuela.campana.refresco > 0 else -24.0) if correr else 11.0) * delta, 0, 100)
 	var direccion_entrada := entrada.normalized() if correr else entrada
 	velocity = direccion_entrada * (54.0 if agachado else (205.0 if correr else 112.0)) if not oculto and bloqueo_entrada <= 0 else Vector2.ZERO
+	if en_primera_persona() and inventario.has("Pistola de clavos") and Input.is_action_pressed("apuntar"):
+		velocity = velocity.limit_length(62.0)   # apuntando se camina despacio
 	move_and_slide()
 	var movimiento := get_real_velocity()
 	distancia_animada += movimiento.length() * delta

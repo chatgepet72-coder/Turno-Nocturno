@@ -239,7 +239,7 @@ func mostrar(tipo: String) -> void:
 			boton("Salir sin guardar este avance", escuela.confirmar_salida)
 		"opciones":
 			texto_menu("CONTROLES", 35)
-			texto_menu("WASD / flechas · Caminar     Shift · Correr\nRatón · Apuntar     E · Interactuar\nF · Linterna   Q · Distracción   I · Mochila   Tab/M · Mapa\nClic izquierdo · Disparar clavos     R · Recargar\nEsc · Pausa     F5 · Guardar en lugar seguro\n\nMando: stick izquierdo · Caminar / Menús\nStick derecho · Apuntar     Cruceta · Menús\nA / Cruz · Aceptar     B / Círculo · Agacharse / Volver\nX / Cuadrado · Linterna     LB / L1 · Correr\nY / Triángulo · Mochila     RB / R1 · Distracción\nStart · Pausa   LT / V · Plano grande   RT · Disparar   Cruceta abajo · Recargar   C / Ctrl · Sigilo", 16)
+			texto_menu("WASD / flechas · Caminar     Shift · Correr\nRatón · Mirar     E · Interactuar\nF · Linterna   Q · Distracción   I · Mochila   Tab/M · Mapa\nClic derecho · Apuntar     Clic izquierdo · Disparar     R · Recargar     G · Molotov\nEsc · Pausa     F5 · Guardar en lugar seguro\n\nMando: stick izquierdo · Caminar / Menús\nStick derecho · Mirar     Cruceta · Menús\nA / Cruz · Aceptar     B / Círculo · Agacharse / Volver\nX / Cuadrado · Linterna     LB / L1 · Correr\nY / Triángulo · Mochila     RB / R1 · Distracción\nStart · Pausa   Back / V · Plano grande   LT · Apuntar   RT · Disparar   Cruceta abajo · Recargar   C / Ctrl · Sigilo", 16)
 			var vibrar := CheckButton.new()
 			vibrar.text = "Vibración de latidos"
 			vibrar.button_pressed = Controles.vibracion

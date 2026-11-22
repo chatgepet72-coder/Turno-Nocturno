@@ -31,6 +31,7 @@ var _manos: TextureRect
 var _cinematica: bool = false
 var _negro: ColorRect
 var _anim_manos: String = "reposo"
+var _subida: float = 0.0   # 0 = manos abajo (fuera de la pantalla), 1 = arma en alto
 var _cuadro_manos: float = 0.0
 var _cuadros_manos: Dictionary = {}   # animación -> Array[Texture2D]
 var _datos_manos: Dictionary = {}
@@ -64,8 +65,8 @@ func _ready() -> void:
 	linterna.light_energy = 3.6
 	linterna.light_color = Color(1.0, 0.96, 0.88)
 	linterna.shadow_enabled = true
-	linterna.shadow_bias = 0.06          # sin franjas ("acné de sombra") en las paredes
-	linterna.shadow_normal_bias = 2.5
+	linterna.shadow_bias = 0.1           # sin franjas ("acné de sombra") en las paredes
+	linterna.shadow_normal_bias = 3.5
 	linterna.light_specular = 0.4
 	add_child(linterna)
 	var capa := CanvasLayer.new()
@@ -194,14 +195,20 @@ func _manos_y_arma(delta: float, velocidad: float) -> void:
 	var j: CharacterBody2D = escuela.jugador
 	var arma: Node = j.get_node_or_null("PistolaClavos")
 	var tiene_arma: bool = j.inventario.has("Pistola de clavos")
-	_manos.visible = not j.oculto and not _cuadros_manos.is_empty()
+	# El arma solo se ve al apuntar (o mientras recarga, dispara o lanza la molotov), como en Resident Evil
+	var recargando: bool = arma != null and float(arma.get("_recargando")) > 0.0
+	var apunta: bool = tiene_arma and Input.is_action_pressed("apuntar") and escuela.jugando
+	var en_accion: bool = recargando or _anim_manos in ["disparo", "molotov"]
+	var mostrar: bool = (apunta or en_accion) and not j.oculto and not _cuadros_manos.is_empty()
+	_subida = move_toward(_subida, 1.0 if mostrar else 0.0, delta * 7.0)
+	_manos.visible = _subida > 0.01
 	# Qué animación toca
-	if arma != null and float(arma.get("_recargando")) > 0.0:
+	if recargando:
 		_poner_animacion_manos("recarga")
 	elif _anim_manos in ["disparo", "molotov", "recarga"]:
 		pass   # se termina sola
 	else:
-		_poner_animacion_manos("reposo" if tiene_arma else "sin_arma")
+		_poner_animacion_manos("reposo")
 	var datos: Dictionary = _datos_manos.get(_anim_manos, {})
 	var cuadros: Array = _cuadros_manos.get(_anim_manos, [])
 	if cuadros.is_empty():
@@ -214,14 +221,15 @@ func _manos_y_arma(delta: float, velocidad: float) -> void:
 		if bool(datos.get("loop", false)):
 			_cuadro_manos = fmod(_cuadro_manos, cuadros.size())
 		else:
-			_poner_animacion_manos("reposo" if tiene_arma else "sin_arma")
+			_poner_animacion_manos("reposo")
 			cuadros = _cuadros_manos.get(_anim_manos, cuadros)
 			_cuadro_manos = 0.0
 	_manos.texture = cuadros[mini(int(_cuadro_manos), cuadros.size() - 1)]
 	# Vaivén al caminar y retroceso del disparo
 	_retroceso = maxf(0.0, _retroceso - delta * 6.0)
 	var balanceo := Vector2(cos(_vaiven * 0.5) * 8.0, absf(sin(_vaiven)) * 7.0) * clampf(velocidad / 110.0, 0.0, 1.0)
-	_manos.position = balanceo + Vector2(0, _retroceso * 10.0)
+	var bajar: float = (1.0 - ease(_subida, 0.6)) * 420.0   # sube desde abajo de la pantalla
+	_manos.position = balanceo + Vector2(0, _retroceso * 10.0 + bajar)
 
 
 ## Transición de puerta doble en 3D: la cámara queda frente a la puerta, las dos hojas se abren con el

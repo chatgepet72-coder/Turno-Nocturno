@@ -61,7 +61,7 @@ func _physics_process(delta: float) -> void:
 		lanzar_molotov()
 	elif Input.is_action_just_pressed("recargar"):
 		recargar()
-	elif Input.is_action_pressed("disparar") and _espera <= 0.0:
+	elif Input.is_action_pressed("disparar") and _espera <= 0.0 and apuntando():
 		disparar()
 
 
@@ -121,3 +121,9 @@ func lanzar_molotov() -> void:
 	m.destino = destino
 	m.global_position = jugador.global_position + Vector2(0, -30)
 	escuela.add_child(m)
+
+
+
+## En primera persona solo se dispara apuntando (clic derecho / gatillo izquierdo), como en Resident Evil.
+func apuntando() -> bool:
+	return not jugador.en_primera_persona() or Input.is_action_pressed("apuntar")

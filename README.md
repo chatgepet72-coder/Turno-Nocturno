@@ -26,7 +26,8 @@ Abre `project.godot` en Godot, espera la importación y pulsa F5. Selecciona **I
 | Apuntar linterna | Ratón | Stick derecho |
 | Linterna | F | X / Cuadrado |
 | Agacharse | C / Ctrl | B / Círculo |
-| Mapa completo | V / Tab / M | LT |
+| Mapa completo | V / Tab / M | Back / Share |
+| Apuntar el arma | Clic derecho | LT / L2 |
 | Disparar clavos | Clic izquierdo | RT / R2 |
 | Recargar | R | Cruceta abajo |
 | Lanzar molotov | G | Cruceta arriba |

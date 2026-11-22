@@ -396,9 +396,57 @@ func _en_pared(o2: Node2D, sp: Sprite2D, nombre: String) -> void:
 				"der":
 					normal = Vector3.LEFT
 					punto = Vector2(r.end.x - 7, pos.y)
+	punto = _lejos_de_puertas(punto, ancho / ESC, normal)
 	var centro := a3d(punto, dato[1]) + normal * 0.05
 	var mi := lamina(centro, ancho, alto, sp.texture, normal)
 	_objetos_3d[o2] = mi
+
+
+## Si algo colgado (pizarrón, reloj...) quedaría encima de una puerta, se recorre a un lado de la puerta.
+func _lejos_de_puertas(punto: Vector2, ancho_px: float, normal: Vector3) -> Vector2:
+	if absf(normal.z) < 0.5:
+		return punto   # paredes laterales: ahí no hay puertas
+	for o in escuela.get_node("Objetos").get_children():
+		if o.get("tipo") != "puerta":
+			continue
+		var p: Vector2 = (o as Node2D).global_position
+		var libre: float = 48.0 + ancho_px / 2.0 + 18.0
+		if absf(p.y - punto.y) < 45.0 and absf(p.x - punto.x) < libre:
+			var izquierda := Vector2(p.x - libre, punto.y)
+			var derecha := Vector2(p.x + libre, punto.y)
+			var cuarto: String = escuela.cuartos.cuarto_en(Vector2(punto.x, punto.y + normal.z * 30.0)) if escuela.cuartos != null else ""
+			if cuarto != "":
+				var r: Rect2 = escuela.cuartos.cuartos[cuarto]
+				if izquierda.x - ancho_px / 2.0 > r.position.x + 10.0:
+					return izquierda
+				return derecha
+			return izquierda
+	return punto
+
+
+## Letrero arriba de la puerta: del lado del pasillo dice el nombre del cuarto; de adentro, "PASILLO".
+func _letreros_de_puerta(o2: Node2D, base: Vector3) -> void:
+	var titulo: String = str(o2.get("titulo"))
+	var clave: String = titulo.trim_prefix("Puerta: ")
+	var nombre: String = escuela.cuartos.nombre_visible(clave) if escuela.cuartos != null else clave
+	var pos: Vector2 = o2.global_position
+	for lado in [-1.0, 1.0]:
+		var del_lado: String = escuela.cuartos.cuarto_en(pos + Vector2(0, lado * 40.0)) if escuela.cuartos != null else ""
+		var texto: String = "PASILLO" if del_lado == clave else nombre.to_upper()
+		var placa := caja(base + Vector3(0, ALTO_PUERTA + 0.42, lado * 0.185), Vector3(1.3, 0.3, 0.02), M.color(Color(0.1, 0.16, 0.2), 0.5, 0.2))
+		var marco := caja(base + Vector3(0, ALTO_PUERTA + 0.42, lado * 0.178), Vector3(1.36, 0.36, 0.01), M.color(Color(0.6, 0.62, 0.6), 0.3, 0.8))
+		placa.name = "Letrero"
+		marco.name = "MarcoLetrero"
+		var etiqueta := Label3D.new()
+		etiqueta.text = texto
+		etiqueta.font_size = 48
+		etiqueta.pixel_size = 0.0042
+		etiqueta.outline_size = 0
+		etiqueta.modulate = Color(0.92, 0.92, 0.86)
+		etiqueta.shaded = true
+		etiqueta.position = base + Vector3(0, ALTO_PUERTA + 0.42, lado * 0.198)
+		etiqueta.rotation.y = 0.0 if lado > 0 else PI
+		add_child(etiqueta)
 
 
 ## Puerta doble de escuela, armada en 3D (sin dibujo pegado): hojas de lámina pintada con ventanilla
@@ -408,6 +456,7 @@ func _puerta(o2: Node2D, _sp: Sprite2D) -> void:
 	var pos: Vector2 = o2.global_position
 	var hueco: float = 96.0 * ESC
 	var base := a3d(pos)
+	_inicio_puerta = get_child_count()
 	var muro := M.repetida("yeso", 2.0)
 	var marco := M.color(Color(0.17, 0.18, 0.19), 0.45, 0.6)
 	caja(base + Vector3(0, (ALTO + ALTO_PUERTA) / 2.0, 0), Vector3(hueco + 0.1, ALTO - ALTO_PUERTA, 0.34), muro)
@@ -415,6 +464,8 @@ func _puerta(o2: Node2D, _sp: Sprite2D) -> void:
 	for lado in [-1, 1]:
 		caja(base + Vector3(lado * (hueco / 2 + 0.04), ALTO_PUERTA / 2, 0), Vector3(0.1, ALTO_PUERTA, 0.38), marco)
 	caja(base + Vector3(0, 0.01, 0), Vector3(hueco, 0.02, 0.3), M.color(Color(0.3, 0.3, 0.3), 0.4, 0.7))   # umbral
+	_letreros_de_puerta(o2, base)
+	_sin_sombra_desde(_inicio_puerta)
 	var hojas: Array = []
 	for lado in [-1, 1]:
 		var bisagra := Node3D.new()
@@ -424,6 +475,9 @@ func _puerta(o2: Node2D, _sp: Sprite2D) -> void:
 		hoja.position = Vector3(-lado * hueco / 4, 0, 0)
 		bisagra.add_child(hoja)
 		_hoja_de_puerta(hoja, hueco / 2 - 0.02, lado)
+		for pieza in hoja.get_children():   # piezas finas de la hoja: sin sombra (dibujaban rayas en la pared)
+			if pieza is GeometryInstance3D:
+				(pieza as GeometryInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		hojas.append(bisagra)
 	_puertas[o2] = hojas
 
@@ -468,6 +522,18 @@ func _hoja_de_puerta(hoja: Node3D, ancho: float, lado: int) -> void:
 			caja(Vector3(x, 1.0, z * 1.4), Vector3(0.03, 0.06, 0.04), metal, hoja)
 	for y in [0.3, 1.1, 1.9]:   # bisagras
 		caja(Vector3(lado * ancho / 2, y, 0), Vector3(0.03, 0.12, 0.07), metal, hoja)
+
+
+var _inicio_puerta: int = 0
+
+
+## Marco, dintel, umbral y letreros van pegados a la pared: no proyectan sombra (si no, la linterna
+## dibuja rayas oscuras donde se cruzan con el muro). Las hojas de la puerta sí dan sombra.
+func _sin_sombra_desde(indice: int) -> void:
+	for k in range(indice, get_child_count()):
+		var n := get_child(k)
+		if n is GeometryInstance3D:
+			(n as GeometryInstance3D).cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 
 
 ## Durante la transición se fuerza abrir o cerrar una puerta. sentido: +1 abre hacia +Z, -1 hacia -Z.

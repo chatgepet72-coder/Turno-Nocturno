@@ -18,7 +18,7 @@ func _ready() -> void:
 			volumen = clampf(float(sonido), 0.0, 1.0)
 		if vibrar is bool:
 			vibracion = vibrar
-	var teclas := {"izquierda": [KEY_A, KEY_LEFT], "derecha": [KEY_D, KEY_RIGHT], "arriba": [KEY_W, KEY_UP], "abajo": [KEY_S, KEY_DOWN], "interactuar": [KEY_E], "linterna": [KEY_F], "correr": [KEY_SHIFT], "pausa": [KEY_ESCAPE], "guardar": [KEY_F5], "distraer": [KEY_Q], "mapa": [KEY_TAB, KEY_M], "agacharse": [KEY_C, KEY_CTRL], "minimapa": [KEY_V], "inventario": [KEY_I], "recargar": [KEY_R], "disparar": [], "lanzar": [KEY_G]}
+	var teclas := {"izquierda": [KEY_A, KEY_LEFT], "derecha": [KEY_D, KEY_RIGHT], "arriba": [KEY_W, KEY_UP], "abajo": [KEY_S, KEY_DOWN], "interactuar": [KEY_E], "linterna": [KEY_F], "correr": [KEY_SHIFT], "pausa": [KEY_ESCAPE], "guardar": [KEY_F5], "distraer": [KEY_Q], "mapa": [KEY_TAB, KEY_M], "agacharse": [KEY_C, KEY_CTRL], "minimapa": [KEY_V], "inventario": [KEY_I], "recargar": [KEY_R], "disparar": [], "lanzar": [KEY_G], "apuntar": []}
 	for accion in teclas:
 		if not InputMap.has_action(accion):
 			InputMap.add_action(accion, 0.34)
@@ -43,8 +43,12 @@ func _ready() -> void:
 	gatillo.device = -1
 	gatillo.axis = JOY_AXIS_TRIGGER_LEFT
 	gatillo.axis_value = 1.0
-	InputMap.action_set_deadzone("minimapa", 0.65)
-	InputMap.action_add_event("minimapa", gatillo)
+	# Gatillo izquierdo y clic derecho: apuntar el arma (el mapa sigue en V / Tab / Back).
+	InputMap.action_set_deadzone("apuntar", 0.4)
+	InputMap.action_add_event("apuntar", gatillo)
+	var clic_derecho := InputEventMouseButton.new()
+	clic_derecho.button_index = MOUSE_BUTTON_RIGHT
+	InputMap.action_add_event("apuntar", clic_derecho)
 	# Gatillo derecho y clic izquierdo: disparar la pistola de clavos. Cruceta abajo: recargar.
 	var gatillo_derecho := gatillo.duplicate() as InputEventJoypadMotion
 	gatillo_derecho.axis = JOY_AXIS_TRIGGER_RIGHT
