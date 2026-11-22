@@ -8,7 +8,12 @@ var ruido: float = 0.0
 var ultimo_escondite: Node2D
 var mensaje: String = "Busca la llave en Dirección. El tablero de Entrada alimenta una sola zona."
 var energia: float = 100.0
-var cordura: float = 100.0
+## En modo de prueba (escuela.modo_prueba) la Cordura nunca baja: los enemigos pegan pero no hacen daño.
+var cordura: float = 100.0:
+	set(valor):
+		if valor < cordura and _en_modo_prueba():
+			return
+		cordura = valor
 var paso: float = 0.0
 var apuntado := Vector2.RIGHT
 var sprite: AnimatedSprite2D
@@ -344,3 +349,8 @@ func sonido_paso() -> String:
 
 func protegido_en_refugio() -> bool:
 	return oculto or (accion == "entrar" and refugio_aceptado)
+
+
+func _en_modo_prueba() -> bool:
+	var e: Node = get_parent()
+	return e != null and e.get("modo_prueba") == true and OS.has_feature("editor")

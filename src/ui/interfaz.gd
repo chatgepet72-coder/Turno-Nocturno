@@ -29,6 +29,7 @@ var _tiempo_objetivo: float = 0.0
 var _mensaje_previo: String = ""
 var _tiempo_mensaje: float = 0.0
 var menu_hint: Label   # lo único fijo en pantalla: cómo abrir el menú con los controles
+var aviso_prueba: Label   # "MODO PRUEBA" arriba a la derecha mientras está activo
 
 func _ready() -> void:
 	layer = 20
@@ -56,6 +57,11 @@ func _ready() -> void:
 	menu_hint.size.x = 240
 	menu_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	menu_hint.hide()
+	aviso_prueba = etiqueta(raiz, Vector2(1000, 22), 15, Color(1.0, 0.45, 0.35, 0.85))
+	aviso_prueba.size.x = 250
+	aviso_prueba.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	aviso_prueba.text = "MODO PRUEBA · invencible (F9)"
+	aviso_prueba.hide()
 	aviso = etiqueta(raiz, Vector2(0, 170), 33, Color("d6b38a"))
 	aviso.size.x = 1280
 	aviso.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -209,6 +215,10 @@ func mostrar(tipo: String) -> void:
 			primero = boton("Continuar", escuela.continuar)
 			boton("Guardar partida", func(): escuela.guardar_manual())
 			boton("Controles y opciones", func(): mostrar("opciones"))
+			if escuela.modo_admin_disponible():   # solo desde el editor de Godot, nunca en el juego exportado
+				boton("Admin · Modo de prueba: " + ("ACTIVADO" if escuela.modo_prueba else "apagado") + "  (F9)", escuela.alternar_modo_prueba)
+			if escuela.modo_admin_disponible() and escuela.modo_prueba:
+				boton("Prueba: dar pistola, clavos, molotov y llaves", func(): escuela.dar_equipo_prueba(); escuela.continuar())
 			boton("Menú principal", func(): escuela.solicitar_salida("menu"))
 			boton("Salir", escuela.salir)
 		"muerte":

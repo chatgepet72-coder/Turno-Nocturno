@@ -22,6 +22,14 @@ var destino_salida: String = "salir"
 var autoguardado: float = 0.0
 var campana: Node
 var cuartos: Node2D
+## Modo de prueba (administradores): todo funciona igual, pero nada le hace daño a Lalo ni el Archivero lo archiva.
+## Solo existe al correr el juego desde el editor de Godot (F5): en el juego exportado para los
+## jugadores no hay botón, ni tecla, ni aviso. Se activa con F9 o desde el menú de pausa. No se guarda.
+var modo_prueba: bool = false
+
+
+static func modo_admin_disponible() -> bool:
+	return OS.has_feature("editor")
 var encuentros: Node2D
 var gatillos_mapa: Dictionary = {}
 var mente: Node
@@ -114,6 +122,29 @@ func crear_oscuridad() -> void:
 	oscuridad.material = material_oscuro
 	capa.add_child(oscuridad)
 
+## Modo de prueba (F9 o menú de pausa): invencible, todo lo demás igual.
+func alternar_modo_prueba() -> void:
+	if not modo_admin_disponible():
+		return
+	modo_prueba = not modo_prueba
+	interfaz.aviso_prueba.visible = modo_prueba
+	jugador.mensaje = "Modo de prueba ACTIVADO: invencible." if modo_prueba else "Modo de prueba desactivado."
+	if interfaz.menu_actual == "pausa":
+		interfaz.mostrar("pausa")
+
+
+## Equipo completo para probar sin juntar nada.
+func dar_equipo_prueba() -> void:
+	if not modo_admin_disponible():
+		return
+	for objeto in ["Pistola de clavos", "Llave del taller", "Llave maestra"]:
+		if not jugador.inventario.has(objeto):
+			jugador.inventario.append(objeto)
+	for objeto in ["Caja de clavos", "Caja de clavos", "Caja de clavos", "Molotov", "Molotov"]:
+		jugador.inventario.append(objeto)
+	jugador.mensaje = "Equipo de prueba: pistola, 3 cajas de clavos, 2 molotov y llaves."
+
+
 ## Nueva partida desde el menú: primero el teaser (se puede saltar) y luego el juego.
 func iniciar_con_teaser() -> void:
 	if transicion or partida_iniciada or has_node("Teaser"):
@@ -173,6 +204,10 @@ func abrir_tienda() -> void:
 
 func _input(evento: InputEvent) -> void:
 	if interfaz == null or evento.is_echo(): return
+	if evento is InputEventKey and evento.pressed and evento.physical_keycode == KEY_F9 and partida_iniciada and modo_admin_disponible():
+		alternar_modo_prueba()
+		get_viewport().set_input_as_handled()
+		return
 	if evento.is_action_pressed("inventario"):
 		if interfaz.menu_actual in ["inventario", "tienda"]: continuar()
 		elif jugando and jugador.accion=="" and not transicion:
@@ -271,6 +306,9 @@ func anunciar(titulo: String, detalle: String) -> void:
 
 func archivar() -> void:
 	if not jugando:
+		return
+	if modo_prueba:
+		jugador.mensaje = "MODO PRUEBA · Te alcanzaron (en el juego normal aquí terminaría el turno)."
 		return
 	jugando = false
 	transicion = true

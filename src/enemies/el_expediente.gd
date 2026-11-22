@@ -141,6 +141,8 @@ func _sostener_agarre(delta: float) -> void:
 	if Input.is_action_just_pressed("interactuar") or Input.is_action_just_pressed("disparar"):
 		_presiones += 1
 		_vibrar(0.2, 0.06)
+	if escuela.modo_prueba and tiempo_estado > 1.0:
+		_presiones = PRESIONES_PARA_ZAFARSE   # en modo de prueba te suelta solo
 	if _presiones >= PRESIONES_PARA_ZAFARSE or estado in ["CAIDO", "CLAVADO", "HERIDO"]:
 		agarrando = false
 		j.bloqueo_entrada = 0.15
