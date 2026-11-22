@@ -1,0 +1,21 @@
+{
+	"_nota": "Dónde aparece cada enemigo y cada objeto de combate. Posiciones en el mapa del edificio principal (x, y). Cada enemigo solo se mueve dentro de su cuarto.",
+	"enemigos": [
+		{"id": "baja_pasillo_1", "tipo": "la_baja", "pos": [1250, 700]},
+		{"id": "baja_pasillo_2", "tipo": "la_baja", "pos": [2950, 640]},
+		{"id": "baja_aula_03", "tipo": "la_baja", "pos": [1000, 250]},
+		{"id": "baja_auditorio", "tipo": "la_baja", "pos": [1450, 1200]},
+		{"id": "desvelado_computo", "tipo": "el_desvelado", "pos": [300, 1230]},
+		{"id": "expediente_rectoria", "tipo": "el_expediente", "pos": [3160, 1270]},
+		{"id": "expediente_aula_08", "tipo": "el_expediente", "pos": [1080, 1270]},
+		{"id": "sinodal_pasillo", "tipo": "el_sinodal", "pos": [420, 680]}
+	],
+	"objetos": [
+		{"id": "pistola_taller", "titulo": "Pistola de clavos", "icono": "res://assets/sprites/armas/pistola_clavos.png", "tamano": 16, "pos": [3585, 1003], "z": 1},
+		{"id": "clavos_entrada", "titulo": "Caja de clavos", "icono": "res://assets/sprites/caja.png", "tamano": 16, "pos": [2050, 1290], "z": 0},
+		{"id": "clavos_taller", "titulo": "Caja de clavos", "icono": "res://assets/sprites/caja.png", "tamano": 16, "pos": [3780, 1270], "z": 0},
+		{"id": "clavos_direccion", "titulo": "Caja de clavos", "icono": "res://assets/sprites/caja.png", "tamano": 16, "pos": [2735, 1290], "z": 0},
+		{"id": "clavos_aula_02", "titulo": "Caja de clavos", "icono": "res://assets/sprites/caja.png", "tamano": 16, "pos": [700, 380], "z": 0},
+		{"id": "clavos_computo", "titulo": "Caja de clavos", "icono": "res://assets/sprites/caja.png", "tamano": 16, "pos": [700, 1300], "z": 0}
+	]
+}

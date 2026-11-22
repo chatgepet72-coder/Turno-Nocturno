@@ -1,0 +1,286 @@
+{
+  "personaje": "el_sinodal",
+  "tamano_cuadro": [
+    480,
+    480
+  ],
+  "fondo": "transparente",
+  "pivote": [
+    240,
+    464
+  ],
+  "nota_pivote": "Centro inferior: línea de piso común. Se dibuja a la misma escala que Lalo; no reescalar.",
+  "direcciones": [
+    "down",
+    "left",
+    "right",
+    "up"
+  ],
+  "animaciones": {
+    "idle": {
+      "cuadros": 6,
+      "fps": 6,
+      "loop": true,
+      "archivos": {
+        "down": [
+          "frames/idle_down_01.png",
+          "frames/idle_down_02.png",
+          "frames/idle_down_03.png",
+          "frames/idle_down_04.png",
+          "frames/idle_down_05.png",
+          "frames/idle_down_06.png"
+        ],
+        "left": [
+          "frames/idle_left_01.png",
+          "frames/idle_left_02.png",
+          "frames/idle_left_03.png",
+          "frames/idle_left_04.png",
+          "frames/idle_left_05.png",
+          "frames/idle_left_06.png"
+        ],
+        "right": [
+          "frames/idle_right_01.png",
+          "frames/idle_right_02.png",
+          "frames/idle_right_03.png",
+          "frames/idle_right_04.png",
+          "frames/idle_right_05.png",
+          "frames/idle_right_06.png"
+        ],
+        "up": [
+          "frames/idle_up_01.png",
+          "frames/idle_up_02.png",
+          "frames/idle_up_03.png",
+          "frames/idle_up_04.png",
+          "frames/idle_up_05.png",
+          "frames/idle_up_06.png"
+        ]
+      },
+      "hoja": {
+        "down": "sheets/idle_down.png",
+        "left": "sheets/idle_left.png",
+        "right": "sheets/idle_right.png",
+        "up": "sheets/idle_up.png"
+      }
+    },
+    "walk": {
+      "cuadros": 8,
+      "fps": 7,
+      "loop": true,
+      "archivos": {
+        "down": [
+          "frames/walk_down_01.png",
+          "frames/walk_down_02.png",
+          "frames/walk_down_03.png",
+          "frames/walk_down_04.png",
+          "frames/walk_down_05.png",
+          "frames/walk_down_06.png",
+          "frames/walk_down_07.png",
+          "frames/walk_down_08.png"
+        ],
+        "left": [
+          "frames/walk_left_01.png",
+          "frames/walk_left_02.png",
+          "frames/walk_left_03.png",
+          "frames/walk_left_04.png",
+          "frames/walk_left_05.png",
+          "frames/walk_left_06.png",
+          "frames/walk_left_07.png",
+          "frames/walk_left_08.png"
+        ],
+        "right": [
+          "frames/walk_right_01.png",
+          "frames/walk_right_02.png",
+          "frames/walk_right_03.png",
+          "frames/walk_right_04.png",
+          "frames/walk_right_05.png",
+          "frames/walk_right_06.png",
+          "frames/walk_right_07.png",
+          "frames/walk_right_08.png"
+        ],
+        "up": [
+          "frames/walk_up_01.png",
+          "frames/walk_up_02.png",
+          "frames/walk_up_03.png",
+          "frames/walk_up_04.png",
+          "frames/walk_up_05.png",
+          "frames/walk_up_06.png",
+          "frames/walk_up_07.png",
+          "frames/walk_up_08.png"
+        ]
+      },
+      "hoja": {
+        "down": "sheets/walk_down.png",
+        "left": "sheets/walk_left.png",
+        "right": "sheets/walk_right.png",
+        "up": "sheets/walk_up.png"
+      },
+      "velocidad": "unos 40 px/s en pantalla, constante, nunca se detiene"
+    },
+    "attack": {
+      "cuadros": 10,
+      "fps": 10,
+      "loop": false,
+      "archivos": {
+        "down": [
+          "frames/attack_down_01.png",
+          "frames/attack_down_02.png",
+          "frames/attack_down_03.png",
+          "frames/attack_down_04.png",
+          "frames/attack_down_05.png",
+          "frames/attack_down_06.png",
+          "frames/attack_down_07.png",
+          "frames/attack_down_08.png",
+          "frames/attack_down_09.png",
+          "frames/attack_down_10.png"
+        ],
+        "left": [
+          "frames/attack_left_01.png",
+          "frames/attack_left_02.png",
+          "frames/attack_left_03.png",
+          "frames/attack_left_04.png",
+          "frames/attack_left_05.png",
+          "frames/attack_left_06.png",
+          "frames/attack_left_07.png",
+          "frames/attack_left_08.png",
+          "frames/attack_left_09.png",
+          "frames/attack_left_10.png"
+        ],
+        "right": [
+          "frames/attack_right_01.png",
+          "frames/attack_right_02.png",
+          "frames/attack_right_03.png",
+          "frames/attack_right_04.png",
+          "frames/attack_right_05.png",
+          "frames/attack_right_06.png",
+          "frames/attack_right_07.png",
+          "frames/attack_right_08.png",
+          "frames/attack_right_09.png",
+          "frames/attack_right_10.png"
+        ],
+        "up": [
+          "frames/attack_up_01.png",
+          "frames/attack_up_02.png",
+          "frames/attack_up_03.png",
+          "frames/attack_up_04.png",
+          "frames/attack_up_05.png",
+          "frames/attack_up_06.png",
+          "frames/attack_up_07.png",
+          "frames/attack_up_08.png",
+          "frames/attack_up_09.png",
+          "frames/attack_up_10.png"
+        ]
+      },
+      "hoja": {
+        "down": "sheets/attack_down.png",
+        "left": "sheets/attack_left.png",
+        "right": "sheets/attack_right.png",
+        "up": "sheets/attack_up.png"
+      },
+      "cuadro_de_golpe": 7
+    },
+    "hurt": {
+      "cuadros": 3,
+      "fps": 10,
+      "loop": false,
+      "archivos": {
+        "down": [
+          "frames/hurt_down_01.png",
+          "frames/hurt_down_02.png",
+          "frames/hurt_down_03.png"
+        ],
+        "left": [
+          "frames/hurt_left_01.png",
+          "frames/hurt_left_02.png",
+          "frames/hurt_left_03.png"
+        ],
+        "right": [
+          "frames/hurt_right_01.png",
+          "frames/hurt_right_02.png",
+          "frames/hurt_right_03.png"
+        ],
+        "up": [
+          "frames/hurt_up_01.png",
+          "frames/hurt_up_02.png",
+          "frames/hurt_up_03.png"
+        ]
+      },
+      "hoja": {
+        "down": "sheets/hurt_down.png",
+        "left": "sheets/hurt_left.png",
+        "right": "sheets/hurt_right.png",
+        "up": "sheets/hurt_up.png"
+      }
+    },
+    "stun": {
+      "cuadros": 6,
+      "fps": 8,
+      "loop": true,
+      "archivos": {
+        "down": [
+          "frames/stun_down_01.png",
+          "frames/stun_down_02.png",
+          "frames/stun_down_03.png",
+          "frames/stun_down_04.png",
+          "frames/stun_down_05.png",
+          "frames/stun_down_06.png"
+        ],
+        "left": [
+          "frames/stun_left_01.png",
+          "frames/stun_left_02.png",
+          "frames/stun_left_03.png",
+          "frames/stun_left_04.png",
+          "frames/stun_left_05.png",
+          "frames/stun_left_06.png"
+        ],
+        "right": [
+          "frames/stun_right_01.png",
+          "frames/stun_right_02.png",
+          "frames/stun_right_03.png",
+          "frames/stun_right_04.png",
+          "frames/stun_right_05.png",
+          "frames/stun_right_06.png"
+        ],
+        "up": [
+          "frames/stun_up_01.png",
+          "frames/stun_up_02.png",
+          "frames/stun_up_03.png",
+          "frames/stun_up_04.png",
+          "frames/stun_up_05.png",
+          "frames/stun_up_06.png"
+        ]
+      },
+      "hoja": {
+        "down": "sheets/stun_down.png",
+        "left": "sheets/stun_left.png",
+        "right": "sheets/stun_right.png",
+        "up": "sheets/stun_up.png"
+      }
+    }
+  },
+  "hoja_completa": {
+    "archivo": "sheets/el_sinodal_todo.png",
+    "columnas": 10,
+    "filas": [
+      "idle_down",
+      "idle_left",
+      "idle_right",
+      "idle_up",
+      "walk_down",
+      "walk_left",
+      "walk_right",
+      "walk_up",
+      "attack_down",
+      "attack_left",
+      "attack_right",
+      "attack_up",
+      "hurt_down",
+      "hurt_left",
+      "hurt_right",
+      "hurt_up",
+      "stun_down",
+      "stun_left",
+      "stun_right",
+      "stun_up"
+    ]
+  }
+}

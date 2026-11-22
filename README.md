@@ -26,7 +26,9 @@ Abre `project.godot` en Godot, espera la importación y pulsa F5. Selecciona **I
 | Apuntar linterna | Ratón | Stick derecho |
 | Linterna | F | X / Cuadrado |
 | Agacharse | C / Ctrl | B / Círculo |
-| Mapa completo | V / Tab / M | LT / RT |
+| Mapa completo | V / Tab / M | LT |
+| Disparar clavos | Clic izquierdo | RT / R2 |
+| Recargar | R | Cruceta abajo |
 | Mochila | I | Y / Triángulo |
 | Distracción | Q | RB / R1 |
 | Pausa | Esc | Start / Options |

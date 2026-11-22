@@ -18,7 +18,7 @@ func _ready() -> void:
 			volumen = clampf(float(sonido), 0.0, 1.0)
 		if vibrar is bool:
 			vibracion = vibrar
-	var teclas := {"izquierda": [KEY_A, KEY_LEFT], "derecha": [KEY_D, KEY_RIGHT], "arriba": [KEY_W, KEY_UP], "abajo": [KEY_S, KEY_DOWN], "interactuar": [KEY_E], "linterna": [KEY_F], "correr": [KEY_SHIFT], "pausa": [KEY_ESCAPE], "guardar": [KEY_F5], "distraer": [KEY_Q], "mapa": [KEY_TAB, KEY_M], "agacharse": [KEY_C, KEY_CTRL], "minimapa": [KEY_V], "inventario": [KEY_I]}
+	var teclas := {"izquierda": [KEY_A, KEY_LEFT], "derecha": [KEY_D, KEY_RIGHT], "arriba": [KEY_W, KEY_UP], "abajo": [KEY_S, KEY_DOWN], "interactuar": [KEY_E], "linterna": [KEY_F], "correr": [KEY_SHIFT], "pausa": [KEY_ESCAPE], "guardar": [KEY_F5], "distraer": [KEY_Q], "mapa": [KEY_TAB, KEY_M], "agacharse": [KEY_C, KEY_CTRL], "minimapa": [KEY_V], "inventario": [KEY_I], "recargar": [KEY_R], "disparar": []}
 	for accion in teclas:
 		if not InputMap.has_action(accion):
 			InputMap.add_action(accion, 0.34)
@@ -45,9 +45,18 @@ func _ready() -> void:
 	gatillo.axis_value = 1.0
 	InputMap.action_set_deadzone("minimapa", 0.65)
 	InputMap.action_add_event("minimapa", gatillo)
+	# Gatillo derecho y clic izquierdo: disparar la pistola de clavos. Cruceta abajo: recargar.
 	var gatillo_derecho := gatillo.duplicate() as InputEventJoypadMotion
 	gatillo_derecho.axis = JOY_AXIS_TRIGGER_RIGHT
-	InputMap.action_add_event("minimapa", gatillo_derecho)
+	InputMap.action_set_deadzone("disparar", 0.5)
+	InputMap.action_add_event("disparar", gatillo_derecho)
+	var clic := InputEventMouseButton.new()
+	clic.button_index = MOUSE_BUTTON_LEFT
+	InputMap.action_add_event("disparar", clic)
+	var cruceta := InputEventJoypadButton.new()
+	cruceta.device = -1
+	cruceta.button_index = JOY_BUTTON_DPAD_DOWN
+	InputMap.action_add_event("recargar", cruceta)
 	# Menús y diálogos comparten el mismo contrato que las acciones del juego.
 	for accion in ["ui_accept", "ui_cancel", "ui_up", "ui_down", "ui_left", "ui_right"]:
 		for evento in InputMap.action_get_events(accion):

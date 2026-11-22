@@ -28,6 +28,8 @@ const CATALOGO = {
  "Llave de servicio":["llave.png","LLAVE","Abre el archivo detrás del mostrador. Se conserva para la misión."],
  "Extintor":["extintor.png","EMERGENCIA","Una descarga frena al Archivero cercano durante 3 segundos. No atraviesa paredes. Un solo uso; el ruido puede atraerlo después."],
  "Grapadora":["grapadora.png","DISTRACCIÓN","Lánzala hacia donde apuntas. El golpe atrae al Archivero. Q / RB fuera del inventario."],
+ "Pistola de clavos":["armas/pistola_clavos.png","ARMA","De Talleres. Clic izquierdo / RT dispara hacia donde apuntas; R / cruceta abajo recarga. Hace ruido. A un enemigo tirado, dispárale 3 veces más para clavarlo al piso y que no se levante."],
+ "Caja de clavos":["caja.png","MUNICIÓN","Diez clavos. Se usa sola al recargar."],
  "Termo de cafe":["termo.png","RECUPERACIÓN","Bebe para recuperar 15 puntos de cordura. Se consume; no hace falta usarlo inmediatamente."],
  "Expediente de Lalo":["expediente.png","EVIDENCIA","Tu firma aparece en una baja que no solicitaste. Recuperar tu nombre es el comienzo, no el final."],
  "Sello roto":["sello_roto.png","EVIDENCIA","Puede revertir las bajas. Conserva el archivo enterrado y al menos 50 de cordura para ofrecer otra salida a los Ecos."],
@@ -162,6 +164,8 @@ func utilizar() -> void:
 		var a: CharacterBody2D=escuela.archivero
 		var rayo:=PhysicsRayQueryParameters2D.create(j.position,a.position,1,[j.get_rid(),a.get_rid()])
 		if a.activo and j.position.distance_to(a.position)<210 and escuela.get_world_2d().direct_space_state.intersect_ray(rayo).is_empty():a.repelido=3
+		for enemigo in get_tree().get_nodes_in_group("enemigos"):
+			if j.position.distance_to(enemigo.global_position)<210:enemigo.aturdir(3.0)
 		escuela.sonidos.efecto("radio_estatica",j.position,-10);escuela.emitir_ruido(j.position,.8)
 		j.mensaje="Extintor descargado. Aprovecha para alejarte."
 	else:

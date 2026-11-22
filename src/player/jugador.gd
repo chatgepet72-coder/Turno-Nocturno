@@ -30,6 +30,7 @@ var jadeo: float = 0.0
 var carrera_agotada := false
 var refugio_aceptado := false
 var distancia_animada := 0.0
+var mancha: float = 0.0   # segundos con la linterna manchada de tinta (escupitajo de La Baja)
 const CONSUMO_SIGILO := 5.0
 @onready var escuela: Node2D = get_parent()
 
@@ -131,6 +132,8 @@ func _physics_process(delta: float) -> void:
 	var balanceo: float = sin(distancia_animada / 46.0 * PI) * 0.018 if movimiento.length() > 3 else sin(escuela.tiempo*1.7)*0.006
 	$Linterna.rotation = apuntado.angle() + balanceo
 	$Linterna.energy = lerpf(0.76,1.12,clampf(escuela.campana.bateria/25.0,0,1))
+	mancha = maxf(0.0, mancha - delta)
+	$Linterna.energy *= 1.0 - 0.6 * clampf(mancha / 2.0, 0.0, 1.0)
 	if escuela.campana.bateria < 20 and sin(escuela.tiempo * 19.0) * sin(escuela.tiempo * 7.3) > 0.48:
 		$Linterna.energy *= 0.3
 	paso -= movimiento.length() * delta

@@ -1,0 +1,229 @@
+{
+  "personaje": "el_expediente",
+  "tamano_cuadro": [
+    320,
+    320
+  ],
+  "fondo": "transparente",
+  "pivote": [
+    160,
+    310
+  ],
+  "nota_pivote": "Centro inferior: línea de piso común. Se dibuja a la misma escala que Lalo; no reescalar.",
+  "direcciones": [
+    "down",
+    "left",
+    "right",
+    "up"
+  ],
+  "animaciones": {
+    "idle": {
+      "cuadros": 6,
+      "fps": 8,
+      "loop": true,
+      "archivos": {
+        "down": [
+          "frames/idle_down_01.png",
+          "frames/idle_down_02.png",
+          "frames/idle_down_03.png",
+          "frames/idle_down_04.png",
+          "frames/idle_down_05.png",
+          "frames/idle_down_06.png"
+        ],
+        "left": [
+          "frames/idle_left_01.png",
+          "frames/idle_left_02.png",
+          "frames/idle_left_03.png",
+          "frames/idle_left_04.png",
+          "frames/idle_left_05.png",
+          "frames/idle_left_06.png"
+        ],
+        "right": [
+          "frames/idle_right_01.png",
+          "frames/idle_right_02.png",
+          "frames/idle_right_03.png",
+          "frames/idle_right_04.png",
+          "frames/idle_right_05.png",
+          "frames/idle_right_06.png"
+        ],
+        "up": [
+          "frames/idle_up_01.png",
+          "frames/idle_up_02.png",
+          "frames/idle_up_03.png",
+          "frames/idle_up_04.png",
+          "frames/idle_up_05.png",
+          "frames/idle_up_06.png"
+        ]
+      },
+      "hoja": {
+        "down": "sheets/idle_down.png",
+        "left": "sheets/idle_left.png",
+        "right": "sheets/idle_right.png",
+        "up": "sheets/idle_up.png"
+      }
+    },
+    "crawl": {
+      "cuadros": 8,
+      "fps": 10,
+      "loop": true,
+      "archivos": {
+        "down": [
+          "frames/crawl_down_01.png",
+          "frames/crawl_down_02.png",
+          "frames/crawl_down_03.png",
+          "frames/crawl_down_04.png",
+          "frames/crawl_down_05.png",
+          "frames/crawl_down_06.png",
+          "frames/crawl_down_07.png",
+          "frames/crawl_down_08.png"
+        ],
+        "left": [
+          "frames/crawl_left_01.png",
+          "frames/crawl_left_02.png",
+          "frames/crawl_left_03.png",
+          "frames/crawl_left_04.png",
+          "frames/crawl_left_05.png",
+          "frames/crawl_left_06.png",
+          "frames/crawl_left_07.png",
+          "frames/crawl_left_08.png"
+        ],
+        "right": [
+          "frames/crawl_right_01.png",
+          "frames/crawl_right_02.png",
+          "frames/crawl_right_03.png",
+          "frames/crawl_right_04.png",
+          "frames/crawl_right_05.png",
+          "frames/crawl_right_06.png",
+          "frames/crawl_right_07.png",
+          "frames/crawl_right_08.png"
+        ],
+        "up": [
+          "frames/crawl_up_01.png",
+          "frames/crawl_up_02.png",
+          "frames/crawl_up_03.png",
+          "frames/crawl_up_04.png",
+          "frames/crawl_up_05.png",
+          "frames/crawl_up_06.png",
+          "frames/crawl_up_07.png",
+          "frames/crawl_up_08.png"
+        ]
+      },
+      "hoja": {
+        "down": "sheets/crawl_down.png",
+        "left": "sheets/crawl_left.png",
+        "right": "sheets/crawl_right.png",
+        "up": "sheets/crawl_up.png"
+      },
+      "velocidad": "unos 60 px/s en pantalla, a tirones (rápido en 2, 3, 6 y 7)"
+    },
+    "attack": {
+      "cuadros": 8,
+      "fps": 12,
+      "loop": false,
+      "archivos": {
+        "down": [
+          "frames/attack_down_01.png",
+          "frames/attack_down_02.png",
+          "frames/attack_down_03.png",
+          "frames/attack_down_04.png",
+          "frames/attack_down_05.png",
+          "frames/attack_down_06.png",
+          "frames/attack_down_07.png",
+          "frames/attack_down_08.png"
+        ],
+        "left": [
+          "frames/attack_left_01.png",
+          "frames/attack_left_02.png",
+          "frames/attack_left_03.png",
+          "frames/attack_left_04.png",
+          "frames/attack_left_05.png",
+          "frames/attack_left_06.png",
+          "frames/attack_left_07.png",
+          "frames/attack_left_08.png"
+        ],
+        "right": [
+          "frames/attack_right_01.png",
+          "frames/attack_right_02.png",
+          "frames/attack_right_03.png",
+          "frames/attack_right_04.png",
+          "frames/attack_right_05.png",
+          "frames/attack_right_06.png",
+          "frames/attack_right_07.png",
+          "frames/attack_right_08.png"
+        ],
+        "up": [
+          "frames/attack_up_01.png",
+          "frames/attack_up_02.png",
+          "frames/attack_up_03.png",
+          "frames/attack_up_04.png",
+          "frames/attack_up_05.png",
+          "frames/attack_up_06.png",
+          "frames/attack_up_07.png",
+          "frames/attack_up_08.png"
+        ]
+      },
+      "hoja": {
+        "down": "sheets/attack_down.png",
+        "left": "sheets/attack_left.png",
+        "right": "sheets/attack_right.png",
+        "up": "sheets/attack_up.png"
+      },
+      "cuadro_de_golpe": 4
+    },
+    "hurt": {
+      "cuadros": 3,
+      "fps": 10,
+      "loop": false,
+      "archivos": {
+        "down": [
+          "frames/hurt_down_01.png",
+          "frames/hurt_down_02.png",
+          "frames/hurt_down_03.png"
+        ],
+        "left": [
+          "frames/hurt_left_01.png",
+          "frames/hurt_left_02.png",
+          "frames/hurt_left_03.png"
+        ],
+        "right": [
+          "frames/hurt_right_01.png",
+          "frames/hurt_right_02.png",
+          "frames/hurt_right_03.png"
+        ],
+        "up": [
+          "frames/hurt_up_01.png",
+          "frames/hurt_up_02.png",
+          "frames/hurt_up_03.png"
+        ]
+      },
+      "hoja": {
+        "down": "sheets/hurt_down.png",
+        "left": "sheets/hurt_left.png",
+        "right": "sheets/hurt_right.png",
+        "up": "sheets/hurt_up.png"
+      }
+    }
+  },
+  "hoja_completa": {
+    "archivo": "sheets/el_expediente_todo.png",
+    "columnas": 8,
+    "filas": [
+      "idle_down",
+      "idle_left",
+      "idle_right",
+      "idle_up",
+      "crawl_down",
+      "crawl_left",
+      "crawl_right",
+      "crawl_up",
+      "attack_down",
+      "attack_left",
+      "attack_right",
+      "attack_up",
+      "hurt_down",
+      "hurt_left",
+      "hurt_right",
+      "hurt_up"
+    ]
+  }
+}

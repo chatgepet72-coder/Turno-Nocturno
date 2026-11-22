@@ -16,7 +16,10 @@ La historia entregada al profesor (documento "Turno Nocturno — El Último Cuat
 
 - `scenes/escuela.tscn`: escena principal. `src/core/escuela.gd`: el nivel, el guardado (`guardado.gd`) y los controles (`controles.gd`, autoload).
 - `src/player/`: Lalo (`jugador.gd`), cordura, mochila y animación.
-- `src/enemies/archivero.gd`: el Archivero.
+- `src/enemies/archivero.gd`: el Archivero (no se puede matar).
+- `src/enemies/enemigo.gd` (`Enemigo`): base de los enemigos que sí se pelean; lee `assets/sprites/enemigos/<tipo>/animaciones.json`. Cada tipo en `la_baja.gd`, `el_desvelado.gd`, `el_expediente.gd`, `el_sinodal.gd`. Dónde aparecen: `data/enemigos.json` (lo arma `encuentros.gd`).
+- `src/player/pistola_clavos.gd` y `clavo.gd`: la pistola de clavos. Un enemigo tirado se clava al piso con 3 clavos más y ya no se levanta.
+- `src/world/cuartos.gd`: solo se ve el cuarto actual y las puertas se cruzan con `src/ui/transicion_puerta.gd`.
 - `src/story/`: historia (`campana.gd` guarda los hechos; `relato_turno.gd` los diálogos).
 - `src/ui/`, `src/world/`, `src/audio/` (`AudioManager`, autoload).
 - `tests/`: pruebas que corren con `godot --headless --path . --script res://tests/<archivo>.gd`.

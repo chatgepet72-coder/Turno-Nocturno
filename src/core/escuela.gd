@@ -22,6 +22,7 @@ var destino_salida: String = "salir"
 var autoguardado: float = 0.0
 var campana: Node
 var cuartos: Node2D
+var encuentros: Node2D
 var gatillos_mapa: Dictionary = {}
 var mente: Node
 var inventario_ui: CanvasLayer
@@ -68,6 +69,14 @@ func _ready() -> void:
 	interfaz.escuela = self
 	add_child(interfaz)
 	interfaz.mostrar("inicio")
+	encuentros = preload("res://src/enemies/encuentros.gd").new()
+	encuentros.name = "Enemigos"
+	encuentros.escuela = self
+	add_child(encuentros)
+	encuentros.armar()
+	var pistola := preload("res://src/player/pistola_clavos.gd").new()
+	pistola.name = "PistolaClavos"
+	jugador.add_child(pistola)
 	mente=preload("res://src/player/cordura.gd").new()
 	add_child(mente)
 	relato = preload("res://src/story/relato_turno.gd").new()
@@ -243,6 +252,8 @@ func emitir_ruido(posicion: Vector2, intensidad: float) -> void:
 	if jugando:
 		if is_instance_valid(resonancia): resonancia.registrar(posicion,intensidad)
 		archivero.escuchar(posicion, intensidad * (1.35 if campana.lugar == "campus" else 1.0))
+		for enemigo in get_tree().get_nodes_in_group("enemigos"):
+			enemigo.escuchar(posicion, intensidad)
 
 func anunciar(titulo: String, detalle: String) -> void:
 	interfaz.anunciar(titulo, detalle)

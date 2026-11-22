@@ -44,7 +44,8 @@ func luz_segura() -> bool:
 	return false
 func avanzar(delta: float, _oscuridad: bool) -> void:
 	if not escuela.jugando:return
-	escuela.jugador.cordura=clampf(escuela.jugador.cordura - 0.1*delta,0,100)
+	# El desgaste con el tiempo nunca baja de 1: a cero solo se llega por los ataques (y ahí Lalo se vuelve Eco).
+	if escuela.jugador.cordura>1.0:escuela.jugador.cordura=maxf(1.0,escuela.jugador.cordura - 0.1*delta)
 	vision=maxf(0,vision-delta)
 	inversion=maxf(0,inversion-delta)
 	if escuela.jugador.oculto or escuela.jugador.accion!="":inversion=0
