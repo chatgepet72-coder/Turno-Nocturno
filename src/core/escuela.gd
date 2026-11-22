@@ -114,6 +114,17 @@ func crear_oscuridad() -> void:
 	oscuridad.material = material_oscuro
 	capa.add_child(oscuridad)
 
+## Nueva partida desde el menú: primero el teaser (se puede saltar) y luego el juego.
+func iniciar_con_teaser() -> void:
+	if transicion or partida_iniciada or has_node("Teaser"):
+		return
+	var teaser := preload("res://src/story/teaser.gd").new()
+	teaser.name = "Teaser"
+	teaser.escuela = self
+	add_child(teaser)
+	teaser.terminado.connect(iniciar, CONNECT_ONE_SHOT)
+	teaser.reproducir()
+
 func iniciar() -> void:
 	if transicion or partida_iniciada:
 		return

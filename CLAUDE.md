@@ -21,6 +21,7 @@ La historia entregada al profesor (documento "Turno Nocturno — El Último Cuat
 - `src/player/pistola_clavos.gd` y `clavo.gd`: la pistola de clavos. Un enemigo tirado se clava al piso con 3 clavos más y ya no se levanta.
 - `src/world/cuartos.gd`: solo se ve el cuarto actual y las puertas se cruzan con `src/ui/transicion_puerta.gd`. Ahí están los cuartos con llave (`LLAVES`) y el cuarto seguro (`REFUGIO`, el Taller: ni el Archivero ni los enemigos entran).
 - `data/enemigos.json`: cuándo aparece cada enemigo (`aparece`: inicio, zona, hecho, etapa, objeto) y los objetos del mundo: recogibles y puntos (`src/world/punto_interes.gd`: examinar, candado de 4 números, mesa de trabajo).
+- `src/story/teaser.gd`: el teaser del inicio (Lalo llega, saluda a Don Chuy, entra, se duerme a las 23:59 y despierta con todo cambiado). Sale al elegir "Iniciar juego" (`escuela.iniciar_con_teaser()`); Esc / Start lo salta. Sonidos en `assets/audio/teaser/` (`tools/teaser/sonidos_teaser.py`).
 - Puzzle del Taller: el reloj de la Entrada (11:59 p. m.) y el memorándum de Dirección (formato de 24 horas) dan la combinación 2359 de la caja de llaves (`src/ui/candado.gd`).
 - `src/story/`: historia (`campana.gd` guarda los hechos; `relato_turno.gd` los diálogos).
 - `src/ui/`, `src/world/`, `src/audio/` (`AudioManager`, autoload).

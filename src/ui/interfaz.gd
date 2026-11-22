@@ -199,7 +199,7 @@ func mostrar(tipo: String) -> void:
 		"inicio":
 			texto_menu("TURNO\nNOCTURNO", 61)
 			texto_menu("Tu expediente sigue abierto. Por ahora.", 19, Color("9bb0b6"))
-			primero = boton("Iniciar juego", escuela.iniciar)
+			primero = boton("Iniciar juego", escuela.iniciar_con_teaser)
 			boton("Cargar partida", escuela.cargar, not escuela.Guardado.leer().is_empty())
 			boton("Controles y opciones", func(): mostrar("opciones"))
 			boton("Salir", escuela.salir)

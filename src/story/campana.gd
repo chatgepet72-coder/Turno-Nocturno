@@ -328,6 +328,8 @@ func cambiar_lugar(destino: String, posicion: Vector2, anuncio: bool = true) -> 
 		exterior.add_child(preload("res://src/world/decoracion_v11.gd").new())
 		escuela.add_child(exterior)
 		preload("res://src/world/pared_v12.gd").renovar(exterior)
+		if escuela.cuartos != null:
+			escuela.cuartos.ocultar_rotulos()   # sin letreros escritos en el piso (como en el edificio)
 	if is_instance_valid(exterior):
 		activar_colisiones(exterior, destino == "campus")
 		exterior.visible = destino == "campus"

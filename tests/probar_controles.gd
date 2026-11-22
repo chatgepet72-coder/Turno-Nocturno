@@ -44,7 +44,12 @@ func ejecutar() -> void:
 	# A/Cruz debe iniciar desde el menú real, sin llamar escuela.iniciar.
 	await boton(JOY_BUTTON_A,true,3)
 	await boton(JOY_BUTTON_A,false,3)
-	await create_timer(3.3).timeout
+	# Primero sale el teaser; Start / Options lo salta.
+	await create_timer(1.0).timeout
+	comprobar(escena.has_node("Teaser"),"A/Cruz inicia el teaser desde el menú")
+	await boton(JOY_BUTTON_START,true,3)
+	await boton(JOY_BUTTON_START,false,3)
+	await create_timer(5.5).timeout
 	comprobar(escena.jugando,"A/Cruz inicia desde menú sin usar ratón")
 	var j: CharacterBody2D=escena.jugador
 	var p: Vector2=j.position

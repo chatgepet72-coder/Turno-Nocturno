@@ -5498,7 +5498,7 @@ consumible = true
 [node name="Sprite454" type="Sprite2D" parent="moneda_2"]
 position = Vector2(0, 0)
 texture = ExtResource("50")
-scale = Vector2(0.03827751196172249, 0.03827751196172249)
+scale = Vector2(0.017, 0.017)
 z_index = 5
 
 
@@ -5523,7 +5523,7 @@ consumible = true
 [node name="Sprite455" type="Sprite2D" parent="moneda_3"]
 position = Vector2(0, 0)
 texture = ExtResource("50")
-scale = Vector2(0.03827751196172249, 0.03827751196172249)
+scale = Vector2(0.017, 0.017)
 z_index = 5
 
 
@@ -5548,7 +5548,7 @@ consumible = true
 [node name="Sprite456" type="Sprite2D" parent="moneda_4"]
 position = Vector2(0, 0)
 texture = ExtResource("50")
-scale = Vector2(0.03827751196172249, 0.03827751196172249)
+scale = Vector2(0.017, 0.017)
 z_index = 5
 
 
@@ -5573,7 +5573,7 @@ consumible = true
 [node name="Sprite457" type="Sprite2D" parent="moneda_5"]
 position = Vector2(0, 0)
 texture = ExtResource("50")
-scale = Vector2(0.03827751196172249, 0.03827751196172249)
+scale = Vector2(0.017, 0.017)
 z_index = 5
 
 
@@ -5598,7 +5598,7 @@ consumible = true
 [node name="Sprite458" type="Sprite2D" parent="moneda_6"]
 position = Vector2(0, 0)
 texture = ExtResource("50")
-scale = Vector2(0.03827751196172249, 0.03827751196172249)
+scale = Vector2(0.017, 0.017)
 z_index = 5
 
 
@@ -5623,7 +5623,7 @@ consumible = true
 [node name="Sprite459" type="Sprite2D" parent="moneda_7"]
 position = Vector2(0, 0)
 texture = ExtResource("50")
-scale = Vector2(0.03827751196172249, 0.03827751196172249)
+scale = Vector2(0.017, 0.017)
 z_index = 5
 
 
