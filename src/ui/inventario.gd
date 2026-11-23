@@ -29,8 +29,10 @@ const CATALOGO = {
  "Extintor":["extintor.png","EMERGENCIA","Una descarga frena al Archivero cercano durante 3 segundos. No atraviesa paredes. Un solo uso; el ruido puede atraerlo después."],
  "Grapadora":["grapadora.png","DISTRACCIÓN","Lánzala hacia donde apuntas. El golpe atrae al Archivero. Q / RB fuera del inventario."],
  "Pistola de clavos":["armas/pistola_clavos.png","ARMA","De Talleres. Clic izquierdo / RT dispara hacia donde apuntas; R / cruceta abajo recarga. Hace ruido. A un enemigo tirado, dispárale 3 veces más para clavarlo al piso y que no se levante."],
- "Alcohol":["limpieza.png","MATERIAL","Con un trapo, en la mesa de trabajo del Taller, se vuelve una molotov."],
- "Trapo":["papeles.png","MATERIAL","Con alcohol, en la mesa de trabajo del Taller, se vuelve una molotov."],
+ "Alcohol":["limpieza.png","MATERIAL","Con una botella vacía y un trapo, en la mesa de trabajo del Taller, se vuelve una molotov."],
+ "Trapo":["objetos_nuevos/trapo.png","MATERIAL","Con una botella vacía y alcohol, en la mesa de trabajo del Taller, se vuelve una molotov."],
+ "Botella vacía":["objetos_nuevos/botella_vacia.png","MATERIAL","Con alcohol y un trapo, en la mesa de trabajo del Taller, se vuelve una molotov."],
+ "Botiquín":["objetos_nuevos/botiquin.png","RECUPERACIÓN","Vendas y analgésicos. Recupera 40 puntos de cordura. Se consume."],
  "Molotov":["termo.png","ARMA","Lánzala con G / cruceta arriba hacia donde apuntas. Los enemigos de papel arden y ya no regresan."],
  "Llave del taller":["llave.png","LLAVE","Abre el Taller de conserjería: el cuarto seguro."],
  "Memorándum de conserjería":["papeles.png","DOCUMENTO","«A conserjería: la caja de llaves de la Entrada ahora abre con la hora del cierre del sistema, en formato de 24 horas. Ya no la anoten en la pared.»"],
@@ -52,7 +54,22 @@ func datos(item: String) -> Array:
 	if Productos.PRODUCTOS.has(item):
 		var p: Array = Productos.PRODUCTOS[item]
 		return [p[0], "CONSUMIBLE · $1" if tienda else "CONSUMIBLE", p[4]]
-	return CATALOGO.get(item,["expediente.png","OBJETO","Objeto recuperado durante el turno. Se conserva en la mochila."])
+	if CATALOGO.has(item):
+		return CATALOGO[item]
+	var nota: String = _texto_de_nota(item)
+	if nota != "":
+		return ["papeles.png", "NOTA", nota]
+	return ["expediente.png","OBJETO","Objeto recuperado durante el turno. Se conserva en la mochila."]
+
+
+## Las notas del mundo (data/enemigos.json) se pueden volver a leer en la mochila.
+func _texto_de_nota(item: String) -> String:
+	var d: Variant = JSON.parse_string(FileAccess.get_file_as_string("res://data/enemigos.json"))
+	if d is Dictionary:
+		for o in d.get("objetos", []):
+			if o.get("titulo", "") == item and o.get("texto", "") != "":
+				return str(o.texto).replace("\n", "\n\n")
+	return ""
 func estilo(color: Color, borde: Color) -> StyleBoxFlat:
 	var s:=StyleBoxFlat.new();s.bg_color=color;s.border_color=borde
 	s.set_border_width_all(1);s.set_corner_radius_all(7);s.content_margin_left=14;s.content_margin_right=14
@@ -131,7 +148,7 @@ func seleccionar(item: String) -> void:
 	animacion_detalle=create_tween()
 	animacion_detalle.tween_property(imagen,"modulate:a",1,.15)
 	seleccion=item;nombre.text=item;imagen.texture=load("res://assets/sprites/"+datos(item)[0]);detalle.text=datos(item)[1]+"\n\n"+datos(item)[2]
-	usar.text="Beber · +15 cordura" if item=="Termo de cafe" else ("Descargar extintor" if item=="Extintor" else ("Lanzar distracción" if item=="Grapadora" else "Conservar · volver a objetos"))
+	usar.text="Beber · +15 cordura" if item=="Termo de cafe" else "Usar · +40 cordura" if item=="Botiquín" else ("Descargar extintor" if item=="Extintor" else ("Lanzar distracción" if item=="Grapadora" else "Conservar · volver a objetos"))
 	if Productos.PRODUCTOS.has(item):
 		usar.text = ("Comprar · $1" if escuela.campana.monedas > 0 else "Sin monedas · necesitas $1") if tienda else "Consumir una unidad"
 func cambiar(direccion: int) -> void:
@@ -162,6 +179,9 @@ func utilizar() -> void:
 	if seleccion=="Termo de cafe" and j.inventario.has(seleccion):
 		if j.cordura>=100:detalle.text="No necesitas beber ahora. Conserva el termo para más tarde.";return
 		j.inventario.erase(seleccion);j.cordura=minf(100,j.cordura+15);escuela.sonidos.efecto("recoger",Vector2.INF,-20);actualizar()
+	elif seleccion=="Botiquín" and j.inventario.has(seleccion):
+		if j.cordura>=100:detalle.text="No lo necesitas ahora. Guárdalo para más tarde.";return
+		j.inventario.erase(seleccion);j.cordura=minf(100,j.cordura+40);escuela.sonidos.efecto("recoger",Vector2.INF,-18);actualizar()
 	elif seleccion=="Grapadora" and j.inventario.has(seleccion):
 		escuela.continuar();j.distraer()
 	elif seleccion=="Extintor" and j.inventario.has(seleccion):

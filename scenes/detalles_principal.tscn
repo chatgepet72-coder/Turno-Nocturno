@@ -171,7 +171,8 @@ z_index = 6
 mouse_filter = 2
 
 [node name="moneda_principal_0" type="StaticBody2D" parent="."]
-position = Vector2(2350,710)
+position = Vector2(147, 184)
+z_index = 1
 collision_layer = 0
 collision_mask = 0
 script = ExtResource("1")
@@ -196,7 +197,8 @@ z_index = 6
 mouse_filter = 2
 
 [node name="moneda_principal_1" type="StaticBody2D" parent="."]
-position = Vector2(780,710)
+position = Vector2(1299, 256)
+z_index = 1
 collision_layer = 0
 collision_mask = 0
 script = ExtResource("1")
@@ -221,7 +223,8 @@ z_index = 6
 mouse_filter = 2
 
 [node name="moneda_principal_2" type="StaticBody2D" parent="."]
-position = Vector2(1800,710)
+position = Vector2(915, 1152)
+z_index = 1
 collision_layer = 0
 collision_mask = 0
 script = ExtResource("1")

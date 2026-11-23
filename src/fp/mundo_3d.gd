@@ -33,6 +33,7 @@ func construir() -> void:
 			_objeto(o)
 	for luz in get_tree().get_nodes_in_group("luces_zona"):
 		_lampara(luz as PointLight2D)
+	_luz_del_refugio()
 
 
 ## Cada cuadro: puertas que el Archivero abre, objetos recogidos y luces que se prenden o parpadean.
@@ -150,6 +151,35 @@ func _paredes() -> void:
 		caja(a3d(c, 0.06), Vector3(tam.x + 0.06, 0.12, tam.z + 0.06), zoclo)
 
 
+## El cuarto seguro siempre está iluminado con luz cálida (dos lámparas de techo y una de escritorio).
+func _luz_del_refugio() -> void:
+	if escuela.cuartos == null or not escuela.cuartos.cuartos.has(escuela.cuartos.REFUGIO):
+		return
+	var r: Rect2 = escuela.cuartos.cuartos[escuela.cuartos.REFUGIO]
+	for fx in [0.3, 0.7]:
+		var p := Vector2(r.position.x + r.size.x * fx, r.get_center().y)
+		var l := OmniLight3D.new()
+		l.position = a3d(p, ALTO - 0.35)
+		l.light_color = Color(1.0, 0.8, 0.55)
+		l.light_energy = 1.6
+		l.omni_range = 7.0
+		l.omni_attenuation = 1.1
+		add_child(l)
+		caja(a3d(p, ALTO - 0.03), Vector3(1.25, 0.05, 0.32), M.color(Color(0.55, 0.5, 0.42)))
+		caja(a3d(p, ALTO - 0.06), Vector3(1.15, 0.02, 0.22), M.emisivo(Color(1.0, 0.85, 0.6), 1.3))
+	# Lámpara de escritorio sobre la mesa de trabajo
+	var mesa := Vector2(3505, 1000)
+	var foco := OmniLight3D.new()
+	foco.position = a3d(mesa, 1.25)
+	foco.light_color = Color(1.0, 0.72, 0.4)
+	foco.light_energy = 1.2
+	foco.omni_range = 3.0
+	add_child(foco)
+	cilindro(a3d(mesa, 0.8), 0.07, 0.03, M.color(Color(0.2, 0.2, 0.2), 0.4, 0.6))
+	cilindro(a3d(mesa, 0.98), 0.012, 0.35, M.color(Color(0.2, 0.2, 0.2), 0.4, 0.6))
+	cilindro(a3d(mesa, 1.18), 0.09, 0.1, M.emisivo(Color(1.0, 0.75, 0.45), 1.2))
+
+
 func _lampara(luz: PointLight2D) -> void:
 	if luz == null:
 		return
@@ -197,6 +227,14 @@ func _objeto(o: Node) -> void:
 	var raiz := Node3D.new()
 	raiz.position = a3d(pos, 0.78 if sobre_mueble else 0.0)
 	add_child(raiz)
+	var guion: Script = o.get_script()
+	if guion != null and guion.resource_path.ends_with("recogible.gd"):
+		var alto_obj: float = clampf(float(o.get("tamano")) * ESC * 0.75, 0.14, 0.4)
+		if sobre_mueble:
+			raiz.position.y = 0.74
+		_parado(raiz, sp.texture, alto_obj, 0.0)
+		_objetos_3d[o2] = raiz
+		return
 	var hecho: bool = true
 	if "moneda" in str(o.name):
 		# Moneda tirada: un disco chiquito en el piso, no un recorte parado

@@ -8062,7 +8062,7 @@ texture = ExtResource("R9")
 metadata/zona = "Pasillo"
 
 [node name="papeles_440" type="CharacterBody2D" parent="Objetos" unique_id=1466510130]
-position = Vector2(420, 760)
+position = Vector2(2150, 380)
 collision_layer = 0
 motion_mode = 1
 script = ExtResource("R6")
@@ -8086,7 +8086,7 @@ texture = ExtResource("R46")
 metadata/zona = ""
 
 [node name="papeles_442" type="CharacterBody2D" parent="Objetos" unique_id=2044676876]
-position = Vector2(2810, 760)
+position = Vector2(1650, 1150)
 collision_layer = 0
 motion_mode = 1
 script = ExtResource("R6")
@@ -8151,7 +8151,8 @@ texture = ExtResource("R8")
 metadata/zona = "Pasillo"
 
 [node name="expediente_447" type="CharacterBody2D" parent="Objetos" unique_id=481886961]
-position = Vector2(1600, 800)
+position = Vector2(1244, 118)
+z_index = 1
 collision_layer = 0
 motion_mode = 1
 script = ExtResource("R6")

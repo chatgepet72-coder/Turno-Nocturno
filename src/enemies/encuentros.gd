@@ -39,6 +39,8 @@ func armar() -> void:
 			r = preload("res://src/world/recogible.gd").new()
 			r.texto = o.get("texto", "")
 		r.name = nombre
+		if o.get("clase", "recogible") == "punto" and nombre in escuela.recogidos:
+			r.abierto = true   # cajón ya revisado / caja ya abierta en esta partida
 		r.titulo = o.titulo
 		r.icono = o.icono
 		r.tamano = float(o.get("tamano", 18))

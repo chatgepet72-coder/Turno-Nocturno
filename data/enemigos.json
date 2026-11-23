@@ -98,6 +98,7 @@
 	"objetos": [
 		{
 			"id": "pistola_taller",
+			"clase": "recogible",
 			"titulo": "Pistola de clavos",
 			"icono": "res://assets/sprites/armas/pistola_clavos.png",
 			"tamano": 16,
@@ -109,45 +110,104 @@
 		},
 		{
 			"id": "clavos_taller",
+			"clase": "recogible",
 			"titulo": "Caja de clavos",
 			"icono": "res://assets/sprites/caja.png",
-			"tamano": 16,
+			"tamano": 14,
 			"pos": [
-				3780,
-				1270
+				3590,
+				1277
+			],
+			"z": 1
+		},
+		{
+			"id": "botella_taller",
+			"clase": "recogible",
+			"titulo": "Botella vacía",
+			"icono": "res://assets/sprites/objetos_nuevos/botella_vacia.png",
+			"tamano": 14,
+			"pos": [
+				3520,
+				1003
+			],
+			"z": 1
+		},
+		{
+			"id": "mesa_trabajo",
+			"clase": "punto",
+			"tipo": "mesa",
+			"titulo": "Mesa de trabajo · guardar y fabricar",
+			"icono": "",
+			"pos": [
+				3505,
+				1032
 			],
 			"z": 0
 		},
 		{
-			"id": "clavos_direccion",
-			"titulo": "Caja de clavos",
-			"icono": "res://assets/sprites/caja.png",
-			"tamano": 16,
+			"id": "tablero_taller",
+			"clase": "punto",
+			"tipo": "examinar",
+			"titulo": "Leer el tablero de conserjería",
+			"icono": "",
+			"tamano": 20,
 			"pos": [
-				2735,
-				1290
+				3700,
+				945
 			],
-			"z": 0
+			"z": 0,
+			"texto": "«Turno de noche: aquí adentro no entra nada. Respiren, guarden y sigan.»\n«Afuera, en el estacionamiento, cuida la salida uno grande de traje que arrastra la guillotina del área de copias.»\n«Los clavos casi no le hacen nada. Cuando deja caer la guillotina se le atora en el piso: ese es el momento.»\n«En la cafetería hay otra de esas que se lanzan. Si gime, háganse a un lado.»"
 		},
 		{
-			"id": "clavos_aula_02",
-			"titulo": "Caja de clavos",
-			"icono": "res://assets/sprites/caja.png",
-			"tamano": 16,
+			"id": "nota_vigilancia",
+			"clase": "recogible",
+			"titulo": "Aviso de vigilancia",
+			"icono": "res://assets/sprites/papeles.png",
+			"tamano": 12,
 			"pos": [
-				700,
-				380
+				2000,
+				1222
 			],
-			"z": 0
+			"z": 1,
+			"texto": "«A quien siga adentro: no corran. Lo que camina en los pasillos no ve, OYE.»\n«Si oyen papeles arrastrarse y un sello que golpea, apaguen la luz y métanse donde puedan.»\n«No contesten si alguien dice su nombre.»"
 		},
 		{
-			"id": "clavos_computo",
-			"titulo": "Caja de clavos",
-			"icono": "res://assets/sprites/caja.png",
-			"tamano": 16,
+			"id": "cartelera_entrada",
+			"clase": "punto",
+			"tipo": "examinar",
+			"titulo": "Leer la cartelera",
+			"icono": "",
+			"tamano": 20,
 			"pos": [
-				700,
-				1300
+				2000,
+				1080
+			],
+			"z": 0,
+			"texto": "Entre los avisos de fin de cuatrimestre hay una hoja escrita a mano:\n«Los que se dieron de baja siguen en los salones. Caminan arrastrando un pie.»\n«Antes de lanzarse se echan para atrás y gimen. Cuando gima, hazte a un lado: se estrellan con la pared.»\n«Si una cae, no pases junto a ella. Clávala al piso o se levanta.»"
+		},
+		{
+			"id": "aviso_bitacora",
+			"clase": "punto",
+			"tipo": "examinar",
+			"titulo": "Leer el aviso pegado junto a la bitácora",
+			"icono": "",
+			"tamano": 20,
+			"pos": [
+				2270,
+				1112
+			],
+			"z": 0,
+			"texto": "«PATIO: hay uno que no duerme. Mientras lo alumbras no se mueve.»\n«No lo dejes en lo oscuro. Si grita, el que sella vendrá: escóndete y espera.»"
+		},
+		{
+			"id": "botella_entrada",
+			"clase": "recogible",
+			"titulo": "Botella vacía",
+			"icono": "res://assets/sprites/objetos_nuevos/botella_vacia.png",
+			"tamano": 14,
+			"pos": [
+				2245,
+				1243
 			],
 			"z": 0
 		},
@@ -163,6 +223,20 @@
 			],
 			"z": 1,
 			"texto": "«A conserjería: la caja de llaves de la Entrada ahora abre con la hora del cierre del sistema, en formato de 24 horas.»\n«Ya no la anoten en la pared.»"
+		},
+		{
+			"id": "cajon_direccion",
+			"clase": "punto",
+			"tipo": "cajon",
+			"titulo": "Revisar la cajonera",
+			"icono": "",
+			"pos": [
+				3022,
+				1162
+			],
+			"z": 0,
+			"premio": "Caja de clavos",
+			"texto": "Debajo de la caja de clavos hay una hoja doblada:\n«Rectoría: los expedientes se mueven solos. Algo se esconde entre los archiveros y agarra del tobillo.»\n«Alúmbrenlo antes de pasar cerca. A la luz se asusta y sale.»"
 		},
 		{
 			"id": "reloj_entrada",
@@ -194,23 +268,150 @@
 			"premio": "Llave del taller"
 		},
 		{
-			"id": "mesa_trabajo",
+			"id": "cajon_aula_02",
 			"clase": "punto",
-			"tipo": "mesa",
-			"titulo": "Mesa de trabajo · guardar y fabricar",
+			"tipo": "cajon",
+			"titulo": "Revisar el cajón del escritorio",
 			"icono": "",
 			"pos": [
-				3505,
-				1032
+				476,
+				155
 			],
-			"z": 0
+			"z": 0,
+			"premio": "Caja de clavos",
+			"texto": ""
+		},
+		{
+			"id": "botella_aula_03",
+			"clase": "recogible",
+			"titulo": "Botella vacía",
+			"icono": "res://assets/sprites/objetos_nuevos/botella_vacia.png",
+			"tamano": 14,
+			"pos": [
+				828,
+				184
+			],
+			"z": 1
+		},
+		{
+			"id": "botiquin_aula_05",
+			"clase": "recogible",
+			"titulo": "Botiquín",
+			"icono": "res://assets/sprites/objetos_nuevos/botiquin.png",
+			"tamano": 14,
+			"pos": [
+				1683,
+				184
+			],
+			"z": 1
+		},
+		{
+			"id": "trapo_aula_06",
+			"clase": "recogible",
+			"titulo": "Trapo",
+			"icono": "res://assets/sprites/objetos_nuevos/trapo.png",
+			"tamano": 14,
+			"pos": [
+				2067,
+				256
+			],
+			"z": 1
+		},
+		{
+			"id": "cajon_aula_07",
+			"clase": "punto",
+			"tipo": "cajon",
+			"titulo": "Revisar el cajón del escritorio",
+			"icono": "",
+			"pos": [
+				2396,
+				155
+			],
+			"z": 0,
+			"premio": "Caja de clavos, Botiquín",
+			"texto": ""
+		},
+		{
+			"id": "botella_aula_09",
+			"clase": "recogible",
+			"titulo": "Botella vacía",
+			"icono": "res://assets/sprites/objetos_nuevos/botella_vacia.png",
+			"tamano": 14,
+			"pos": [
+				2364,
+				1224
+			],
+			"z": 1
+		},
+		{
+			"id": "botiquin_aula_09",
+			"clase": "recogible",
+			"titulo": "Botiquín",
+			"icono": "res://assets/sprites/objetos_nuevos/botiquin.png",
+			"tamano": 14,
+			"pos": [
+				2451,
+				1152
+			],
+			"z": 1
+		},
+		{
+			"id": "alcohol_computo",
+			"clase": "recogible",
+			"titulo": "Alcohol",
+			"icono": "res://assets/sprites/limpieza.png",
+			"tamano": 16,
+			"pos": [
+				84,
+				1086
+			],
+			"z": 1
+		},
+		{
+			"id": "clavos_computo",
+			"clase": "recogible",
+			"titulo": "Caja de clavos",
+			"icono": "res://assets/sprites/caja.png",
+			"tamano": 14,
+			"pos": [
+				664,
+				1086
+			],
+			"z": 1
+		},
+		{
+			"id": "nota_computo",
+			"clase": "recogible",
+			"titulo": "Bitácora de intendencia",
+			"icono": "res://assets/sprites/papeles.png",
+			"tamano": 12,
+			"pos": [
+				229,
+				1190
+			],
+			"z": 1,
+			"texto": "«Intendencia, noche del jueves: en el Aula 08 algo duerme entre los papeles, pegado al piso.»\n«No pasen junto a los muebles con la luz apagada. Si los agarra del tobillo, pataleen hasta soltarse.»\n«Avienta hojas como navajas. Háganse a un lado.»"
+		},
+		{
+			"id": "cajon_auditorio",
+			"clase": "punto",
+			"tipo": "cajon",
+			"titulo": "Revisar el cajón del escritorio",
+			"icono": "",
+			"pos": [
+				1250,
+				1030
+			],
+			"z": 0,
+			"premio": "Caja de clavos, Trapo",
+			"texto": ""
 		},
 		{
 			"id": "alcohol_bano_m",
 			"clase": "recogible",
 			"titulo": "Alcohol",
 			"icono": "res://assets/sprites/limpieza.png",
-			"tamano": 18,
+			"tamano": 16,
 			"pos": [
 				3700,
 				390
@@ -221,8 +422,8 @@
 			"id": "trapo_bano_h",
 			"clase": "recogible",
 			"titulo": "Trapo",
-			"icono": "res://assets/sprites/papeles.png",
-			"tamano": 12,
+			"icono": "res://assets/sprites/objetos_nuevos/trapo.png",
+			"tamano": 14,
 			"pos": [
 				2760,
 				400
@@ -230,29 +431,19 @@
 			"z": 0
 		},
 		{
-			"id": "alcohol_computo",
-			"clase": "recogible",
-			"titulo": "Alcohol",
-			"icono": "res://assets/sprites/limpieza.png",
-			"tamano": 18,
+			"id": "cajon_rectoria",
+			"clase": "punto",
+			"tipo": "cajon",
+			"titulo": "Revisar el cajón del escritorio",
+			"icono": "",
 			"pos": [
-				120,
-				1290
+				3264,
+				1245
 			],
-			"z": 0
-		},
-		{
-			"id": "trapo_auditorio",
-			"clase": "recogible",
-			"titulo": "Trapo",
-			"icono": "res://assets/sprites/papeles.png",
-			"tamano": 12,
-			"pos": [
-				1830,
-				1290
-			],
-			"z": 0
+			"z": 0,
+			"premio": "Botiquín, Caja de clavos",
+			"texto": ""
 		}
 	],
-	"_nota_objetos": "Objetos: clase 'recogible' (se lleva a la mochila; 'texto' se narra al recogerlo) o 'punto' (examinar, candado o mesa). Puzzle del Taller: el reloj de la Entrada marca 11:59 de la noche y el memorándum de Dirección dice que la caja de llaves usa esa hora en formato de 24 horas: 2359."
+	"_nota_objetos": "Objetos del mundo. clase 'recogible' (va a la mochila; 'texto' se narra al recogerlo y se puede releer en la mochila) o 'punto': examinar, candado, cajon (premio: cosas separadas por coma; texto: la nota que hay dentro) o mesa. z = 1: encima de un mueble. Puzzle del Taller: reloj de la Entrada (11:59 p. m.) + memorándum de Dirección (24 horas) = 2359."
 }

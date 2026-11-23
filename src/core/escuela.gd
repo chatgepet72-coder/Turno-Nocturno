@@ -108,6 +108,10 @@ func _ready() -> void:
 	await get_tree().physics_frame
 	archivero.construir_rutas()
 	cuartos.ocultar_rotulos()
+	var refugio := preload("res://src/world/refugio.gd").new()
+	refugio.name = "Refugio"
+	refugio.escuela = self
+	add_child(refugio)
 	var entrada: String = get_tree().get_meta("entrada_turno", "inicio")
 	get_tree().remove_meta("entrada_turno")
 	if entrada == "nuevo":
