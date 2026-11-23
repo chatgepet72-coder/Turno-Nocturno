@@ -437,8 +437,51 @@ func _efecto(n: Node2D, ruta: String) -> void:
 				fuego.omni_range = 5.0
 				fuego.light_energy = 0.0
 				fuego.name = "Fuego"
+				fuego.position = Vector3(0, 0.6, 0)   # arriba del piso, para que lo alumbre
 				g.add_child(fuego)
-				mundo.cilindro(Vector3(0, 0.1, 0), 0.04, 0.2, M.color(Color(0.4, 0.55, 0.35), 0.2), g).name = "Botella"
+				var llamas := CPUParticles3D.new()
+				llamas.name = "Llamas"
+				llamas.emitting = false
+				llamas.amount = 70
+				llamas.lifetime = 0.7
+				llamas.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+				llamas.emission_sphere_radius = 1.0
+				llamas.direction = Vector3.UP
+				llamas.spread = 15.0
+				llamas.gravity = Vector3(0, 1.4, 0)
+				llamas.initial_velocity_min = 0.3
+				llamas.initial_velocity_max = 0.9
+				llamas.scale_amount_min = 0.6
+				llamas.scale_amount_max = 1.4
+				var chispa := QuadMesh.new()
+				chispa.size = Vector2(0.12, 0.16)
+				var mat_llama := StandardMaterial3D.new()
+				mat_llama.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+				mat_llama.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+				mat_llama.vertex_color_use_as_albedo = true
+				mat_llama.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+				chispa.material = mat_llama
+				llamas.mesh = chispa
+				var grad := Gradient.new()
+				grad.set_color(0, Color(1.0, 0.85, 0.3))
+				grad.set_color(1, Color(0.7, 0.08, 0.0, 0.0))
+				llamas.color_ramp = grad
+				llamas.scale = Vector3(1.0, 0.25, 1.0)
+				g.add_child(llamas)
+				var botella := Node3D.new()
+				botella.name = "Botella"
+				g.add_child(botella)
+				mundo.cilindro(Vector3.ZERO, 0.05, 0.22, M.color(Color(0.55, 0.32, 0.1), 0.15), botella)
+				mundo.cilindro(Vector3(0, 0.14, 0), 0.02, 0.07, M.color(Color(0.55, 0.32, 0.1), 0.15), botella)
+				mundo.cilindro(Vector3(0, 0.2, 0), 0.018, 0.06, M.emisivo(Color(1.0, 0.6, 0.15), 3.0), botella)   # trapo encendido
+				var llama := OmniLight3D.new()
+				llama.name = "Llama"
+				llama.light_color = Color(1.0, 0.6, 0.2)
+				llama.omni_range = 3.0
+				llama.light_energy = 1.5
+				llama.position = Vector3(0, 0.22, 0)
+				botella.add_child(llama)
+				g.set_meta("inicio", n.global_position)
 			"charco.gd":
 				var d := MeshInstance3D.new()
 				var c := CylinderMesh.new()
@@ -451,9 +494,9 @@ func _efecto(n: Node2D, ruta: String) -> void:
 	var altura: float = 0.0
 	match ruta:
 		"clavo.gd":
-			altura = 1.2
+			altura = maxf(float(n.get("altura")) * ESC, 0.01)
 			var dir: Vector2 = n.get("direccion")
-			g.rotation.y = atan2(-dir.x, -dir.y)
+			g.rotation = Vector3(float(n.get("inclinacion")), atan2(-dir.x, -dir.y), 0)
 		"proyectil_enemigo.gd":
 			altura = 1.0
 			if n.get("clase") == "termo":
@@ -464,7 +507,19 @@ func _efecto(n: Node2D, ruta: String) -> void:
 			var explotada: bool = b == null or not is_instance_valid(b)
 			if botella != null:
 				botella.visible = not explotada
+				if not explotada:
+					# Arco 3D: sale de la mano (1.3 m), sube un poco y cae al piso donde revienta
+					var inicio: Vector2 = g.get_meta("inicio")
+					var destino: Vector2 = n.get("destino")
+					var total: float = maxf(inicio.distance_to(destino), 1.0)
+					var p: float = clampf(inicio.distance_to(n.global_position) / total, 0.0, 1.0)
+					botella.position = Vector3(0, lerpf(1.3, 0.1, p) + sin(p * PI) * 0.7, 0)
+					botella.rotation.x = p * TAU * 1.5
 			(g.get_node("Fuego") as OmniLight3D).light_energy = randf_range(2.0, 3.0) if explotada else 0.0
+			var particulas := g.get_node("Llamas") as CPUParticles3D
+			var ardiendo: bool = explotada and n.get_child_count() > 1   # el fuego 2D sigue vivo
+			if particulas.emitting != ardiendo:
+				particulas.emitting = ardiendo
 		"charco.gd":
 			altura = 0.01
 	g.position = Mundo.a3d(n.global_position, altura)

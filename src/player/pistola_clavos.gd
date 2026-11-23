@@ -76,10 +76,14 @@ func disparar() -> void:
 		_mostrar()
 		return
 	cargados -= 1
-	var salida: Vector2 = jugador.global_position + jugador.mano + jugador.apuntado * 10.0
+	var fp: bool = jugador.en_primera_persona()
+	# En primera persona el clavo sale del centro de la mira (no de la mano del dibujo 2D)
+	var salida: Vector2 = jugador.global_position + (Vector2.ZERO if fp else jugador.mano) + jugador.apuntado * 10.0
 	var clavo := preload("res://src/player/clavo.gd").new()
 	clavo.escuela = escuela
 	clavo.direccion = jugador.apuntado
+	if fp:
+		clavo.inclinacion = escuela.vista_fp.inclinacion   # si apuntas al piso, el clavo baja y pega ahí
 	clavo.global_position = salida
 	escuela.add_child(clavo)
 	escuela.sonidos.efecto("disparo_clavos", Vector2.INF, -6.0)
@@ -113,13 +117,17 @@ func lanzar_molotov() -> void:
 		escuela.vista_fp.avisar_molotov()
 	var m := preload("res://src/player/molotov.gd").new()
 	m.escuela = escuela
-	var destino: Vector2 = jugador.global_position + jugador.apuntado * 220.0
+	var lejos: float = 220.0
+	if jugador.en_primera_persona():
+		# Más lejos si miras hacia arriba, más cerca si miras al piso (como un tiro en arco)
+		lejos = clampf(220.0 + escuela.vista_fp.inclinacion * 260.0, 90.0, 320.0)
+	var destino: Vector2 = jugador.global_position + jugador.apuntado * lejos
 	var rayo := PhysicsRayQueryParameters2D.create(jugador.global_position, destino, 1, [jugador.get_rid()])
 	var choque := jugador.get_world_2d().direct_space_state.intersect_ray(rayo)
 	if not choque.is_empty():
 		destino = choque.position - jugador.apuntado * 16.0
 	m.destino = destino
-	m.global_position = jugador.global_position + Vector2(0, -30)
+	m.global_position = jugador.global_position + (jugador.apuntado * 12.0 if jugador.en_primera_persona() else Vector2(0, -30))
 	escuela.add_child(m)
 
 

@@ -8,6 +8,11 @@ const CAPA_CUERPOS: int = 8   # zona de golpe de los enemigos (Area2D "Cuerpo")
 
 var escuela: Node2D
 var direccion := Vector2.RIGHT
+## Primera persona: inclinación de la mira (radianes, negativo = hacia el piso). El clavo baja
+## y, donde toca el piso, pega a lo que esté tirado ahí (o se clava en el piso).
+var inclinacion: float = 0.0
+const OJOS_PX: float = 1.55 * 44.0   # altura de la mira en píxeles del mapa
+var altura: float = OJOS_PX
 var _recorrido: float = 0.0
 var _clavado: float = -1.0
 
@@ -29,6 +34,18 @@ func _physics_process(delta: float) -> void:
 			queue_free()
 		return
 	var paso: Vector2 = direccion * VELOCIDAD * delta
+	if inclinacion < -0.02:
+		var al_piso: float = altura / tan(-inclinacion)   # distancia hasta tocar el piso
+		if al_piso <= paso.length():
+			var punto: Vector2 = global_position + direccion * al_piso
+			var choque_corto := _primer_choque(punto)
+			if choque_corto.is_empty():
+				global_position = punto
+				altura = 0.0
+				_pegar_en_el_piso()
+				return
+			paso = direccion * al_piso
+		altura -= paso.length() * tan(-inclinacion)
 	var choque := _primer_choque(global_position + paso)
 	if not choque.is_empty():
 		global_position = choque.position
@@ -61,3 +78,18 @@ func _primer_choque(hasta: Vector2) -> Dictionary:
 	if b.is_empty():
 		return a
 	return a if global_position.distance_to(a.position) < global_position.distance_to(b.position) else b
+
+
+## El clavo tocó el piso: si hay un enemigo tirado ahí, le pega; si no, se queda clavado en el piso.
+func _pegar_en_el_piso() -> void:
+	for e in get_tree().get_nodes_in_group("enemigos"):
+		var enemigo := e as Enemigo
+		if enemigo != null and enemigo.estado == "CAIDO" and enemigo.visible:
+			var cuerpo := enemigo.get_node("Cuerpo") as Node2D
+			var centro: Vector2 = (cuerpo.get_child(0) as Node2D).global_position
+			if global_position.distance_to(centro) < 46.0 or global_position.distance_to(enemigo.global_position) < 40.0:
+				enemigo.recibir_clavo(direccion)
+				queue_free()
+				return
+	escuela.sonidos.efecto("clavo_impacto", global_position, -12.0)
+	_clavado = 0.0
