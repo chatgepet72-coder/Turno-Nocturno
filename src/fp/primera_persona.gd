@@ -74,9 +74,9 @@ func _ready() -> void:
 	add_child(capa)
 	_manos = TextureRect.new()
 	_manos.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	_manos.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	_manos.size = Vector2(1280, 720)   # los cuadros miden 640 × 360: ×2 a pantalla completa
-	_manos.modulate = Color(0.58, 0.58, 0.66)   # más oscuras para que combinen con la noche
+	_manos.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS   # dibujo estilo cómic: filtro suave
+	_manos.size = Vector2(1280, 720)   # cuadros de 1920 × 1080 a pantalla completa
+	_manos.modulate = Color(0.92, 0.92, 0.96)   # ya vienen con luz de noche: casi sin oscurecer
 	_manos.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	capa.add_child(_manos)
 	_cargar_manos()
@@ -227,7 +227,7 @@ func _manos_y_arma(delta: float, velocidad: float) -> void:
 	_manos.texture = cuadros[mini(int(_cuadro_manos), cuadros.size() - 1)]
 	# Vaivén al caminar y retroceso del disparo
 	_retroceso = maxf(0.0, _retroceso - delta * 6.0)
-	var balanceo := Vector2(cos(_vaiven * 0.5) * 8.0, absf(sin(_vaiven)) * 7.0) * clampf(velocidad / 110.0, 0.0, 1.0)
+	var balanceo := Vector2(cos(_vaiven * 0.5) * 6.0, absf(sin(_vaiven)) * 5.0) * clampf(velocidad / 110.0, 0.0, 1.0)
 	var bajar: float = (1.0 - ease(_subida, 0.6)) * 420.0   # sube desde abajo de la pantalla
 	_manos.position = balanceo + Vector2(0, _retroceso * 10.0 + bajar)
 

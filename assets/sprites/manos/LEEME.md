@@ -1,35 +1,31 @@
-# Manos de Lalo en primera persona: clavadora industrial
+# Manos de Lalo en primera persona (v4: diseño de la referencia)
 
-Son las dos manos de Lalo, vistas desde sus ojos, sosteniendo una clavadora industrial gris y amarilla, gastada.
-La pistola queda en la esquina inferior derecha y apunta hacia el centro de la pantalla.
-- **Mano derecha:** en la empuñadura, con el índice en el gatillo y el pulgar a lo largo del costado.
-- **Mano izquierda:** sostiene el frente por debajo.
-- **Mangas:** de la sudadera azul de la universidad, con puño de resorte.
-- **Estilo:** piel morena como la de Lalo, contorno oscuro y luz tenue azulada para que combine con lo oscuro del juego.
+Son las mismas manos y la misma clavadora de la imagen de referencia, con las correcciones aplicadas.
 
-**Formato:** todos los cuadros miden 640 × 360 px, con fondo transparente.
-Colócalos en (0, 0) cubriendo la pantalla y escálalos ×3 para 1920 × 1080 con filtro *nearest*, para que el pixel quede nítido.
-En `animaciones.json` vienen todos los datos.
+- **Tamaño:** ocupan el cuarto inferior derecho, y la punta de la clavadora no pasa del centro de la pantalla.
+- **Ángulo:** la boquilla apunta hacia el centro, casi horizontal.
+- **Luz de noche:** la linterna está en el pecho y alumbra desde abajo. La parte de arriba queda en sombra y los colores están apagados y sucios. La única luz cálida es el fuego de la molotov.
+- **Fondo:** totalmente transparente, sin franjas negras. Las mangas siguen hasta salir de la pantalla.
 
-## Animaciones
+## Carpetas
 
-| Archivo | Cuadros | FPS | Loop | Qué pasa |
-|---------|---------|-----|------|----------|
-| `reposo` | 4 | 6 | sí | Respira: todo sube y baja muy poco, y la mano izquierda va con un leve retraso. |
-| `disparo` | 3 | 15 | no | **Cuadro 1:** el gatillo se jala, la pistola salta hacia arriba y hacia atrás, sale el clavo con chispas. **Cuadro 2:** humo y la pistola baja. **Cuadro 3:** se asienta. Después regresa a `reposo`. |
-| `recarga` | 6 | 8 | no | **1:** levanta la pistola. **2–3:** la mano izquierda saca la tira de clavos vieja por atrás del cargador (el riel queda vacío). **4:** trae una tira nueva y brillante. **5:** la mete. **6:** la mano regresa abajo. |
-| `molotov` | 4 | 10 | no | La pistola baja de lado. **1:** la mano izquierda sube la botella ámbar con el trapo ardiendo, que ilumina con luz cálida. **2:** la echa atrás. **3:** la lanza. **4:** la mano queda abierta y la botella sale girando. |
-| `sin_arma` | 2 | 3 | sí | Solo la mano derecha, relajada a un lado, respirando. |
+| Carpeta | Contenido |
+|---|---|
+| `frames/` | 640 × 360, **mismos nombres de archivo** que la entrega anterior |
+| `frames_1920x1080/` | Los mismos cuadros en 1920 × 1080 (16:9) |
+| `sheets/` | Una tira horizontal por animación (640 × 360 por cuadro) |
+| `preview/` | Un GIF por animación dentro del pasillo, más `todas_las_animaciones.png` |
+| `diseno/` | El cuadro de reposo suelto y dentro del juego |
 
-Momentos para el código:
-- **Disparo:** aplícalo en el cuadro 1.
-- **Molotov:** crea el proyectil en el cuadro 4.
-- **Recarga:** está completa al terminar el cuadro 6.
+`animaciones.json` es **idéntico** al anterior: mismas animaciones, cuadros, fps y loops.
+`animaciones_1920x1080.json` es el mismo archivo, pero apunta a `frames_1920x1080/`.
 
-## Archivos
+| Animación | Cuadros | fps | Loop | Nota |
+|---|---|---|---|---|
+| reposo | 4 | 6 | sí | Respira (balanceo en ocho, suave) |
+| disparo | 3 | 15 | no | El clavo sale en el cuadro 1: retroceso corto arriba y atrás, con chispa |
+| recarga | 6 | 8 | no | 2-3 sale la tira vieja, 4 llega la nueva, 5 entra. Las manos no salen de la esquina |
+| molotov | 4 | 10 | no | Baja la clavadora y la izquierda lanza la botella. La botella sale en el cuadro 4 |
+| sin_arma | 2 | 3 | sí | Manos relajadas abajo |
 
-- `frames/<animación>_<NN>.png`: cada cuadro suelto, por ejemplo `recarga_03.png`.
-- `sheets/<animación>.png`: una tira por animación. El cuadro 1 va a la izquierda.
-- `animaciones.json`: cuadros, FPS, loop, archivos y notas de cada animación.
-- `preview/`: GIF de cada animación sobre una captura del juego, y `todas_las_animaciones.png` con todo junto.
-- `diseno/`: el diseño en reposo, solo y sobre la pantalla a 1920 × 1080.
+**Ojo con el escalado:** este dibujo es de estilo cómic, no pixel art. Si usas los cuadros de 640 × 360 y los escalas a pantalla completa, usa filtro lineal: con "nearest" se ven escalones. Si tu pantalla es de 1920 × 1080, mejor usa `frames_1920x1080/` directamente.
