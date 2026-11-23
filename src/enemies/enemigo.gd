@@ -360,6 +360,9 @@ func lastimar_a_lalo(cuanto: float) -> void:
 	_vibrar(clampf(cuanto / 30.0, 0.25, 0.8), 0.18)
 	# Empujón corto para que se sienta el golpe
 	j.move_and_collide(global_position.direction_to(j.global_position) * 10.0)
+	var vista: Variant = escuela.get("vista_fp")
+	if vista != null and vista.activa:
+		vista.sacudir(clampf(cuanto / 25.0, 0.3, 1.0))
 	if j.cordura <= 0.0:
 		escuela.archivar()
 

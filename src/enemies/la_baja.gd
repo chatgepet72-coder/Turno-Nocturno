@@ -1,17 +1,43 @@
 extends Enemigo
-## La Baja (común): lenta. Embiste de cerca y escupe tinta que mancha la linterna.
-## Si ve a Lalo, gime y despierta a las otras Bajas de su cuarto.
+## La Baja (común). Ideas tomadas de enemigos de terror (Molded de RE7, Lying Figure de SH2 remake,
+## Haunted de The Evil Within), sin copiar ninguno:
+## 1. Manotazo: de cerca, golpe torpe.
+## 2. Embestida: se queda quieta, se echa para atrás y gime (aviso) y se lanza en línea recta.
+##    Si la esquivas de lado se estrella contra la pared y queda aturdida; si te alcanza, te agarra.
+## 3. Agarre: te sujeta y te muerde la Cordura. Presiona E / A o dispara muchas veces para zafarte;
+##    si no, te avienta con un golpe fuerte. Al zafarte, ella queda tambaleando.
+## 4. Escupitajo de tinta: de media distancia; mancha la linterna.
+## 5. Esquiva: si le apuntas de frente a media distancia, a veces se hace a un lado.
+## 6. Se hace la muerta: tirada en el piso, si pasas junto a ella sin clavarla, te agarra del tobillo.
+## Además gime al verte y despierta a las otras Bajas del cuarto.
 
-const ESPERA_ESCUPIR: float = 6.0
+const ESPERA_ESCUPIR: float = 7.0
+const ESPERA_EMBESTIDA: float = 5.5
+const ESPERA_ESQUIVA: float = 3.5
+const CARGA: float = 0.7              # aviso antes de lanzarse
+const VELOCIDAD_EMBESTIDA: float = 250.0
+const DURACION_EMBESTIDA: float = 0.6
+const ESTRELLADA: float = 1.6         # aturdida si choca con la pared
+const PRESIONES_ZAFARSE: int = 6
+const TIEMPO_AGARRE: float = 2.6      # si no te zafas en este tiempo, te avienta
+const DANO_AGARRE: float = 7.0        # por segundo mientras te muerde
+const DANO_AVENTON: float = 18.0
+const DISTANCIA_EMBOSCADA: float = 52.0
+
 var _escupir: float = 2.0
+var _embestida: float = 2.5
+var _esquiva: float = 0.0
 var _gimio: bool = false
+var _rumbo := Vector2.ZERO
+var _presiones: int = 0
+var _hecha_muerta: bool = false
 
 
 func _configurar() -> void:
 	tipo = "la_baja"
 	vida_max = 4.0
 	velocidad = 46.0
-	alcance = 42.0
+	alcance = 40.0
 	dano = 12.0
 	vision = 230.0
 	anim_mover = "walk"
@@ -19,6 +45,8 @@ func _configurar() -> void:
 
 func _actualizar_especial(delta: float) -> void:
 	_escupir = maxf(0.0, _escupir - delta)
+	_embestida = maxf(0.0, _embestida - delta)
+	_esquiva = maxf(0.0, _esquiva - delta)
 	if estado == "PERSIGUE" and not _gimio:
 		_gimio = true
 		escuela.sonidos.efecto("eco_%d" % randi_range(1, 5), global_position, -8.0)
@@ -27,19 +55,185 @@ func _actualizar_especial(delta: float) -> void:
 				otra.escuchar(global_position, 0.6)
 	elif estado in ["QUIETO", "ALERTA"]:
 		_gimio = false
+	if estado == "CAIDO":
+		_vigilar_desde_el_piso()
+
+
+# ---------- Estados propios: CARGA, EMBISTE, AGARRA, ESQUIVA ----------
+func _decidir(delta: float) -> void:
+	match estado:
+		"CARGA":
+			_cargar()
+			return
+		"EMBISTE":
+			_embestir(delta)
+			return
+		"AGARRA":
+			_agarrar(delta)
+			return
+		"ESQUIVA":
+			move_and_slide()
+			if tiempo_estado > 0.28:
+				_cambiar("PERSIGUE")
+			return
+	if estado == "PERSIGUE" and _quiere_esquivar():
+		return
+	super._decidir(delta)
 
 
 func _probar_ataque_especial(distancia: float) -> bool:
-	if _escupir > 0.0 or distancia < 80.0 or distancia > 210.0 or not _linea_libre(jugador().global_position):
+	if not _linea_libre(jugador().global_position):
 		return false
-	_escupir = ESPERA_ESCUPIR
-	_atacar("escupir")
+	if _embestida <= 0.0 and distancia > 70.0 and distancia < 175.0:
+		_embestida = ESPERA_EMBESTIDA
+		_empezar_carga()
+		return true
+	if _escupir <= 0.0 and distancia > 110.0 and distancia < 230.0:
+		_escupir = ESPERA_ESCUPIR
+		_atacar("escupir")
+		return true
+	return false
+
+
+func _empezar_carga() -> void:
+	_cambiar("CARGA")
+	velocity = Vector2.ZERO
+	_mirar_hacia(jugador().global_position - global_position)
+	sprite.speed_scale = 0.55   # los primeros cuadros del ataque: se echa para atrás
+	_animar("attack", true)
+	escuela.sonidos.efecto("eco_%d" % randi_range(1, 5), global_position, -4.0)
+
+
+func _cargar() -> void:
+	velocity = Vector2.ZERO
+	# Durante el aviso sigue girando hacia Lalo; el rumbo se fija al lanzarse
+	if tiempo_estado < CARGA * 0.75:
+		_mirar_hacia(jugador().global_position - global_position)
+		_rumbo = global_position.direction_to(jugador().global_position)
+	if sprite.frame >= cuadro_de_golpe() - 1:
+		sprite.pause()   # se queda echada para atrás
+	if tiempo_estado >= CARGA:
+		_cambiar("EMBISTE")
+		sprite.play()
+		sprite.speed_scale = 1.4
+		escuela.sonidos.efecto("paso_archivero", global_position, -4.0)
+
+
+func _embestir(_delta: float) -> void:
+	velocity = _rumbo * VELOCIDAD_EMBESTIDA
+	var antes := global_position
+	move_and_slide()
+	var j := jugador()
+	if not j.oculto and global_position.distance_to(j.global_position) < 30.0:
+		_empezar_agarre()
+		return
+	var avanzo: float = global_position.distance_to(antes)
+	if tiempo_estado > 0.1 and avanzo < VELOCIDAD_EMBESTIDA * get_physics_process_delta_time() * 0.35:
+		# Se estrelló: queda aturdida (premio por esquivarla)
+		escuela.sonidos.efecto("golpe", global_position, -2.0)
+		escuela.emitir_ruido(global_position, 0.5)
+		aturdir(ESTRELLADA)
+		return
+	if tiempo_estado >= DURACION_EMBESTIDA:
+		_cambiar("PERSIGUE")
+		espera_ataque = 0.6
+
+
+func _empezar_agarre() -> void:
+	_cambiar("AGARRA")
+	_presiones = 0
+	velocity = Vector2.ZERO
+	sprite.pause()
+	sprite.frame = mini(cuadro_de_golpe(), sprite.sprite_frames.get_frame_count(sprite.animation) - 1)
+	var j := jugador()
+	_mirar_hacia(j.global_position - global_position)
+	lastimar_a_lalo(6.0)
+	j.mensaje = "¡Te agarró! Presiona %s o dispara una y otra vez." % _boton_interaccion()
+	_vibrar(0.7, 0.3)
+	_sacudir(0.9)
+
+
+func _agarrar(delta: float) -> void:
+	var j := jugador()
+	velocity = Vector2.ZERO
+	j.bloqueo_entrada = 0.2
+	j.velocity = Vector2.ZERO
+	j.cordura = maxf(0.0, j.cordura - DANO_AGARRE * delta)
+	if j.cordura <= 0.0:
+		escuela.archivar()
+		return
+	if Input.is_action_just_pressed("interactuar") or Input.is_action_just_pressed("disparar"):
+		_presiones += 1
+		_vibrar(0.25, 0.06)
+		_sacudir(0.25)
+	if escuela.modo_prueba and tiempo_estado > 1.0:
+		_presiones = PRESIONES_ZAFARSE
+	if _presiones >= PRESIONES_ZAFARSE:
+		j.mensaje = "Te zafaste. ¡Aléjate!"
+		j.bloqueo_entrada = 0.1
+		j.move_and_collide(global_position.direction_to(j.global_position) * 24.0)
+		aturdir(1.4)
+		return
+	if tiempo_estado >= TIEMPO_AGARRE:
+		# No te zafaste: te avienta
+		lastimar_a_lalo(DANO_AVENTON)
+		j.move_and_collide(global_position.direction_to(j.global_position) * 40.0)
+		j.mensaje = "Te aventó contra el piso."
+		_sacudir(1.0)
+		_cambiar("PERSIGUE")
+		espera_ataque = 1.5
+
+
+## Si Lalo le apunta de frente desde media distancia, a veces se hace a un lado (no siempre).
+func _quiere_esquivar() -> bool:
+	if _esquiva > 0.0:
+		return false
+	var j := jugador()
+	var distancia := global_position.distance_to(j.global_position)
+	if distancia < 90.0 or distancia > 260.0 or not Input.is_action_pressed("apuntar"):
+		return false
+	if j.apuntado.dot((global_position - j.global_position).normalized()) < 0.97:
+		return false
+	_esquiva = ESPERA_ESQUIVA
+	if randf() > 0.45:
+		return false
+	var lado: Vector2 = (global_position - j.global_position).normalized().orthogonal() * (1.0 if randf() < 0.5 else -1.0)
+	velocity = lado * 190.0
+	_cambiar("ESQUIVA")
+	escuela.sonidos.efecto("papel", global_position, -10.0)
 	return true
+
+
+## Tirada en el piso: si Lalo pasa junto a ella sin haberla clavado, a veces lo agarra del tobillo.
+func _vigilar_desde_el_piso() -> void:
+	if _hecha_muerta or tiempo_estado < 2.0:
+		return
+	var j := jugador()
+	if j.oculto or global_position.distance_to(j.global_position) > DISTANCIA_EMBOSCADA:
+		return
+	_hecha_muerta = true
+	if randf() > 0.6:
+		return
+	_levantarse()
+	escuela.sonidos.efecto("grito", global_position, -8.0)
+	_empezar_agarre()
+
+
+func _levantarse() -> void:
+	super._levantarse()
+	_hecha_muerta = false
+
+
+func _caer(direccion_clavo: Vector2) -> void:
+	super._caer(direccion_clavo)
+	_hecha_muerta = false
 
 
 func _golpe() -> void:
 	if ataque != "escupir":
 		super._golpe()
+		if global_position.distance_to(jugador().global_position) <= alcance + 16.0:
+			_sacudir(0.6)
 		return
 	var p := preload("res://src/enemies/proyectil_enemigo.gd").new()
 	p.escuela = escuela
@@ -48,3 +242,16 @@ func _golpe() -> void:
 	p.global_position = global_position + Vector2(0, -34)
 	p.velocidad = p.global_position.direction_to(jugador().global_position + Vector2(0, -20)) * 260.0
 	get_parent().add_child(p)
+
+
+## Si te pegan con clavos mientras te tiene agarrado, te suelta.
+func recibir_clavo(direccion_clavo: Vector2) -> bool:
+	if estado in ["CARGA", "EMBISTE"]:
+		_cambiar("PERSIGUE")
+	return super.recibir_clavo(direccion_clavo)
+
+
+func _sacudir(fuerza: float) -> void:
+	var vista: Variant = escuela.get("vista_fp")
+	if vista != null and vista.activa:
+		vista.sacudir(fuerza)

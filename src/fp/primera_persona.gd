@@ -29,6 +29,7 @@ var _vaiven: float = 0.0
 var _retroceso: float = 0.0
 var _manos: TextureRect
 var _cinematica: bool = false
+var _sacudida: float = 0.0   # golpes: la cámara tiembla
 var _negro: ColorRect
 var _anim_manos: String = "reposo"
 var _subida: float = 0.0   # 0 = manos abajo (fuera de la pantalla), 1 = arma en alto
@@ -154,6 +155,11 @@ func _process(delta: float) -> void:
 	camara.position = Mundo.a3d(j.global_position, ojos)
 	camara.rotation = Vector3(inclinacion, atan2(-adelante.x, -adelante.z), 0)
 	camara.position += camara.basis * bob
+	if _sacudida > 0.0:
+		_sacudida = maxf(0.0, _sacudida - delta * 2.5)
+		var s: float = _sacudida * _sacudida
+		camara.position += Vector3(randf_range(-1, 1), randf_range(-1, 1), 0) * s * 0.06
+		camara.rotation.z = randf_range(-1, 1) * s * 0.05
 	# La linterna va en el pecho: sigue el cuerpo (rumbo) y casi nada la inclinación de la cabeza
 	linterna.position = Mundo.a3d(j.global_position, ojos - 0.38) + adelante * 0.12
 	linterna.rotation = Vector3(inclinacion * 0.35 - 0.1, camara.rotation.y, 0)
@@ -179,6 +185,11 @@ func _poner_animacion_manos(nombre: String) -> void:
 	if _cuadros_manos.has(nombre) and _anim_manos != nombre:
 		_anim_manos = nombre
 		_cuadro_manos = 0.0
+
+
+## Un golpe hace temblar la vista (0 = nada, 1 = fuerte).
+func sacudir(fuerza: float) -> void:
+	_sacudida = maxf(_sacudida, clampf(fuerza, 0.0, 1.0))
 
 
 func avisar_disparo() -> void:
