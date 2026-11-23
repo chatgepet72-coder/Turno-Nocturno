@@ -1,0 +1,632 @@
+{
+  "version": 1,
+  "nota": "Catálogo de objetos del inventario. Los íconos salen de la imagen de referencia, recortados con fondo transparente. efecto_sugerido, uso_sugerido y combinar_sugerido son propuestas para balancear en el juego.",
+  "pestanas": [
+    {
+      "id": "objetos",
+      "nombre": "Objetos",
+      "icono": "ui/iconos_pestanas/objetos.png"
+    },
+    {
+      "id": "documentos",
+      "nombre": "Documentos",
+      "icono": "ui/iconos_pestanas/documentos.png"
+    },
+    {
+      "id": "evidencias",
+      "nombre": "Evidencias",
+      "icono": "ui/iconos_pestanas/evidencias.png"
+    },
+    {
+      "id": "llaves",
+      "nombre": "Llaves",
+      "icono": "ui/iconos_pestanas/llaves.png"
+    },
+    {
+      "id": "recuperacion",
+      "nombre": "Recuperación",
+      "icono": "ui/iconos_pestanas/recuperacion.png"
+    },
+    {
+      "id": "otros",
+      "nombre": "Otros",
+      "icono": "ui/iconos_pestanas/otros.png"
+    }
+  ],
+  "recetas_sugeridas": [
+    {
+      "ingredientes": [
+        "botella_verde",
+        "trapo",
+        "alcohol"
+      ],
+      "resultado": "molotov"
+    },
+    {
+      "ingredientes": [
+        "botella_vidrio",
+        "trapo",
+        "alcohol"
+      ],
+      "resultado": "molotov"
+    },
+    {
+      "ingredientes": [
+        "caja_clavos",
+        "pistola_clavos"
+      ],
+      "resultado": "recarga",
+      "nota": "Combinar = recargar (animación \"recarga\")."
+    }
+  ],
+  "objetos": [
+    {
+      "id": "pistola_clavos",
+      "nombre": "Pistola de clavos",
+      "categoria": "objetos",
+      "tipo": "ARMA",
+      "descripcion": "Una clavadora industrial. Puede ser útil para reforzar puertas o hacer ruido.",
+      "apilable": false,
+      "max_pila": 1,
+      "uso_sugerido": "Equipar: arma principal (dispara clavos).",
+      "icono": "iconos/pistola_clavos.png",
+      "icono_256": "iconos_256/pistola_clavos.png",
+      "icono_512": "iconos_512/pistola_clavos.png",
+      "vista_previa_512": "vistas_previas_512/pistola_clavos.png"
+    },
+    {
+      "id": "caja_clavos",
+      "nombre": "Caja de clavos",
+      "categoria": "objetos",
+      "tipo": "MUNICIÓN",
+      "descripcion": "Clavos sueltos en una caja de cartón húmeda. Alcanzan para una tira más.",
+      "apilable": true,
+      "max_pila": 5,
+      "uso_sugerido": "Recarga la pistola de clavos.",
+      "combinar_sugerido": [
+        "pistola_clavos"
+      ],
+      "icono": "iconos/caja_clavos.png",
+      "icono_256": "iconos_256/caja_clavos.png"
+    },
+    {
+      "id": "molotov",
+      "nombre": "Molotov",
+      "categoria": "objetos",
+      "tipo": "ARMA ARROJADIZA",
+      "descripcion": "Una botella con trapo empapado. Quema lo que encuentre.",
+      "apilable": true,
+      "max_pila": 3,
+      "uso_sugerido": "Equipar y lanzar (animación \"molotov\" de las manos).",
+      "icono": "iconos/molotov.png",
+      "icono_256": "iconos_256/molotov.png",
+      "vista_previa_512": "vistas_previas_512/molotov.png"
+    },
+    {
+      "id": "extintor",
+      "nombre": "Extintor",
+      "categoria": "objetos",
+      "tipo": "HERRAMIENTA",
+      "descripcion": "Todavía le queda presión. Apaga fuego... o aturde lo que tengas enfrente.",
+      "apilable": false,
+      "max_pila": 1,
+      "uso_sugerido": "Apaga incendios; ráfaga que aturde por unos segundos.",
+      "icono": "iconos/extintor.png",
+      "icono_256": "iconos_256/extintor.png"
+    },
+    {
+      "id": "engrapadora",
+      "nombre": "Engrapadora",
+      "categoria": "objetos",
+      "tipo": "HERRAMIENTA",
+      "descripcion": "Pesada, de metal. Las de antes no se rompían.",
+      "apilable": false,
+      "max_pila": 1,
+      "uso_sugerido": "Arma de último recurso / objeto para un acertijo.",
+      "icono": "iconos/engrapadora.png",
+      "icono_256": "iconos_256/engrapadora.png"
+    },
+    {
+      "id": "botella_agua",
+      "nombre": "Botella de agua",
+      "categoria": "recuperacion",
+      "tipo": "RECUPERACIÓN",
+      "descripcion": "Agua sellada. Lo único limpio en todo el edificio.",
+      "apilable": true,
+      "max_pila": 3,
+      "efecto_sugerido": {
+        "cordura": 15
+      },
+      "icono": "iconos/botella_agua.png",
+      "icono_256": "iconos_256/botella_agua.png"
+    },
+    {
+      "id": "trapo",
+      "nombre": "Trapo",
+      "categoria": "otros",
+      "tipo": "MATERIAL",
+      "descripcion": "Un trapo manchado. Sirve para limpiar o para prender una botella.",
+      "apilable": true,
+      "max_pila": 5,
+      "combinar_sugerido": [
+        "botella_verde",
+        "botella_vidrio"
+      ],
+      "icono": "iconos/trapo.png",
+      "icono_256": "iconos_256/trapo.png"
+    },
+    {
+      "id": "botella_verde",
+      "nombre": "Botella verde",
+      "categoria": "otros",
+      "tipo": "MATERIAL",
+      "descripcion": "Botella de vidrio vacía. Con un trapo podría ser otra cosa.",
+      "apilable": true,
+      "max_pila": 3,
+      "combinar_sugerido": [
+        "trapo"
+      ],
+      "icono": "iconos/botella_verde.png",
+      "icono_256": "iconos_256/botella_verde.png"
+    },
+    {
+      "id": "botiquin",
+      "nombre": "Botiquín",
+      "categoria": "recuperacion",
+      "tipo": "RECUPERACIÓN",
+      "descripcion": "Botiquín de la enfermería. Vendas, alcohol y poco más.",
+      "apilable": true,
+      "max_pila": 2,
+      "efecto_sugerido": {
+        "cordura": 60
+      },
+      "icono": "iconos/botiquin.png",
+      "icono_256": "iconos_256/botiquin.png",
+      "vista_previa_512": "vistas_previas_512/botiquin.png"
+    },
+    {
+      "id": "termo",
+      "nombre": "Termo",
+      "categoria": "recuperacion",
+      "tipo": "RECUPERACIÓN",
+      "descripcion": "Café recalentado de alguien que ya no vino por él.",
+      "apilable": false,
+      "max_pila": 1,
+      "efecto_sugerido": {
+        "cordura": 20,
+        "aguante": 30
+      },
+      "icono": "iconos/termo.png",
+      "icono_256": "iconos_256/termo.png"
+    },
+    {
+      "id": "llave_etiqueta",
+      "nombre": "Llave con etiqueta",
+      "categoria": "llaves",
+      "tipo": "LLAVE",
+      "descripcion": "Dos llaves de latón con una etiqueta de cartón. La letra ya no se lee.",
+      "apilable": false,
+      "max_pila": 1,
+      "uso_sugerido": "Abre la puerta asignada en el nivel.",
+      "icono": "iconos/llave_etiqueta.png",
+      "icono_256": "iconos_256/llave_etiqueta.png",
+      "vista_previa_512": "vistas_previas_512/llave_etiqueta.png"
+    },
+    {
+      "id": "llave_azul",
+      "nombre": "Llave azul",
+      "categoria": "llaves",
+      "tipo": "LLAVE",
+      "descripcion": "Llave con llavero azul de plástico.",
+      "apilable": false,
+      "max_pila": 1,
+      "uso_sugerido": "Abre la puerta asignada en el nivel.",
+      "icono": "iconos/llave_azul.png",
+      "icono_256": "iconos_256/llave_azul.png",
+      "vista_previa_512": "vistas_previas_512/llave_azul.png"
+    },
+    {
+      "id": "llave_roja",
+      "nombre": "Llave roja",
+      "categoria": "llaves",
+      "tipo": "LLAVE",
+      "descripcion": "Llave con llavero rojo. Alguien la escondió bien.",
+      "apilable": false,
+      "max_pila": 1,
+      "uso_sugerido": "Abre la puerta asignada en el nivel.",
+      "icono": "iconos/llave_roja.png",
+      "icono_256": "iconos_256/llave_roja.png",
+      "vista_previa_512": "vistas_previas_512/llave_roja.png"
+    },
+    {
+      "id": "celular_roto",
+      "nombre": "Celular roto",
+      "categoria": "objetos",
+      "tipo": "HERRAMIENTA",
+      "descripcion": "La pantalla está estrellada, pero todavía prende.",
+      "apilable": false,
+      "max_pila": 1,
+      "uso_sugerido": "Leer mensajes / pista; luz débil.",
+      "icono": "iconos/celular_roto.png",
+      "icono_256": "iconos_256/celular_roto.png"
+    },
+    {
+      "id": "radio",
+      "nombre": "Radio",
+      "categoria": "objetos",
+      "tipo": "HERRAMIENTA",
+      "descripcion": "Un radio de intendencia. A veces se oye algo entre la estática.",
+      "apilable": false,
+      "max_pila": 1,
+      "uso_sugerido": "Recibir avisos; hace ruido cerca de enemigos.",
+      "icono": "iconos/radio.png",
+      "icono_256": "iconos_256/radio.png"
+    },
+    {
+      "id": "pala",
+      "nombre": "Pala de mano",
+      "categoria": "objetos",
+      "tipo": "HERRAMIENTA",
+      "descripcion": "Una pala de jardinería oxidada. Sirve para escarbar.",
+      "apilable": false,
+      "max_pila": 1,
+      "uso_sugerido": "Desenterrar objetos en zonas marcadas.",
+      "icono": "iconos/pala.png",
+      "icono_256": "iconos_256/pala.png"
+    },
+    {
+      "id": "carpeta_confidencial",
+      "nombre": "Carpeta confidencial",
+      "categoria": "documentos",
+      "tipo": "DOCUMENTO",
+      "descripcion": "Una carpeta con el sello CONFIDENCIAL. Pesa más de lo que debería.",
+      "apilable": false,
+      "max_pila": 1,
+      "uso_sugerido": "Leer.",
+      "icono": "iconos/carpeta_confidencial.png",
+      "icono_256": "iconos_256/carpeta_confidencial.png",
+      "vista_previa_512": "vistas_previas_512/carpeta_confidencial.png"
+    },
+    {
+      "id": "sobre_sellado",
+      "nombre": "Sobre sellado",
+      "categoria": "documentos",
+      "tipo": "DOCUMENTO",
+      "descripcion": "Un sobre cerrado con lacre rojo. Nadie lo ha abierto.",
+      "apilable": false,
+      "max_pila": 1,
+      "uso_sugerido": "Abrir y leer.",
+      "icono": "iconos/sobre_sellado.png",
+      "icono_256": "iconos_256/sobre_sellado.png"
+    },
+    {
+      "id": "expediente_001",
+      "nombre": "Expediente 001",
+      "categoria": "documentos",
+      "tipo": "DOCUMENTO",
+      "descripcion": "El primer expediente del archivo. El número está escrito a mano.",
+      "apilable": false,
+      "max_pila": 1,
+      "uso_sugerido": "Leer.",
+      "icono": "iconos/expediente_001.png",
+      "icono_256": "iconos_256/expediente_001.png"
+    },
+    {
+      "id": "portapapeles",
+      "nombre": "Portapapeles",
+      "categoria": "documentos",
+      "tipo": "DOCUMENTO",
+      "descripcion": "Una lista de asistencia con nombres tachados.",
+      "apilable": false,
+      "max_pila": 1,
+      "uso_sugerido": "Leer.",
+      "icono": "iconos/portapapeles.png",
+      "icono_256": "iconos_256/portapapeles.png"
+    },
+    {
+      "id": "nota_postit",
+      "nombre": "Hoja con nota",
+      "categoria": "documentos",
+      "tipo": "DOCUMENTO",
+      "descripcion": "Un oficio con una nota amarilla pegada encima.",
+      "apilable": false,
+      "max_pila": 1,
+      "uso_sugerido": "Leer.",
+      "icono": "iconos/nota_postit.png",
+      "icono_256": "iconos_256/nota_postit.png"
+    },
+    {
+      "id": "carta_vieja",
+      "nombre": "Carta vieja",
+      "categoria": "documentos",
+      "tipo": "DOCUMENTO",
+      "descripcion": "Una hoja escrita a mano, rota de las orillas.",
+      "apilable": false,
+      "max_pila": 1,
+      "uso_sugerido": "Leer.",
+      "icono": "iconos/carta_vieja.png",
+      "icono_256": "iconos_256/carta_vieja.png"
+    },
+    {
+      "id": "fotografia",
+      "nombre": "Fotografía antigua",
+      "categoria": "documentos",
+      "tipo": "DOCUMENTO",
+      "descripcion": "Una foto de grupo. A una de las personas le rasparon la cara.",
+      "apilable": false,
+      "max_pila": 1,
+      "uso_sugerido": "Examinar.",
+      "icono": "iconos/fotografia.png",
+      "icono_256": "iconos_256/fotografia.png"
+    },
+    {
+      "id": "reporte_vigilancia",
+      "nombre": "Reporte de vigilancia",
+      "categoria": "documentos",
+      "tipo": "DOCUMENTO",
+      "descripcion": "Una hoja arrugada que dice VIGILANCIA. Faltan las últimas noches.",
+      "apilable": false,
+      "max_pila": 1,
+      "uso_sugerido": "Leer.",
+      "icono": "iconos/reporte_vigilancia.png",
+      "icono_256": "iconos_256/reporte_vigilancia.png"
+    },
+    {
+      "id": "libreta",
+      "nombre": "Libreta azul",
+      "categoria": "documentos",
+      "tipo": "DOCUMENTO",
+      "descripcion": "Una libreta con pluma. Alguien llevaba la cuenta de algo.",
+      "apilable": false,
+      "max_pila": 1,
+      "uso_sugerido": "Leer (diario).",
+      "icono": "iconos/libreta.png",
+      "icono_256": "iconos_256/libreta.png"
+    },
+    {
+      "id": "usb_negra",
+      "nombre": "Memoria USB",
+      "categoria": "documentos",
+      "tipo": "GRABACIÓN",
+      "descripcion": "Una memoria USB negra. Hay que conectarla en una computadora.",
+      "apilable": false,
+      "max_pila": 1,
+      "uso_sugerido": "Reproducir en una computadora.",
+      "icono": "iconos/usb_negra.png",
+      "icono_256": "iconos_256/usb_negra.png"
+    },
+    {
+      "id": "usb_oxidada",
+      "nombre": "USB oxidada",
+      "categoria": "documentos",
+      "tipo": "GRABACIÓN",
+      "descripcion": "Una memoria vieja y oxidada. Puede que todavía funcione.",
+      "apilable": false,
+      "max_pila": 1,
+      "uso_sugerido": "Reproducir en una computadora.",
+      "icono": "iconos/usb_oxidada.png",
+      "icono_256": "iconos_256/usb_oxidada.png"
+    },
+    {
+      "id": "usb_rec",
+      "nombre": "USB \"REC\"",
+      "categoria": "documentos",
+      "tipo": "GRABACIÓN",
+      "descripcion": "Una memoria con una etiqueta que dice REC.",
+      "apilable": false,
+      "max_pila": 1,
+      "uso_sugerido": "Reproducir en una computadora (grabación de cámara).",
+      "icono": "iconos/usb_rec.png",
+      "icono_256": "iconos_256/usb_rec.png"
+    },
+    {
+      "id": "gafete",
+      "nombre": "Gafete",
+      "categoria": "llaves",
+      "tipo": "ACCESO",
+      "descripcion": "Credencial con foto y cordón azul. Abre las puertas con lector.",
+      "apilable": false,
+      "max_pila": 1,
+      "uso_sugerido": "Abre puertas con lector de tarjeta.",
+      "icono": "iconos/gafete.png",
+      "icono_256": "iconos_256/gafete.png"
+    },
+    {
+      "id": "sello",
+      "nombre": "Sello de goma",
+      "categoria": "evidencias",
+      "tipo": "EVIDENCIA",
+      "descripcion": "El sello rojo del archivo. BAJA, ARCHIVADO, REPROBADO: todo pasa por aquí.",
+      "apilable": false,
+      "max_pila": 1,
+      "icono": "iconos/sello.png",
+      "icono_256": "iconos_256/sello.png"
+    },
+    {
+      "id": "maqueta_escuela",
+      "nombre": "Maqueta de la escuela",
+      "categoria": "evidencias",
+      "tipo": "EVIDENCIA",
+      "descripcion": "Una maqueta del edificio. Tiene una ventana que la escuela real no tiene.",
+      "apilable": false,
+      "max_pila": 1,
+      "icono": "iconos/maqueta_escuela.png",
+      "icono_256": "iconos_256/maqueta_escuela.png"
+    },
+    {
+      "id": "papas_verdes",
+      "nombre": "Papas (bolsa verde)",
+      "categoria": "recuperacion",
+      "tipo": "RECUPERACIÓN",
+      "descripcion": "Papas con sal y limón. Siguen crujientes.",
+      "apilable": true,
+      "max_pila": 5,
+      "efecto_sugerido": {
+        "cordura": 5
+      },
+      "icono": "iconos/papas_verdes.png",
+      "icono_256": "iconos_256/papas_verdes.png"
+    },
+    {
+      "id": "papas_rojas",
+      "nombre": "Papas (bolsa roja)",
+      "categoria": "recuperacion",
+      "tipo": "RECUPERACIÓN",
+      "descripcion": "Papas enchiladas de la tiendita.",
+      "apilable": true,
+      "max_pila": 5,
+      "efecto_sugerido": {
+        "cordura": 5
+      },
+      "icono": "iconos/papas_rojas.png",
+      "icono_256": "iconos_256/papas_rojas.png"
+    },
+    {
+      "id": "papas_amarillas",
+      "nombre": "Papas (bolsa amarilla)",
+      "categoria": "recuperacion",
+      "tipo": "RECUPERACIÓN",
+      "descripcion": "Papas naturales. Las que nadie escoge.",
+      "apilable": true,
+      "max_pila": 5,
+      "efecto_sugerido": {
+        "cordura": 5
+      },
+      "icono": "iconos/papas_amarillas.png",
+      "icono_256": "iconos_256/papas_amarillas.png"
+    },
+    {
+      "id": "frituras_rojas",
+      "nombre": "Frituras (bolsa roja)",
+      "categoria": "recuperacion",
+      "tipo": "RECUPERACIÓN",
+      "descripcion": "Frituras de chile. Pican más de lo que llenan.",
+      "apilable": true,
+      "max_pila": 5,
+      "efecto_sugerido": {
+        "cordura": 5
+      },
+      "icono": "iconos/frituras_rojas.png",
+      "icono_256": "iconos_256/frituras_rojas.png"
+    },
+    {
+      "id": "refresco",
+      "nombre": "Refresco",
+      "categoria": "recuperacion",
+      "tipo": "RECUPERACIÓN",
+      "descripcion": "Refresco en botella de vidrio, sin marca. Tibio y sin gas.",
+      "apilable": true,
+      "max_pila": 3,
+      "efecto_sugerido": {
+        "cordura": 10,
+        "aguante": 15
+      },
+      "icono": "iconos/refresco.png",
+      "icono_256": "iconos_256/refresco.png",
+      "icono_512": "iconos_512/refresco.png"
+    },
+    {
+      "id": "galletas",
+      "nombre": "Galletas",
+      "categoria": "recuperacion",
+      "tipo": "RECUPERACIÓN",
+      "descripcion": "Un paquete de galletas sin abrir.",
+      "apilable": true,
+      "max_pila": 5,
+      "efecto_sugerido": {
+        "cordura": 8
+      },
+      "icono": "iconos/galletas.png",
+      "icono_256": "iconos_256/galletas.png"
+    },
+    {
+      "id": "botella_vidrio",
+      "nombre": "Botella de vidrio",
+      "categoria": "otros",
+      "tipo": "MATERIAL",
+      "descripcion": "Una botella transparente, vacía. Con un trapo podría ser otra cosa.",
+      "apilable": true,
+      "max_pila": 3,
+      "combinar_sugerido": [
+        "trapo"
+      ],
+      "icono": "iconos/botella_vidrio.png",
+      "icono_256": "iconos_256/botella_vidrio.png"
+    },
+    {
+      "id": "chocolate",
+      "nombre": "Chocolate",
+      "categoria": "recuperacion",
+      "tipo": "RECUPERACIÓN",
+      "descripcion": "Una barra de chocolate medio derretida.",
+      "apilable": true,
+      "max_pila": 5,
+      "efecto_sugerido": {
+        "cordura": 10
+      },
+      "icono": "iconos/chocolate.png",
+      "icono_256": "iconos_256/chocolate.png"
+    },
+    {
+      "id": "palitos",
+      "nombre": "Palitos de papa",
+      "categoria": "recuperacion",
+      "tipo": "RECUPERACIÓN",
+      "descripcion": "Palitos de papa con chile.",
+      "apilable": true,
+      "max_pila": 5,
+      "efecto_sugerido": {
+        "cordura": 5
+      },
+      "icono": "iconos/palitos.png",
+      "icono_256": "iconos_256/palitos.png"
+    },
+    {
+      "id": "frituras_queso",
+      "nombre": "Frituras de queso",
+      "categoria": "recuperacion",
+      "tipo": "RECUPERACIÓN",
+      "descripcion": "Frituras de queso. Te dejan los dedos naranjas.",
+      "apilable": true,
+      "max_pila": 5,
+      "efecto_sugerido": {
+        "cordura": 5
+      },
+      "icono": "iconos/frituras_queso.png",
+      "icono_256": "iconos_256/frituras_queso.png"
+    },
+    {
+      "id": "sello_roto",
+      "nombre": "Sello roto",
+      "categoria": "evidencias",
+      "tipo": "EVIDENCIA",
+      "descripcion": "El mismo sello del archivo, partido a la mitad. La tinta roja ya se secó.",
+      "apilable": false,
+      "max_pila": 1,
+      "icono": "iconos/sello_roto.png",
+      "icono_256": "iconos_256/sello_roto.png",
+      "icono_512": "iconos_512/sello_roto.png"
+    },
+    {
+      "id": "alcohol",
+      "nombre": "Alcohol",
+      "categoria": "otros",
+      "tipo": "MATERIAL",
+      "descripcion": "Alcohol de limpieza, medio vacío. Sirve para curar... o para que una botella prenda mejor.",
+      "apilable": true,
+      "max_pila": 3,
+      "efecto_sugerido": {
+        "cordura": 5
+      },
+      "combinar_sugerido": [
+        "trapo",
+        "botella_verde",
+        "botella_vidrio",
+        "botiquin"
+      ],
+      "icono": "iconos/alcohol.png",
+      "icono_256": "iconos_256/alcohol.png",
+      "icono_512": "iconos_512/alcohol.png"
+    }
+  ]
+}

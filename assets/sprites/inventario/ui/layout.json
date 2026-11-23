@@ -1,0 +1,256 @@
+{
+  "nota": "Coordenadas en píxeles dentro de panel_fondo.png (origen arriba-izquierda). Rectángulos = [x, y, ancho, alto]. Diseñado a 1614 px de ancho: para 1920 × 1080 escala todo ×1.15 y centra el panel abajo.",
+  "panel": {
+    "imagen": "ui/panel_fondo.png",
+    "tamano": [
+      1614,
+      354
+    ]
+  },
+  "pestanas": {
+    "fondo_activa": "ui/pestana_activa.png",
+    "y": 16,
+    "alto": 39,
+    "lista": [
+      {
+        "id": "objetos",
+        "texto": "Objetos",
+        "x": 51,
+        "ancho": 186,
+        "icono": "ui/iconos_pestanas/objetos.png",
+        "icono_x": 74
+      },
+      {
+        "id": "documentos",
+        "texto": "Documentos",
+        "x": 251,
+        "ancho": 168,
+        "icono": "ui/iconos_pestanas/documentos.png",
+        "icono_x": 267
+      },
+      {
+        "id": "evidencias",
+        "texto": "Evidencias",
+        "x": 429,
+        "ancho": 168,
+        "icono": "ui/iconos_pestanas/evidencias.png",
+        "icono_x": 449
+      },
+      {
+        "id": "llaves",
+        "texto": "Llaves",
+        "x": 606,
+        "ancho": 166,
+        "icono": "ui/iconos_pestanas/llaves.png",
+        "icono_x": 626
+      },
+      {
+        "id": "recuperacion",
+        "texto": "Recuperación",
+        "x": 779,
+        "ancho": 202,
+        "icono": "ui/iconos_pestanas/recuperacion.png",
+        "icono_x": 790
+      },
+      {
+        "id": "otros",
+        "texto": "Otros",
+        "x": 994,
+        "ancho": 164,
+        "icono": "ui/iconos_pestanas/otros.png",
+        "icono_x": 1016
+      }
+    ],
+    "texto": {
+      "fuente": "ui/fuente/CrimsonText-Regular.ttf",
+      "tamano": 22,
+      "color": "#C6C7C6",
+      "color_activa": "#FFFFFF"
+    }
+  },
+  "cuadricula": {
+    "area": [
+      44,
+      65,
+      692,
+      208
+    ],
+    "columnas": 6,
+    "filas_visibles": 2,
+    "origen": [
+      56,
+      74
+    ],
+    "paso": [
+      114.4,
+      95
+    ],
+    "tamano_slot": [
+      106,
+      88
+    ],
+    "slot": "ui/slot.png",
+    "slot_seleccionado": "ui/slot_seleccionado.png",
+    "margen_slot_seleccionado": 10,
+    "margen_slot": 4,
+    "icono_en_slot": "iconos_256/<id>.png escalado a 86 px de alto como máximo, centrado en el slot",
+    "nota": "La tercera fila asoma cortada por abajo: indica que hay scroll."
+  },
+  "scroll": {
+    "area": [
+      744,
+      65,
+      31,
+      216
+    ]
+  },
+  "vista_previa": {
+    "area": [
+      786,
+      70,
+      369,
+      215
+    ],
+    "icono": "iconos_256/<id>.png escalado a ~200 px, centrado, rotado -12° opcional"
+  },
+  "descripcion": {
+    "area": [
+      1179,
+      72,
+      385,
+      208
+    ],
+    "nombre": {
+      "pos": [
+        1190,
+        80
+      ],
+      "tamano": 30,
+      "color": "#FFFFFF",
+      "fuente": "ui/fuente/CrimsonText-Regular.ttf"
+    },
+    "tipo": {
+      "pos": [
+        1191,
+        117
+      ],
+      "tamano": 20,
+      "color": "#E7A415",
+      "mayusculas": true
+    },
+    "separador": {
+      "y": 142,
+      "x": [
+        1190,
+        1554
+      ],
+      "color": "#FFFFFF22"
+    },
+    "texto": {
+      "pos": [
+        1191,
+        151
+      ],
+      "tamano": 21,
+      "color": "#E6E6E2",
+      "ancho_max": 360,
+      "interlineado": 26
+    }
+  },
+  "cordura": {
+    "etiqueta": {
+      "texto": "Cordura",
+      "pos": [
+        48,
+        304
+      ],
+      "tamano": 22,
+      "color": "#FFFFFF"
+    },
+    "ecg": {
+      "imagen": "ui/salud_ecg.png",
+      "pos": [
+        134,
+        294
+      ],
+      "nota": "Verde = estable, amarillo = alterado, rojo = al límite. Recorta la tira de izquierda a derecha según la cordura."
+    }
+  },
+  "botones": [
+    {
+      "accion": "usar",
+      "texto": "Usar",
+      "centro": [
+        1218,
+        320
+      ],
+      "texto_x": 1242,
+      "tamano": 22,
+      "color": "#FFFFFF",
+      "iconos": {
+        "playstation": "ui/botones/playstation/cruz.png",
+        "xbox": "ui/botones/xbox/a.png",
+        "teclado": "ui/botones/teclado/e.png"
+      }
+    },
+    {
+      "accion": "combinar",
+      "texto": "Combinar",
+      "centro": [
+        1331,
+        320
+      ],
+      "texto_x": 1355,
+      "tamano": 22,
+      "color": "#FFFFFF",
+      "iconos": {
+        "playstation": "ui/botones/playstation/cuadrado.png",
+        "xbox": "ui/botones/xbox/x.png",
+        "teclado": "ui/botones/teclado/q.png"
+      }
+    },
+    {
+      "accion": "volver",
+      "texto": "Volver",
+      "centro": [
+        1483,
+        320
+      ],
+      "texto_x": 1507,
+      "tamano": 22,
+      "color": "#FFFFFF",
+      "iconos": {
+        "playstation": "ui/botones/playstation/circulo.png",
+        "xbox": "ui/botones/xbox/b.png",
+        "teclado": "ui/botones/teclado/esc.png"
+      }
+    }
+  ],
+  "teclas": {
+    "usar": {
+      "teclado": "E",
+      "xbox": "A",
+      "playstation": "Cruz"
+    },
+    "combinar": {
+      "teclado": "Q",
+      "xbox": "X",
+      "playstation": "Cuadrado"
+    },
+    "volver": {
+      "teclado": "Esc",
+      "xbox": "B",
+      "playstation": "Círculo"
+    },
+    "pestana_anterior": {
+      "teclado": "Tab + Shift",
+      "xbox": "LB",
+      "playstation": "L1"
+    },
+    "pestana_siguiente": {
+      "teclado": "Tab",
+      "xbox": "RB",
+      "playstation": "R1"
+    }
+  }
+}
