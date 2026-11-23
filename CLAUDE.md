@@ -35,6 +35,7 @@ La historia entregada al profesor (documento "Turno Nocturno — El Último Cuat
 - Modo de prueba para administradores (`escuela.modo_prueba`): invencible, todo lo demás igual. F9 o "Admin · Modo de prueba" en la pausa; con él activo, la pausa también da pistola, clavos, molotovs y llaves. Solo existe al correr desde el editor de Godot (`OS.has_feature("editor")`): el juego exportado no lo tiene.
 - `src/story/`: historia (`campana.gd` guarda los hechos; `relato_turno.gd` los diálogos).
 - `src/ui/`, `src/world/`, `src/audio/` (`AudioManager`, autoload).
+- `docs/pendientes.md`: lo que falta (arte que hay que pedir a la IA de diseños, campus, etc.).
 - `tests/`: pruebas que corren con `godot --headless --path . --script res://tests/<archivo>.gd`.
 
 ## Reglas de código
