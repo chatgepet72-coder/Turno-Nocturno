@@ -8,6 +8,7 @@ extends Node3D
 ## Afuera (campus) todavía no hay 3D: ahí se ve el juego 2D de siempre.
 
 const Mundo = preload("res://src/fp/mundo_3d.gd")
+const Campus = preload("res://src/fp/campus_3d.gd")
 const M = preload("res://src/fp/materiales_3d.gd")
 const ESC: float = 1.0 / 44.0
 const OJOS: float = 1.62
@@ -17,7 +18,9 @@ const SENSIBILIDAD_STICK: float = 2.6
 const ESCALA_SPRITE: float = 0.25   # la misma escala que en 2D
 
 var escuela: Node2D
-var mundo: Node3D
+var mundo: Node3D          # el que se ve ahora: el edificio o el campus
+var edificio: Node3D
+var campus: Node3D
 var camara: Camera3D
 var linterna: SpotLight3D
 var rumbo: float = -PI / 2.0        # ángulo en el mapa 2D hacia donde mira Lalo (arriba al empezar)
@@ -57,6 +60,7 @@ func _ready() -> void:
 	mundo.escuela = escuela
 	add_child(mundo)
 	mundo.construir()
+	edificio = mundo
 	camara = Camera3D.new()
 	camara.fov = 72.0
 	camara.near = 0.05
@@ -118,7 +122,38 @@ func _ocultar_2d(si: bool) -> void:
 
 
 func _debe_estar_activa() -> bool:
-	return escuela.campana.lugar == "principal" and not escuela.has_node("Teaser")
+	return escuela.campana.lugar in ["principal", "campus"] and not escuela.has_node("Teaser")
+
+
+## Adentro se ve el edificio; afuera, el campus (se arma la primera vez que sales).
+func _elegir_mundo() -> void:
+	var afuera: bool = escuela.campana.lugar == "campus"
+	if afuera and campus == null:
+		var ext: Variant = escuela.campana.get("exterior")
+		if ext == null or not is_instance_valid(ext):
+			return
+		campus = Campus.new()
+		campus.escuela = escuela
+		campus.exterior = ext
+		add_child(campus)
+		campus.construir()
+	var quiere: Node3D = campus if afuera and campus != null else edificio
+	if quiere == mundo:
+		return
+	mundo = quiere
+	edificio.visible = mundo == edificio
+	if campus != null:
+		campus.visible = mundo == campus
+	# Los dibujos de enemigos y efectos se vuelven a crear en el mundo nuevo
+	for k in _gemelos.keys():
+		if is_instance_valid(_gemelos[k]):
+			(_gemelos[k] as Node3D).queue_free()
+	_gemelos.clear()
+	# Afuera: niebla que se ve (la luz de los faroles la pinta); adentro, negro
+	var env: Environment = _entorno.environment
+	env.fog_light_color = Color(0.03, 0.035, 0.045) if afuera else Color(0.0, 0.0, 0.0)
+	env.fog_density = 0.085 if afuera else 0.11
+	env.ambient_light_color = Color(0.02, 0.024, 0.032) if afuera else Color(0.012, 0.014, 0.02)
 
 
 func _input(evento: InputEvent) -> void:
@@ -134,6 +169,7 @@ func _process(delta: float) -> void:
 	_activar(_debe_estar_activa())
 	if not activa:
 		return
+	_elegir_mundo()
 	var j: CharacterBody2D = escuela.jugador
 	# Ratón capturado solo mientras se juega (en menús se suelta)
 	var quiere_captura: bool = escuela.jugando and not Controles.usando_mando and DisplayServer.get_name() != "headless"

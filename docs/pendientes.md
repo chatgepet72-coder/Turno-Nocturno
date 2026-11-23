@@ -24,7 +24,7 @@ Silla de paleta escolar (madera gastada, tubos de metal oxidado, paleta de un la
 
 ## Campus (afuera)
 Plan acordado el 23 nov 2026, en este orden:
-- [ ] Campus en 3D (piso, fachadas, andador, faroles, niebla, árboles, carros, reja, caseta).
+- [x] Campus en 3D, primera vuelta (`src/fp/campus_3d.gd`). Falta: árboles y arbustos con el arte de la parte B, letrero de la escuela, caseta con más detalle.
 - [ ] Encuentros de afuera en puntos fijos (patio, cafetería, andador, estacionamiento).
 - [ ] El Desvelado, El Sinodal y la Baja de la cafetería con IA de cazador como la de adentro.
 
@@ -32,4 +32,5 @@ Plan acordado el 23 nov 2026, en este orden:
 - [ ] Teaser en 3D.
 - [ ] Mejoras de armas en la mesa del Taller.
 - [ ] Ataques nuevos para El Expediente.
+- [ ] `probar_campus` se queda colgada (también antes del campus 3D).
 - [ ] Pruebas que ya fallaban: `probar_sigilo` (13), `probar_turno` (1), `probar_mejoras_v9` (5 de cordura).
