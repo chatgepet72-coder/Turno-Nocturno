@@ -61,8 +61,12 @@ func sincronizar() -> void:
 	for l2 in _luces:
 		var l3: OmniLight3D = _luces[l2]
 		if is_instance_valid(l2):
+			# Las lámparas del edificio apenas sirven: tenues y parpadeando (la luz de verdad es la linterna).
 			l3.visible = (l2 as PointLight2D).enabled and (l2 as PointLight2D).is_visible_in_tree()
-			l3.light_energy = (l2 as PointLight2D).energy * 1.4
+			var parpadeo: float = 1.0
+			if randf() < 0.04:
+				parpadeo = randf_range(0.0, 0.4)
+			l3.light_energy = lerpf(l3.light_energy, (l2 as PointLight2D).energy * 0.3 * parpadeo, 0.5)
 
 
 # ---------- Piezas básicas ----------
@@ -187,14 +191,14 @@ func _lampara(luz: PointLight2D) -> void:
 	var l := OmniLight3D.new()
 	l.position = a3d(p, ALTO - 0.25)
 	l.light_color = Color(0.72, 1.0, 0.9)
-	l.omni_range = 6.5
-	l.omni_attenuation = 1.4
+	l.omni_range = 4.0
+	l.omni_attenuation = 2.0
 	l.shadow_enabled = false
 	add_child(l)
 	_luces[luz] = l
 	# El gabinete de la lámpara fluorescente en el plafón
 	caja(a3d(p, ALTO - 0.03), Vector3(1.25, 0.05, 0.32), M.color(Color(0.55, 0.56, 0.55)))
-	caja(a3d(p, ALTO - 0.06), Vector3(1.15, 0.02, 0.22), M.emisivo(Color(0.75, 0.95, 0.9), 0.9))
+	caja(a3d(p, ALTO - 0.06), Vector3(1.15, 0.02, 0.22), M.emisivo(Color(0.75, 0.95, 0.9), 0.25))
 
 
 # ---------- Objetos del mapa ----------

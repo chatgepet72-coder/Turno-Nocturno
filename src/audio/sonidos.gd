@@ -7,6 +7,15 @@ var recursos: Dictionary = {}
 var tension: AudioStreamPlayer
 var pasos_indice := 0
 var variantes_pasos: Dictionary = {}
+var persecucion: AudioStreamPlayer   # sube cuando un enemigo te caza (assets/audio/tension, tools/audio/musica_tension.py)
+var cazado: float = 0.0               # 0..1, lo calcula _process con los enemigos que persiguen
+
+
+static func _en_bucle(ruta: String) -> AudioStreamWAV:
+	var pista := (load(ruta) as AudioStreamWAV).duplicate() as AudioStreamWAV
+	pista.loop_mode = AudioStreamWAV.LOOP_FORWARD
+	pista.loop_end = pista.data.size() / 2   # 16 bits, mono
+	return pista
 
 func _ready() -> void:
 	volumen = Controles.volumen
@@ -22,6 +31,8 @@ func _ready() -> void:
 		for i in range(4): variantes_pasos[tipo].append(load("res://assets/audio/v7/footstep_%s_%03d.ogg" % [tipo,i]))
 	for nombre in ["murmullo", "papeles", "radio_estatica"]:
 		recursos[nombre] = load("res://assets/audio/v7/" + nombre + ".wav")
+	for nombre in ["correteo_1", "correteo_2", "correteo_3", "correteo_4", "rasguno", "chillido", "lanzar"]:
+		recursos[nombre] = load("res://assets/audio/tension/" + nombre + ".wav")
 	for i in range(1,6):
 		recursos["eco_%d" % i] = load("res://assets/audio/v8/eco_%d.mp3" % i)
 	for nombre in ["goteo", "paso_baldosa"]:
@@ -39,10 +50,9 @@ func _ready() -> void:
 		if DisplayServer.get_name() != "headless": capa.play()
 	ambiente = AudioStreamPlayer.new()
 	ambiente.bus = "Música"
-	ambiente.stream = recursos["ambiente"]
-	ambiente.volume_db = -36.0
+	ambiente.stream = _en_bucle("res://assets/audio/tension/suspenso.wav")   # antes: cc0/lost.ogg (se queda en su carpeta)
+	ambiente.volume_db = -24.0
 	add_child(ambiente)
-	ambiente.finished.connect(ambiente.play)
 	if DisplayServer.get_name() != "headless":
 		ambiente.play()
 	ajustar(volumen)
@@ -53,6 +63,11 @@ func _ready() -> void:
 	add_child(tension)
 	tension.finished.connect(tension.play)
 	if DisplayServer.get_name() != "headless": tension.play()
+	persecucion = AudioStreamPlayer.new()
+	persecucion.bus = "Música"
+	persecucion.stream = _en_bucle("res://assets/audio/tension/persecucion.wav")
+	persecucion.volume_db = -60
+	add_child(persecucion)
 
 func _process(delta: float) -> void:
 	var escuela := get_parent()
@@ -67,8 +82,21 @@ func _process(delta: float) -> void:
 	if espera_goteo <= 0:
 		espera_goteo = randf_range(3.5, 7.0)
 		if zona_actual == "banos": efecto("goteo", Vector2(900, 950) if escuela.campana.lugar == "campus" else Vector2(2980, 180), -13)
-	ambiente.volume_db = -36.0 - peligro * 8.0
+	# ¿Algún enemigo de este lugar te está cazando? Entra la persecución y el suspenso se hace a un lado.
+	var meta_caza: float = 0.0
+	if escuela.jugando:
+		for e in get_tree().get_nodes_in_group("enemigos"):
+			if e.visible and e.get("estado") in ["PERSIGUE", "CARGA", "EMBISTE", "AGARRA", "ESQUIVA", "ACECHA", "LANZA"]:
+				meta_caza = 1.0
+				break
+	cazado = move_toward(cazado, meta_caza, delta * (1.5 if meta_caza > cazado else 0.25))
+	ambiente.volume_db = -24.0 - peligro * 8.0 - cazado * 10.0
 	tension.volume_db = move_toward(tension.volume_db, lerpf(-60,-31,peligro),delta*14)
+	if cazado > 0.01 and not persecucion.playing and DisplayServer.get_name() != "headless":
+		persecucion.play()
+	persecucion.volume_db = lerpf(-60.0, -15.0, sqrt(cazado))
+	if cazado <= 0.0 and persecucion.playing:
+		persecucion.stop()
 
 func efecto(nombre: String, posicion: Vector2 = Vector2.INF, db: float = -8.0) -> void:
 	if DisplayServer.get_name() == "headless" or not recursos.has(nombre):
@@ -116,8 +144,9 @@ func _exit_tree() -> void:
 func silenciar_ambiente(silenciar: bool) -> void:
 	ambiente.stream_paused = silenciar
 	tension.stream_paused = silenciar
+	persecucion.stream_paused = silenciar
 	if silenciar:
 		for voz in get_children():
-			if voz != ambiente and voz != tension and not voz in capas.values() and (voz is AudioStreamPlayer or voz is AudioStreamPlayer2D):
+			if voz != ambiente and voz != tension and voz != persecucion and not voz in capas.values() and (voz is AudioStreamPlayer or voz is AudioStreamPlayer2D):
 				voz.stop()
 				voz.queue_free()

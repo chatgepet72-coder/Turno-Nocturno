@@ -1,0 +1,185 @@
+{
+  "personaje": "el_pupitre",
+  "provisional": true,
+  "tamano_cuadro": [
+    320,
+    320
+  ],
+  "fondo": "transparente",
+  "pivote": [
+    160,
+    310
+  ],
+  "direcciones": [
+    "down",
+    "left",
+    "right",
+    "up"
+  ],
+  "animaciones": {
+    "idle": {
+      "cuadros": 2,
+      "fps": 3,
+      "loop": true,
+      "archivos": {
+        "down": [
+          "frames/idle_down_01.png",
+          "frames/idle_down_02.png"
+        ],
+        "left": [
+          "frames/idle_left_01.png",
+          "frames/idle_left_02.png"
+        ],
+        "right": [
+          "frames/idle_right_01.png",
+          "frames/idle_right_02.png"
+        ],
+        "up": [
+          "frames/idle_up_01.png",
+          "frames/idle_up_02.png"
+        ]
+      }
+    },
+    "walk": {
+      "cuadros": 6,
+      "fps": 14,
+      "loop": true,
+      "archivos": {
+        "down": [
+          "frames/walk_down_01.png",
+          "frames/walk_down_02.png",
+          "frames/walk_down_03.png",
+          "frames/walk_down_04.png",
+          "frames/walk_down_05.png",
+          "frames/walk_down_06.png"
+        ],
+        "left": [
+          "frames/walk_left_01.png",
+          "frames/walk_left_02.png",
+          "frames/walk_left_03.png",
+          "frames/walk_left_04.png",
+          "frames/walk_left_05.png",
+          "frames/walk_left_06.png"
+        ],
+        "right": [
+          "frames/walk_right_01.png",
+          "frames/walk_right_02.png",
+          "frames/walk_right_03.png",
+          "frames/walk_right_04.png",
+          "frames/walk_right_05.png",
+          "frames/walk_right_06.png"
+        ],
+        "up": [
+          "frames/walk_up_01.png",
+          "frames/walk_up_02.png",
+          "frames/walk_up_03.png",
+          "frames/walk_up_04.png",
+          "frames/walk_up_05.png",
+          "frames/walk_up_06.png"
+        ]
+      }
+    },
+    "run": {
+      "cuadros": 6,
+      "fps": 20,
+      "loop": true,
+      "archivos": {
+        "down": [
+          "frames/run_down_01.png",
+          "frames/run_down_02.png",
+          "frames/run_down_03.png",
+          "frames/run_down_04.png",
+          "frames/run_down_05.png",
+          "frames/run_down_06.png"
+        ],
+        "left": [
+          "frames/run_left_01.png",
+          "frames/run_left_02.png",
+          "frames/run_left_03.png",
+          "frames/run_left_04.png",
+          "frames/run_left_05.png",
+          "frames/run_left_06.png"
+        ],
+        "right": [
+          "frames/run_right_01.png",
+          "frames/run_right_02.png",
+          "frames/run_right_03.png",
+          "frames/run_right_04.png",
+          "frames/run_right_05.png",
+          "frames/run_right_06.png"
+        ],
+        "up": [
+          "frames/run_up_01.png",
+          "frames/run_up_02.png",
+          "frames/run_up_03.png",
+          "frames/run_up_04.png",
+          "frames/run_up_05.png",
+          "frames/run_up_06.png"
+        ]
+      }
+    },
+    "attack": {
+      "cuadros": 5,
+      "fps": 12,
+      "loop": false,
+      "archivos": {
+        "down": [
+          "frames/attack_down_01.png",
+          "frames/attack_down_02.png",
+          "frames/attack_down_03.png",
+          "frames/attack_down_04.png",
+          "frames/attack_down_05.png"
+        ],
+        "left": [
+          "frames/attack_left_01.png",
+          "frames/attack_left_02.png",
+          "frames/attack_left_03.png",
+          "frames/attack_left_04.png",
+          "frames/attack_left_05.png"
+        ],
+        "right": [
+          "frames/attack_right_01.png",
+          "frames/attack_right_02.png",
+          "frames/attack_right_03.png",
+          "frames/attack_right_04.png",
+          "frames/attack_right_05.png"
+        ],
+        "up": [
+          "frames/attack_up_01.png",
+          "frames/attack_up_02.png",
+          "frames/attack_up_03.png",
+          "frames/attack_up_04.png",
+          "frames/attack_up_05.png"
+        ]
+      },
+      "cuadro_de_golpe": 3
+    },
+    "hurt": {
+      "cuadros": 3,
+      "fps": 10,
+      "loop": false,
+      "archivos": {
+        "down": [
+          "frames/hurt_down_01.png",
+          "frames/hurt_down_02.png",
+          "frames/hurt_down_03.png"
+        ],
+        "left": [
+          "frames/hurt_left_01.png",
+          "frames/hurt_left_02.png",
+          "frames/hurt_left_03.png"
+        ],
+        "right": [
+          "frames/hurt_right_01.png",
+          "frames/hurt_right_02.png",
+          "frames/hurt_right_03.png"
+        ],
+        "up": [
+          "frames/hurt_up_01.png",
+          "frames/hurt_up_02.png",
+          "frames/hurt_up_03.png"
+        ]
+      }
+    }
+  }
+}

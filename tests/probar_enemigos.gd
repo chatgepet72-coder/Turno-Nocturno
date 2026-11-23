@@ -22,7 +22,7 @@ func ejecutar() -> void:
 	e.partida_iniciada = true; e.jugando = true; e.interfaz.jugar()
 	e.archivero.activo = false; e.archivero.set_physics_process(false)
 	var j: CharacterBody2D = e.jugador
-	check(e.encuentros.get_child_count() == 2, "Al empezar solo hay 2 Bajas (%d)" % e.encuentros.get_child_count())
+	check(e.encuentros.get_child_count() == 1, "Al empezar solo hay 1 Baja, en el Aula 03 (%d)" % e.encuentros.get_child_count())
 	check(e.get_node("Objetos").has_node("combate_pistola_taller"), "La pistola está en el Taller")
 	# El Taller está cerrado: candado 2359 con la pista del reloj y el memorándum
 	var puerta_taller: Node = null
@@ -91,7 +91,7 @@ func ejecutar() -> void:
 		await create_timer(0.3).timeout
 	check(baja.estado == "CLAVADO" and "enemigo_baja_pasillo_2" in e.recogidos, "Tres clavos más la dejan clavada y se guarda")
 	# Ataque cuerpo a cuerpo
-	var otra := enemigo("baja_pasillo_1")
+	var otra := enemigo("baja_aula_03")
 	var cordura_antes: float = j.cordura
 	j.global_position = otra.global_position + Vector2(30, 0)
 	await create_timer(2.5).timeout

@@ -1,15 +1,19 @@
 {
-	"_nota": "Dónde y cuándo aparece cada enemigo y cada objeto de combate. 'lugar': principal (edificio) o campus (afuera). 'aparece': inicio | zona:<Circuito encendido> | hecho:<clave de campana.hechos> | etapa:<número mínimo> | objeto:<en la mochila>. Afuera no hay cuartos: 'territorio' es el radio donde caza.",
+	"_nota": "Dónde y cuándo aparece cada enemigo y cada objeto de combate. 'lugar': principal (edificio) o campus (afuera). 'aparece': inicio | zona:<Circuito encendido> | hecho:<clave de campana.hechos> | etapa:<número mínimo> | objeto:<en la mochila>. Afuera no hay cuartos: 'territorio' es el radio donde caza. 'huye_a': solo se deja ver y huye a ese punto. 'encierros': al entrar al cuarto ('*' = el primero que no esté en 'excluye') se traban las puertas y salen los enemigos; se destraban cuando quedan clavados o quemados.",
 	"enemigos": [
 		{
-			"id": "baja_pasillo_1",
+			"id": "baja_vistazo",
 			"tipo": "la_baja",
 			"lugar": "principal",
 			"pos": [
-				1250,
+				2330,
 				700
 			],
-			"aparece": "inicio"
+			"huye_a": [
+				2496,
+				470
+			],
+			"aparece": "objeto:Llave maestra"
 		},
 		{
 			"id": "baja_aula_03",
@@ -20,16 +24,6 @@
 				250
 			],
 			"aparece": "inicio"
-		},
-		{
-			"id": "baja_auditorio",
-			"tipo": "la_baja",
-			"lugar": "principal",
-			"pos": [
-				1450,
-				1200
-			],
-			"aparece": "objeto:Pistola de clavos"
 		},
 		{
 			"id": "expediente_rectoria",
@@ -93,6 +87,16 @@
 			],
 			"territorio": 700,
 			"aparece": "etapa:4"
+		},
+		{
+			"id": "pupitre_pasillo",
+			"tipo": "el_pupitre",
+			"lugar": "principal",
+			"pos": [
+				1800,
+				680
+			],
+			"aparece": "hecho:encierro_primero"
 		}
 	],
 	"objetos": [
@@ -156,7 +160,7 @@
 				945
 			],
 			"z": 0,
-			"texto": "«Turno de noche: aquí adentro no entra nada. Respiren, guarden y sigan.»\n«Afuera, en el estacionamiento, cuida la salida uno grande de traje que arrastra la guillotina del área de copias.»\n«Los clavos casi no le hacen nada. Cuando deja caer la guillotina se le atora en el piso: ese es el momento.»\n«En la cafetería hay otra de esas que se lanzan. Si gime, háganse a un lado.»"
+			"texto": "«Turno de noche: aquí adentro no entra nada. Respiren, guarden y sigan.»\n«Afuera, en el estacionamiento, cuida la salida uno grande de traje que arrastra la guillotina del área de copias.»\n«Los clavos casi no le hacen nada. Cuando deja caer la guillotina se le atora en el piso: ese es el momento.»\n«En la cafetería hay otra de esas que se lanzan. Si gime, háganse a un lado.»\n«PASILLO: hay algo que corre en lo oscuro, por el piso y por las paredes. Suena como muchos pies.»\n«No le den la espalda. Alúmbrenlo: se queda quieto un segundo y huye. Ese segundo es para dispararle.»"
 		},
 		{
 			"id": "nota_vigilancia",
@@ -445,5 +449,38 @@
 			"texto": ""
 		}
 	],
-	"_nota_objetos": "Objetos del mundo. clase 'recogible' (va a la mochila; 'texto' se narra al recogerlo y se puede releer en la mochila) o 'punto': examinar, candado, cajon (premio: cosas separadas por coma; texto: la nota que hay dentro) o mesa. z = 1: encima de un mueble. Puzzle del Taller: reloj de la Entrada (11:59 p. m.) + memorándum de Dirección (24 horas) = 2359."
+	"_nota_objetos": "Objetos del mundo. clase 'recogible' (va a la mochila; 'texto' se narra al recogerlo y se puede releer en la mochila) o 'punto': examinar, candado, cajon (premio: cosas separadas por coma; texto: la nota que hay dentro) o mesa. z = 1: encima de un mueble. Puzzle del Taller: reloj de la Entrada (11:59 p. m.) + memorándum de Dirección (24 horas) = 2359.",
+	"encierros": [
+		{
+			"id": "primero",
+			"cuarto": "*",
+			"excluye": [
+				"Taller",
+				"Pasillo",
+				"Bano_H",
+				"Bano_M"
+			],
+			"requiere": "objeto:Pistola de clavos",
+			"enemigos": [
+				{
+					"tipo": "la_baja"
+				}
+			],
+			"aviso": "La puerta se azotó detrás de ti. Algo se mueve entre los muebles."
+		},
+		{
+			"id": "auditorio",
+			"cuarto": "Auditorio",
+			"requiere": "hecho:encierro_primero",
+			"enemigos": [
+				{
+					"tipo": "la_baja"
+				},
+				{
+					"tipo": "la_baja"
+				}
+			],
+			"aviso": "Las puertas del auditorio se trabaron. Hay más de una."
+		}
+	]
 }

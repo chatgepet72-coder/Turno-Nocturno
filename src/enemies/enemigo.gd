@@ -31,10 +31,12 @@ var dano: float = 12.0
 var vision: float = 240.0
 var oido: float = 1.0
 var anim_mover: String = "walk"
+var anim_correr: String = "run"          # se usa si el JSON la trae; si no, "walk" más rápido
 var alto_cuerpo: float = 70.0             # alto de la zona de golpe, desde los pies
 var ancho_cuerpo: float = 30.0
 var tiempo_levantarse: float = 14.0
 var pausa_entre_ataques: float = 1.1
+var sigue_por_puertas: bool = false       # si lo venía persiguiendo, cruza la puerta detrás de Lalo
 
 var vida: float = 4.0
 var estado: String = "QUIETO"   # QUIETO, ALERTA, PERSIGUE, ATACA, HERIDO, ATURDIDO, CAIDO, CLAVADO
@@ -50,6 +52,10 @@ var golpe_hecho: bool = false
 var tiempo_estado: float = 0.0
 var clavos_en_piso: int = 0
 var _revisar_guardado: float = 0.0
+var _vio_a_lalo_ms: int = -100000
+var _forcejeo: float = 0.0               # segundos jalando la puerta antes de cruzarla
+var _golpes_refugio: int = 0
+var _agazapado: bool = false
 
 
 func _ready() -> void:
@@ -237,6 +243,7 @@ func _linea_libre(hasta: Vector2) -> bool:
 
 func _percibir() -> void:
 	if ve_a_lalo():
+		_vio_a_lalo_ms = Time.get_ticks_msec()
 		if estado in ["QUIETO", "ALERTA"]:
 			_cambiar("PERSIGUE")
 		destino = jugador().global_position
@@ -259,6 +266,8 @@ func _decidir(delta: float) -> void:
 	var j := jugador()
 	var distancia := global_position.distance_to(j.global_position)
 	if estado == "PERSIGUE":
+		if not jugador_en_mi_cuarto() and _seguir_por_la_puerta(delta):
+			return
 		if not jugador_en_mi_cuarto() or j.oculto:
 			# Lo perdió: va al último lugar donde lo vio y luego regresa a casa.
 			if destino == Vector2.INF or global_position.distance_to(destino) < 20.0 or tiempo_estado > 8.0:
@@ -277,6 +286,69 @@ func _decidir(delta: float) -> void:
 		_animar("idle")
 		return
 	_caminar_hacia(destino, delta)
+
+
+## Movimiento de lado que se suma al caminar (zigzag para no ser blanco fácil).
+func _desvio(_dir: Vector2) -> Vector2:
+	return Vector2.ZERO
+
+
+## Lalo se fue por una puerta mientras lo perseguía: camina a esa puerta, la jala y entra detrás de él.
+## Al cuarto seguro no entra: golpea la puerta y se va.
+func _seguir_por_la_puerta(delta: float) -> bool:
+	var c: Node = escuela.cuartos
+	if not sigue_por_puertas or territorio > 0.0 or c == null or jugador().oculto:
+		return false
+	var p: Node2D = c.ultima_puerta
+	if p == null or not is_instance_valid(p) or Time.get_ticks_msec() - c.ultimo_cruce_ms > 9000:
+		return false
+	if c.ultimo_cruce_ms - _vio_a_lalo_ms > 4000:
+		return false   # no lo venía siguiendo cuando cruzó
+	var llegada: Vector2 = c.ultima_llegada
+	var hacia: String = c.cuarto_en(llegada)
+	var mi_lado: Vector2 = p.global_position + (p.global_position - llegada)
+	if hacia == "" or hacia == cuarto or c.cuarto_en(mi_lado) != cuarto:
+		return false
+	if global_position.distance_to(p.global_position) > 34.0:
+		_caminar_hacia(p.global_position, delta)
+		return true
+	velocity = Vector2.ZERO
+	_animar("idle")
+	if hacia == c.REFUGIO:
+		# Golpea la puerta del Taller tres veces y se rinde
+		_forcejeo += delta
+		if _forcejeo > 0.7:
+			_forcejeo = 0.0
+			_golpes_refugio += 1
+			escuela.sonidos.efecto("golpe", p.global_position, -2.0)
+			_vibrar(0.2, 0.1)
+		if _golpes_refugio >= 3:
+			_golpes_refugio = 0
+			c.ultima_puerta = null
+			destino = casa
+			_cambiar("ALERTA")
+		return true
+	_forcejeo += delta
+	if _forcejeo < 0.6:
+		return true
+	_forcejeo = 0.0
+	escuela.sonidos.efecto("puerta", p.global_position, 0.0)
+	escuela.sonidos.efecto("eco_%d" % randi_range(1, 5), llegada, -6.0)
+	var vista: Variant = escuela.get("vista_fp")
+	if vista != null and vista.activa:
+		var sentido: float = 1.0 if llegada.y > p.global_position.y else -1.0
+		vista.mundo.forzar_puerta(p, true, sentido)
+		get_tree().create_timer(1.3).timeout.connect(func() -> void:
+			if is_instance_valid(vista) and is_instance_valid(p):
+				vista.mundo.soltar_puerta(p))
+	global_position = llegada + Vector2(randf_range(-14.0, 14.0), 0.0)
+	cuarto = hacia
+	casa = global_position
+	destino = jugador().global_position
+	_vio_a_lalo_ms = Time.get_ticks_msec()
+	espera_ataque = 0.5
+	_cambiar("PERSIGUE")
+	return true
 
 
 ## Las subclases deciden si usan su ataque a distancia. Devuelve true si atacó.
@@ -300,12 +372,16 @@ func _caminar_hacia(punto: Vector2, delta: float) -> void:
 		camino.remove_at(0)
 	var siguiente: Vector2 = camino[0] if camino.size() > 0 else punto
 	var dir := global_position.direction_to(siguiente)
-	velocity = dir * _velocidad_actual()
+	velocity = dir * _velocidad_actual() + _desvio(dir)
 	move_and_slide()
 	var real := get_real_velocity()
 	_mirar_hacia(real if real.length() > 2.0 else dir)
-	_animar(anim_mover if real.length() > 2.0 else "idle")
-	sprite.speed_scale = clampf(real.length() / maxf(velocidad, 1.0), 0.6, 1.6)
+	var corriendo: bool = real.length() > velocidad * 1.5
+	var anim: String = anim_mover
+	if corriendo and sprite.sprite_frames.has_animation("%s_%s" % [anim_correr, direccion]):
+		anim = anim_correr
+	_animar(anim if real.length() > 2.0 else "idle")
+	sprite.speed_scale = clampf(real.length() / maxf(velocidad, 1.0), 0.6, 1.2 if anim == anim_correr else 2.4)
 
 
 # ---------- Ataques ----------
@@ -374,6 +450,9 @@ func recibir_clavo(direccion_clavo: Vector2) -> bool:
 		"CLAVADO":
 			return false
 		"CAIDO":
+			if _agazapado:
+				tiempo_estado = tiempo_levantarse   # el disparo lo despierta: se levanta ya
+				return true
 			clavos_en_piso += 1
 			escuela.sonidos.efecto("clavo_impacto", global_position, -4.0)
 			if clavos_en_piso >= CLAVOS_PARA_CLAVAR:
@@ -429,6 +508,28 @@ func _caer(direccion_clavo: Vector2) -> void:
 	if not _avisado_clavar:
 		_avisado_clavar = true
 		jugador().mensaje = "Se va a levantar. Clávalo al piso: dispárale %d veces más mientras está tirado." % CLAVOS_PARA_CLAVAR
+
+
+## Encierros: aparece tirado entre los muebles y se levanta a los pocos segundos con toda su vida.
+func aparecer_agazapado(segundos: float) -> void:
+	_cambiar("CAIDO")
+	velocity = Vector2.ZERO
+	collision_layer = 0
+	_animar("hurt", true)
+	sprite.pause()
+	sprite.frame = sprite.sprite_frames.get_frame_count(sprite.animation) - 1
+	sprite.rotation = PI * 0.5
+	(get_node("Cuerpo") as Node2D).rotation = PI * 0.5
+	sprite.modulate = Color(0.75, 0.75, 0.78)
+	_agazapado = true
+	var normal: float = tiempo_levantarse
+	tiempo_levantarse = segundos
+	await get_tree().create_timer(segundos + 0.2).timeout
+	tiempo_levantarse = normal
+	_agazapado = false
+	if is_instance_valid(self) and estado not in ["CAIDO", "CLAVADO"]:
+		vida = vida_max
+		_vio_a_lalo_ms = Time.get_ticks_msec()
 
 
 func _levantarse() -> void:

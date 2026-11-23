@@ -21,6 +21,10 @@ var escuela: Node2D
 var cuartos: Dictionary = {}       # nombre -> Rect2 en coordenadas del mundo
 var actual: String = ""
 var transicion: CanvasLayer
+# Por dónde cruzó Lalo la última vez: los enemigos que lo venían persiguiendo lo siguen por esa puerta.
+var ultima_puerta: Node2D
+var ultima_llegada := Vector2.INF
+var ultimo_cruce_ms: int = -100000
 
 
 func _ready() -> void:
@@ -111,12 +115,19 @@ func cruzar(puerta: Node2D) -> bool:
 	if destino == Vector2.INF:
 		return false
 	var cuarto_destino := cuarto_en(destino)
+	if escuela.encuentros != null and escuela.encuentros.cuarto_cerrado() != "" and escuela.encuentros.cuarto_cerrado() == cuarto_en(jugador.global_position):
+		escuela.sonidos.efecto("metal", puerta.global_position, -4.0)
+		jugador.mensaje = "Está trabada. No se abre mientras eso siga de pie."
+		return false
 	if LLAVES.has(cuarto_destino) and not jugador.inventario.has(LLAVES[cuarto_destino]):
 		escuela.sonidos.efecto("metal", puerta.global_position, -8.0)
 		jugador.mensaje = "Cerrada con llave. La placa dice: TALLER · CONSERJERÍA."
 		return false
 	escuela.jugando = false
 	escuela.emitir_ruido(puerta.global_position, 0.35)
+	ultima_puerta = puerta
+	ultima_llegada = destino
+	ultimo_cruce_ms = Time.get_ticks_msec()
 	var cambiar := func() -> void:
 		jugador.global_position = destino
 		jugador.velocity = Vector2.ZERO

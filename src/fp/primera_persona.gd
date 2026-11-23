@@ -44,10 +44,12 @@ func _ready() -> void:
 	env.background_mode = Environment.BG_COLOR
 	env.background_color = Color.BLACK
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	env.ambient_light_color = Color(0.07, 0.085, 0.12)
+	# Oscuridad casi total: solo se ve lo que toca la linterna (y apenas las siluetas de cerca).
+	env.ambient_light_color = Color(0.012, 0.014, 0.02)
+	env.ambient_light_energy = 1.0
 	env.fog_enabled = true
-	env.fog_light_color = Color(0.006, 0.008, 0.013)
-	env.fog_density = 0.075
+	env.fog_light_color = Color(0.0, 0.0, 0.0)
+	env.fog_density = 0.11
 	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
 	_entorno.environment = env
 	add_child(_entorno)
@@ -60,9 +62,9 @@ func _ready() -> void:
 	camara.near = 0.05
 	add_child(camara)
 	linterna = SpotLight3D.new()
-	linterna.spot_range = 17.0
-	linterna.spot_angle = 32.0
-	linterna.spot_angle_attenuation = 1.5
+	linterna.spot_range = 15.0
+	linterna.spot_angle = 30.0
+	linterna.spot_angle_attenuation = 2.2   # borde del haz más marcado: afuera del círculo, negro
 	linterna.light_energy = 3.6
 	linterna.light_color = Color(1.0, 0.96, 0.88)
 	linterna.shadow_enabled = true
@@ -304,7 +306,10 @@ func _sincronizar_dinamicos() -> void:
 	if a != null and a.sprite != null:
 		vivos[a] = true
 		_actor(a, a.sprite, "")
-	for n in escuela.get_children():
+	var sueltos: Array[Node] = escuela.get_children()
+	if escuela.encuentros != null:
+		sueltos.append_array(escuela.encuentros.get_children())   # lo que avientan los enemigos
+	for n in sueltos:
 		var guion: Script = n.get_script()
 		if guion == null:
 			continue
@@ -358,6 +363,9 @@ func _actor(n: Node2D, sp: AnimatedSprite2D, direccion: String) -> void:
 	s.modulate = sp.modulate * n.modulate
 	s.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
 	s.position = Mundo.a3d(n.global_position)
+	var arriba: Variant = n.get("altura_3d")   # El Pupitre corre por las paredes
+	if arriba is float:
+		s.position.y += arriba
 	s.rotation = Vector3.ZERO
 
 
@@ -440,6 +448,17 @@ func _efecto(n: Node2D, ruta: String) -> void:
 					g.add_child(b)
 				elif clase == "termo":
 					mundo.cilindro(Vector3.ZERO, 0.05, 0.2, M.color(Color(0.6, 0.6, 0.62), 0.3, 0.7), g)
+				elif clase == "silla":
+					# Silla de paleta aventada: asiento, respaldo y patas de metal
+					var metal := M.color(Color(0.35, 0.36, 0.38), 0.4, 0.7)
+					var madera := M.color(Color(0.45, 0.3, 0.18))
+					mundo.caja(Vector3(0, 0, 0), Vector3(0.4, 0.03, 0.38), madera, g)
+					mundo.caja(Vector3(0, 0.22, -0.18), Vector3(0.4, 0.3, 0.03), madera, g)
+					for x in [-0.17, 0.17]:
+						for z in [-0.16, 0.16]:
+							mundo.caja(Vector3(x, -0.2, z), Vector3(0.025, 0.4, 0.025), metal, g)
+				elif clase == "libro":
+					mundo.caja(Vector3.ZERO, Vector3(0.22, 0.06, 0.3), M.color(Color(0.35, 0.08, 0.06)), g)
 				else:
 					mundo.caja(Vector3.ZERO, Vector3(0.21, 0.005, 0.28), M.color(Color(0.92, 0.9, 0.82)), g)
 			"molotov.gd":
@@ -510,6 +529,9 @@ func _efecto(n: Node2D, ruta: String) -> void:
 			g.rotation = Vector3(float(n.get("inclinacion")), atan2(-dir.x, -dir.y), 0)
 		"proyectil_enemigo.gd":
 			altura = 1.0
+			if n.get("clase") in ["silla", "libro"]:
+				altura = 1.1
+				g.rotation = Vector3(float(n.get("rotation")) * 1.3, float(n.get("rotation")), 0.0)
 			if n.get("clase") == "termo":
 				altura = 0.3 + float(n.get("_altura")) * ESC
 		"molotov.gd":

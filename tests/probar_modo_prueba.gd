@@ -14,7 +14,7 @@ func ejecutar() -> void:
 	var j: CharacterBody2D = e.jugador
 	e.alternar_modo_prueba()
 	check(e.modo_prueba and e.interfaz.aviso_prueba.visible, "F9 activa el modo de prueba y se ve el aviso")
-	var baja: Enemigo = e.encuentros.get_node("enemigo_baja_pasillo_1")
+	var baja: Enemigo = e.encuentros.get_node("enemigo_baja_aula_03")
 	j.global_position = baja.global_position + Vector2(30, 0)
 	await create_timer(3.0).timeout
 	check(baja.estado in ["PERSIGUE", "ATACA"], "La Baja sigue atacando (" + baja.estado + ")")
