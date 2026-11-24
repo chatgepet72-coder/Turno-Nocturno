@@ -39,6 +39,6 @@ func ejecutar() -> void:
 	comprobar(ui.fondo.video.is_playing() and ui.fondo.musica.playing, "Reintento recupera fondo y música")
 	await captura("reintento")
 	ui.mostrar("inicio")
-	comprobar(ui.columna.get_child_count() == 6, "Menú principal conserva sus cuatro opciones")
+	comprobar(ui.columna.get_children().filter(func(n): return n is Button).size() == 4, "Menú principal conserva sus cuatro opciones")
 	print("RESULTADO: %d fallos" % fallos)
 	quit(fallos)

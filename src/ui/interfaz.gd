@@ -166,18 +166,43 @@ func texto_menu(texto: String, tamano: int, color: Color = Color("d6e0dd")) -> L
 func boton(texto: String, accion: Callable, habilitado: bool = true) -> Button:
 	var b := Button.new()
 	b.text = texto
-	b.custom_minimum_size = Vector2(510, 44)
+	b.custom_minimum_size = Vector2(440, 48)
 	b.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	b.add_theme_font_size_override("font_size", 20)
+	b.add_theme_font_size_override("font_size", 22)
+	b.add_theme_color_override("font_color", Color("a8a399"))
+	b.add_theme_color_override("font_hover_color", Color.WHITE)
+	b.add_theme_color_override("font_focus_color", Color.WHITE)
+	b.add_theme_color_override("font_pressed_color", Color.WHITE)
+	b.add_theme_color_override("font_disabled_color", Color("5a5852"))
+	# Estilo de la plantilla "Inicio C": sin caja; el elegido lleva una barra naranja y un brillo que se desvanece
+	var brillo := GradientTexture2D.new()
+	var degradado := Gradient.new()
+	degradado.colors = PackedColorArray([Color(0.77, 0.44, 0.25, 0.30), Color(0.77, 0.44, 0.25, 0.0)])
+	brillo.gradient = degradado
+	brillo.width = 256
+	brillo.height = 4
 	for estado in ["normal", "hover", "focus", "pressed", "disabled"]:
-		var estilo := StyleBoxFlat.new()
-		estilo.bg_color = Color("182931") if estado in ["hover", "focus", "pressed"] else Color("0e1b23")
-		estilo.border_color = Color("bb765a") if estado == "focus" else Color("2b4048")
-		estilo.bg_color.a = 0.88 if estado in ["hover", "focus", "pressed"] else 0.72
-		estilo.set_corner_radius_all(5)
-		estilo.set_border_width_all(1)
-		estilo.content_margin_left = 18
+		var elegido: bool = estado in ["hover", "focus", "pressed"]
+		var estilo: StyleBox
+		if elegido:
+			var t := StyleBoxTexture.new()
+			t.texture = brillo
+			estilo = t
+		else:
+			estilo = StyleBoxEmpty.new()
+		estilo.content_margin_left = 21
 		b.add_theme_stylebox_override(estado, estilo)
+	var barra := ColorRect.new()
+	barra.color = Color("c5703f")
+	barra.size = Vector2(3, 48)
+	barra.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	barra.visible = false
+	b.add_child(barra)
+	b.focus_entered.connect(func() -> void: barra.visible = true)
+	b.focus_exited.connect(func() -> void: barra.visible = false)
+	b.mouse_entered.connect(func() -> void: if not b.disabled: b.grab_focus())
+	if texto.begins_with("Admin") or texto.begins_with("Prueba:"):
+		b.add_theme_color_override("font_color", Color("d9a27a"))   # solo existe en el editor: que se note
 	b.disabled = not habilitado
 	b.pressed.connect(accion)
 	columna.add_child(b)
@@ -191,7 +216,8 @@ func mostrar(tipo: String) -> void:
 	aviso.hide()
 	subtitulo.hide()
 	panel.show()
-	fondo.activar(tipo not in ["dialogo", "electricidad"])
+	var sobre_el_juego: bool = escuela.partida_iniciada and tipo in ["pausa", "saltar_nivel", "opciones"]
+	fondo.activar(tipo not in ["dialogo", "electricidad"] and not sobre_el_juego)
 	escuela.sonidos.silenciar_ambiente(tipo not in ["dialogo", "electricidad"])
 	hud.hide()
 	ayuda.hide()
@@ -203,15 +229,23 @@ func mostrar(tipo: String) -> void:
 	var primero: Button
 	match tipo:
 		"inicio":
-			texto_menu("TURNO\nNOCTURNO", 61)
-			texto_menu("Tu expediente sigue abierto. Por ahora.", 19, Color("9bb0b6"))
+			var titulo := texto_menu("Turno\nNocturno", 84, Color("ece7dc"))
+			titulo.add_theme_font_override("font", preload("res://assets/fuentes/CrimsonText-SemiBold.ttf"))
+			titulo.add_theme_constant_override("line_spacing", -22)
+			var sub := texto_menu("——   El último cuatrimestre", 24, Color("b9b3a6"))
+			sub.add_theme_font_override("font", preload("res://assets/fuentes/CrimsonText-Regular.ttf"))
+			var hueco := Control.new()
+			hueco.custom_minimum_size = Vector2(0, 26)
+			columna.add_child(hueco)
 			primero = boton("Iniciar juego", escuela.iniciar_con_teaser)
 			boton("Cargar partida", escuela.cargar, not escuela.Guardado.leer().is_empty())
 			boton("Controles y opciones", func(): mostrar("opciones"))
 			boton("Salir", escuela.salir)
 		"pausa":
-			texto_menu("TURNO EN PAUSA", 42)
-			texto_menu("El pasillo espera. Respira.", 19)
+			texto_menu("PAUSA", 48)
+			var donde := texto_menu(("Nivel %d · " % int(escuela.campana.etapa)) + escuela.campana.objetivo().split("·", true, 1)[-1].strip_edges(), 19, Color("c8cdd0"))
+			donde.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			donde.custom_minimum_size.x = 440
 			primero = boton("Continuar", escuela.continuar)
 			boton("Guardar partida", func(): escuela.guardar_manual())
 			boton("Controles y opciones", func(): mostrar("opciones"))
