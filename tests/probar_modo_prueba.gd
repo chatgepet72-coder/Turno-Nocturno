@@ -31,5 +31,18 @@ func ejecutar() -> void:
 	e.alternar_modo_prueba()
 	j.cordura = 50.0
 	check(j.cordura == 50.0 and not e.modo_prueba, "Al apagarlo la Cordura vuelve a bajar normal")
+	# Saltar a nivel (solo admin)
+	e.interfaz.mostrar("pausa")
+	e.interfaz.mostrar("saltar_nivel")
+	await create_timer(0.2).timeout
+	await e.saltar_a_nivel(2)
+	await create_timer(0.5).timeout
+	check(e.campana.lugar == "campus" and e.campana.etapa >= 2 and e.jugando, "Saltar al nivel 2 lleva al patio (" + e.campana.lugar + ")")
+	await e.saltar_a_nivel(4)
+	await create_timer(0.5).timeout
+	check(e.campana.etapa == 4 and j.inventario.has("Reporte de cierre"), "Saltar al nivel 4: estacionamiento con el reporte")
+	await e.saltar_a_nivel(1)
+	await create_timer(0.5).timeout
+	check(e.campana.lugar == "principal", "Saltar al nivel 1 regresa al edificio")
 	print("RESULTADO modo prueba: %d fallos" % fallos)
 	quit()

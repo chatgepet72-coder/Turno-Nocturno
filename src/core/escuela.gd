@@ -156,6 +156,45 @@ func dar_equipo_prueba() -> void:
 	jugador.mensaje = "Equipo de prueba: pistola, 3 cajas de clavos, 2 molotov y llaves."
 
 
+## Admin: brincar a un nivel sin jugar los anteriores. Da por hecho lo de los niveles previos
+## (objetos, hechos de la historia) para que todo quede coherente, y lleva a Lalo a ese lugar.
+const SALTOS: Dictionary = {
+	1: ["principal", Vector2(2112, 1180), "Nivel 1 · Edificio principal (Entrada)"],
+	2: ["campus", Vector2(950, 2000), "Nivel 2 · Patio"],
+	3: ["campus", Vector2(1250, 1320), "Nivel 3 · Cafetería y servicios"],
+	4: ["campus", Vector2(1840, 2700), "Nivel 4 · Estacionamiento"],
+}
+const HECHOS_POR_NIVEL: Dictionary = {
+	2: ["computo", "radio", "pala", "bitacora", "refugio_visto", "encierro_primero"],
+	3: ["revision_luz", "revision_agua", "memoria_banca", "memoria_desenterrada", "archivo_enterrado", "autorizacion"],
+	4: ["talleres", "llave_servicio", "revision_cafe", "revision_banos", "reporte"],
+}
+const OBJETOS_POR_NIVEL: Dictionary = {
+	2: ["Llave maestra", "Expediente de Lalo", "Llave del taller", "Pistola de clavos"],
+	3: ["Memoria USB del patio"],
+	4: ["Grabación recuperada", "Llave de servicio", "Reporte de cierre"],
+}
+
+
+func saltar_a_nivel(nivel: int) -> void:
+	if not modo_admin_disponible() or not SALTOS.has(nivel):
+		return
+	for n in range(2, nivel + 1):
+		for h in HECHOS_POR_NIVEL[n]:
+			campana.hechos[h] = true
+		for o in OBJETOS_POR_NIVEL[n]:
+			if not jugador.inventario.has(o):
+				jugador.inventario.append(o)
+	campana.etapa = maxi(campana.etapa, nivel) if nivel > 1 else 1
+	if campana.has_method("actualizar_accesos"):
+		campana.actualizar_accesos()
+	var destino: Array = SALTOS[nivel]
+	continuar()
+	await campana.cambiar_lugar(destino[0], destino[1], false)
+	jugador.global_position = destino[1]
+	anunciar(str(destino[2]).to_upper(), "Admin · " + campana.objetivo())
+
+
 ## Nueva partida desde el menú: primero el teaser (se puede saltar) y luego el juego.
 func iniciar_con_teaser() -> void:
 	if transicion or partida_iniciada or has_node("Teaser"):

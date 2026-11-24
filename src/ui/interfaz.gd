@@ -219,8 +219,18 @@ func mostrar(tipo: String) -> void:
 				boton("Admin · Modo de prueba: " + ("ACTIVADO" if escuela.modo_prueba else "apagado") + "  (F9)", escuela.alternar_modo_prueba)
 			if escuela.modo_admin_disponible() and escuela.modo_prueba:
 				boton("Prueba: dar pistola, clavos, molotov y llaves", func(): escuela.dar_equipo_prueba(); escuela.continuar())
+			if escuela.modo_admin_disponible():
+				boton("Admin · Saltar a nivel…", func(): mostrar("saltar_nivel"))
 			boton("Menú principal", func(): escuela.solicitar_salida("menu"))
 			boton("Salir", escuela.salir)
+		"saltar_nivel":
+			texto_menu("SALTAR A NIVEL", 42)
+			texto_menu("Solo admin. Se da por hecho lo de los niveles anteriores.", 19)
+			primero = null
+			for n in escuela.SALTOS:
+				var b := boton(escuela.SALTOS[n][2], func(): escuela.saltar_a_nivel(n))
+				if primero == null: primero = b
+			boton("Volver", func(): mostrar("pausa"))
 		"muerte":
 			texto_menu("EXPEDIENTE\nCERRADO", 53, Color("d5826c"))
 			texto_menu("ESTADO: ARCHIVADO\nEl silencio era tu única defensa.", 19)
